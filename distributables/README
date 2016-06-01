@@ -1,0 +1,7 @@
+first connect IMA sensor's aggregator
+cd distributables
+java -jar RegistryUnit/dist/RegistryUnit.jar &
+java net.tinyos.sf.SerialForwarder -comm serial@/dev/ttyUSB2:micaz&
+java -jar Osciloscope/dist/Osciloscope.jar &
+cd build-HTTPServer-qt5-Debug/
+./HTTPServer &
