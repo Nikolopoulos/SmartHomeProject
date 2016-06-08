@@ -305,6 +305,7 @@ public class Control {
                     @Override
                     public void run() {
                         while (true) {
+                            System.out.println("polling");
                             messages.sendPoll();
                             try {
                                 Thread.sleep(1000);

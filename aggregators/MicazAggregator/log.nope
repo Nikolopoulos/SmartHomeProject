@@ -1,0 +1,5 @@
+[Wed Jun 08 18:54:50 EEST 2016]:  Available cores: 2
+[Wed Jun 08 18:54:51 EEST 2016]:  encryptionCore: Core[#0]
+[Wed Jun 08 18:54:51 EEST 2016]:  HTTPCore: Core[#1]
+[Wed Jun 08 18:54:51 EEST 2016]:  sensingCore: Core[#1]
+[Wed Jun 08 18:54:51 EEST 2016]:  cronCore: Core[#0]
