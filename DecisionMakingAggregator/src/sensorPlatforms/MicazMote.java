@@ -146,5 +146,7 @@ public class MicazMote {
         String reply = "\"ID\":\"" + getId() + "\", \"Temperature\":\"" + util.Util.a2d2celsius((int)this.getTempReading())+ "\" ";
         return reply;
     }
+    
+ 
 
 }

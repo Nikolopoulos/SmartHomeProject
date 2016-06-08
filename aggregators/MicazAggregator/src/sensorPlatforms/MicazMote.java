@@ -5,6 +5,10 @@
  */
 package sensorPlatforms;
 
+import java.util.ArrayList;
+import util.Control;
+import util.Util;
+
 /**
  *
  * @author billaros
@@ -17,6 +21,7 @@ public class MicazMote {
     private boolean tempService = false;
     private boolean photoService = false;
     private boolean switchService = false;
+    private ArrayList<Service> servicesList;
 
     private enum voltage {
 
@@ -30,20 +35,24 @@ public class MicazMote {
     private int switchState;
 
     public MicazMote(int id, int services, long latestActivity) {
+        this.servicesList = new ArrayList<Service>();
         this.id = id;
         this.services = services;
         if (services / lib.Constants.PIN_S > 0.9) {
             services -= 4;
             this.switchService = true;
             switchState = -1;
+            servicesList.add(new Service("switch", "Switch service for accuator", "/switch", "boolean"));
         }
         if (services / lib.Constants.PHOTO_S > 0.9) {
             services -= 2;
             this.photoService = true;
+            servicesList.add(new Service("photo", "Light levels service", "/photo", "lum?"));
         }
         if (services % 2 == lib.Constants.TEMP_S) {
             services -= lib.Constants.TEMP_S;
             this.tempService = true;
+            servicesList.add(new Service("temp", "Temperature levels service", "/temp", "Celsious"));
         }
         this.photoReading = -1;
         this.tempReading = -1;
@@ -52,11 +61,20 @@ public class MicazMote {
     }
 
     public int getSwitchState() {
-        return switchState;
+        for (Service s : servicesList) {
+            if (s.getName().equals("switch")) {
+                return Integer.parseInt(s.getDecimalValue());
+            }
+        }
+        return -1;
     }
 
     public void setSwitchState(int switchState) {
-        this.switchState = switchState;
+        for (Service s : servicesList) {
+            if (s.getName().equals("temp")) {
+                s.setDecimalValue("1");
+            }
+        }
     }
 
     public int getId() {
@@ -67,8 +85,8 @@ public class MicazMote {
         this.id = id;
     }
 
-    public int getServices() {
-        return services;
+    public ArrayList<Service> getServices() {
+        return servicesList;
     }
 
     public void setServices(int services) {
@@ -100,19 +118,41 @@ public class MicazMote {
     }
 
     public double getTempReading() {
-        return tempReading;
+        for (Service s : servicesList) {
+            if (s.getName().equals("temp")) {
+                return s.getDoubleUnits();
+            }
+        }
+
+        return 0.0d;
     }
 
     public void setTempReading(double tempReading) {
-        this.tempReading = tempReading;
+        for (Service s : servicesList) {
+            if (s.getName().equals("temp")) {
+                s.setDecimalValue(tempReading + "");
+                s.setLatestReading(Util.getTime());
+            }
+        }
     }
 
     public double getPhotoReading() {
-        return photoReading;
+        for (Service s : servicesList) {
+            if (s.getName().equals("photo")) {vvv                
+                return s.getDoubleUnits();
+            }
+            
+        }
+        return 0.0;
     }
 
     public void setPhotoReading(double photoReading) {
-        this.photoReading = photoReading;
+        for (Service s : servicesList) {
+            if (s.getName().equals("photo")) {
+                
+                s.setDecimalValue(photoReading + "");
+            }
+        }
     }
 
     public long getLatestActivity() {
@@ -125,27 +165,49 @@ public class MicazMote {
 
     @Override
     public String toString() {
-        return id + "\t Micaz provides: " + (tempService ? "temperature service " : "") + (photoService ? "photo service " : "") + (switchService ? "switch service " : "");
+        String toReturn = id + " sensor provides: \n\t";
+        for (Service s : servicesList) {
+            toReturn += s.getName() + " service\n\t";
+        }
+        return toReturn;
     }
-    //If i remember correctly the folloing json shit are shitty as shit goes
+
     public String JSONDescription() {
         //return "{"+id+"\t Micaz provides: " + (tempService?"temperature service ":"")+ (photoService?"photo service ":"") + (switchService?"switch service ":"") ;
-        String reply = "{\"ID\":\"" + getId() + "\", \"TemperatureService\":\"" + this.isTempService() + "\", \"LightService\":\"" + this.isPhotoService() + "\", \"SwitchService\":\"" + this.isSwitchService() + "\"} ";
+        String reply = "{\"ID\":\"" + getId() + "\", ";
+        for (Service s : servicesList) {
+            reply += "\"" + s.getName() + "\":\"true\"";
+        }
+        reply += "\"} ";
         return reply;
     }
 
     public String JSONObject() {
-       String reply = "\"ID\":\"" + getId() + "\", \"TemperatureService\":\"" + this.isTempService() + "\", \"LightService\":\"" + this.isPhotoService() + "\", \"SwitchService\":\"" + this.isSwitchService() + "\", \"Temperature\":\"" + util.Util.a2d2celsius((int)this.getTempReading()) + "\", \"Light\":\"" + this.getPhotoReading() + "\", \"Switch\":\"" + this.getSwitchState() + "\" ";
+        String reply = "\"ID\":\"" + getId() + "\", \"TemperatureService\":\"" + this.isTempService() + "\", \"LightService\":\"" + this.isPhotoService() + "\", \"SwitchService\":\"" + this.isSwitchService() + "\", \"Temperature\":\"" + util.Util.a2d2celsius((int) this.getTempReading()) + "\", \"Light\":\"" + this.getPhotoReading() + "\", \"Switch\":\"" + this.getSwitchState() + "\" ";
         return reply;
     }
-    
+
     public String JSONLight() {
         String reply = "\"ID\":\"" + getId() + "\", \"Light\":\"" + this.getPhotoReading() + "\" ";
         return reply;
     }
+
     public String JSONTemp() {
-        String reply = "\"ID\":\"" + getId() + "\", \"Temperature\":\"" + util.Util.a2d2celsius((int)this.getTempReading())+ "\" ";
+        String reply = "\"ID\":\"" + getId() + "\", \"Temperature\":\"" + util.Util.a2d2celsius((int) this.getTempReading()) + "\" ";
         return reply;
     }
 
+    public String RequestServiceReading(String ServiceURI, boolean cached,Control con) {
+        String reply = "genericError";
+        for (Service s : servicesList) {
+            if (s.getURI().contentEquals(ServiceURI) && cached && this.latestActivity-System.currentTimeMillis()<30000) {
+                reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
+            }
+            else{
+                con.
+            }
+        }
+
+        return reply;
+    }
 }
