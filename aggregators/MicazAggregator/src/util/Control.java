@@ -304,8 +304,7 @@ public class Control {
                 Thread serial = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        while (true) {
-                            System.out.println("polling");
+                        while (true) {                            
                             messages.sendPoll();
                             try {
                                 Thread.sleep(1000);
@@ -379,6 +378,7 @@ public class Control {
                 switch (messageType) {
                     case lib.Constants.TEMP: {
                         m.setTempReading(Util.median(Readings));
+                        System.out.println("tried to set reading to "+Util.median(Readings));
                         break;
                     }
                     case lib.Constants.PHOTO: {

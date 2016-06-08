@@ -77,7 +77,7 @@ class DoComms implements Runnable {
             } else if (requestedURL.startsWith("/log")) {
                 reply = MyLogger.readLog();
 
-            } else if (requestedURL.startsWith("/sensor/") && (!requestedURL.contains("light")) && (!requestedURL.contains("temp")) && (!requestedURL.contains("switch"))) {
+            } else if (requestedURL.startsWith("/sensor/") && ((requestedURL.contains("photo")) || (requestedURL.contains("temp")) || (requestedURL.contains("switch")))) {
                 if (requestedURL.length() < 9) {
                     reply = con.ip + ":" + con.myPort + "/sensors -> returns a list of sensors available\n"
                             + con.ip + ":" + con.myPort + "/sensor/ID -> returns data of specific sensor with id = ID\n"

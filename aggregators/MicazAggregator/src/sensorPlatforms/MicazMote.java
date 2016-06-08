@@ -6,6 +6,8 @@
 package sensorPlatforms;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lib.Constants;
 import oscilloscope.Messaging;
 import util.Util;
@@ -136,8 +138,11 @@ public class MicazMote {
 
     public void setTempReading(double tempReading) {
         for (Service s : servicesList) {
+            System.out.println("Setting temp to " + tempReading);
             if (s.getName().equals("temp")) {
+                System.out.println("Found service " + tempReading);
                 s.setDecimalValue(tempReading + "");
+                System.out.println("Set temp to " + s.getDecimalValue());
                 s.setLatestReading(Util.getTime());
             }
         }
@@ -208,21 +213,57 @@ public class MicazMote {
         String reply = "genericError";
         int type = -99;
         for (Service s : servicesList) {
-            if (s.getURI().contentEquals(ServiceURI) && cached && s.getLatestReading() - System.currentTimeMillis() < 30000) {
-                reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
-            } else if (s.getURI().contentEquals(ServiceURI)) {
+            System.out.println("s.uri vs serviceuri " + s.getURI() + " vs " + ServiceURI + " is contained? " + s.getURI().contains(ServiceURI));
+            if (s.getURI().contains(ServiceURI) && cached && System.currentTimeMillis() -s.getLatestReading()< 30000) {
                 if (s.getURI().contains("/temp")) {
+                    System.out.println("ELSE INNER s.uri vs serviceuri " + s.getURI() + " vs " + ServiceURI + " is contained? " + s.getURI().contains(ServiceURI));
+                    System.out.println("Uri contains/temp " + ServiceURI);
                     type = Constants.TEMP;
                     messages.sendReadingRequest(id, type);
+                    reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + Util.a2d2celsius(Integer.parseInt(s.getDecimalValue().substring(0, s.getDecimalValue().length()-2))) + "\" ";
+                }
+                else
+                    reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
+                System.out.println("INNER s.uri vs serviceuri " + s.getURI() + " vs " + ServiceURI + " is contained? " + s.getURI().contains(ServiceURI));
+            } else if (s.getURI().contains(ServiceURI)) {
+                System.out.println("ELSE s.uri vs serviceuri " + s.getURI() + " vs " + ServiceURI + " is contained? " + s.getURI().contains(ServiceURI));
+                if (s.getURI().contains("/temp")) {
+                    System.out.println("ELSE INNER s.uri vs serviceuri " + s.getURI() + " vs " + ServiceURI + " is contained? " + s.getURI().contains(ServiceURI));
+                    System.out.println("Uri contains/temp " + ServiceURI);
+                    type = Constants.TEMP;
+                    messages.sendReadingRequest(id, type);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(MicazMote.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + Util.a2d2celsius(Integer.parseInt(s.getDecimalValue().substring(0, s.getDecimalValue().length()-2))) + "\" ";
                 }
                 if (s.getURI().contains("/photo")) {
                     type = Constants.PHOTO;
                     messages.sendReadingRequest(id, type);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(MicazMote.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
                 }
                 if (s.getURI().contains("/switch")) {
                     messages.sendSwitchToggle(id);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(MicazMote.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
                 }
-                reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(MicazMote.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
             }
         }
 
