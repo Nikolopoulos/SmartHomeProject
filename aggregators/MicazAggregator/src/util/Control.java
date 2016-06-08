@@ -5,8 +5,10 @@
  */
 package util;
 
+import Logging.MyLogger;
 import affinitySupport.Core;
 import affinitySupport.ThreadAffinity;
+import java.lang.management.ManagementFactory;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -17,9 +19,15 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import org.json.JSONObject;
 import oscilloscope.Messaging;
+import sensorPlatforms.AssociatedHardware;
 import sensorPlatforms.MicazMote;
+import sensorPlatforms.Service;
 
 /**
  *
@@ -27,102 +35,100 @@ import sensorPlatforms.MicazMote;
  */
 public class Control {
 
-    ArrayList<MicazMote> motesList;
-    Messaging messages;
+    ArrayList<MicazMote> sensorsList;
+    public Messaging messages;
     Thread dropDaemon, populate;
     String uid = "";
     boolean debug;
     public ThreadAffinity threadAffinity;
-    public final Core encryptionCore;
+    public final Core criticalSensingCore;
     public final Core HTTPCore;
     public final Core sensingCore;
     public final Core cronCore;
+    public InetAddress addr = null;// = getFirstNonLoopbackAddress(true, false);
+    public final String ip;// = addr.getHostAddress();
+    public final String registryUnitIP;// = "127.0.0.1";
+    public final int registryPort;// = 8383;
+    public final int myPort;// = 8282;
 
     public Control(boolean debug) {
-        //Thread affinity class is "Legaly CopyPasted" from a guy that I 
-        //mention on my github on the affinity project
+        try {
+            addr = getFirstNonLoopbackAddress(true, false);
+        } catch (SocketException ex) {
+            System.exit(1);
+        }
+        ip = addr.getHostAddress();
+        System.out.println("Percieved ip is " + ip + " first non loopbak is " + addr);
+        registryUnitIP = "192.168.2.5";
+        registryPort = 8383;
+        myPort = 8181;
         threadAffinity = new ThreadAffinity(this);
-
         this.debug = debug;
         String jsonReply = "";
 
         if (threadAffinity.cores().length == 4) {
-            //If quadcore etc
-            encryptionCore = threadAffinity.cores()[0];
+            criticalSensingCore = threadAffinity.cores()[0];
             HTTPCore = threadAffinity.cores()[1];
             sensingCore = threadAffinity.cores()[2];
             cronCore = threadAffinity.cores()[3];
         } else if (threadAffinity.cores().length == 2) {
-            encryptionCore = threadAffinity.cores()[0];
+            criticalSensingCore = threadAffinity.cores()[0];
             HTTPCore = threadAffinity.cores()[1];
             sensingCore = threadAffinity.cores()[1];
             cronCore = threadAffinity.cores()[0];
         } else if (threadAffinity.cores().length == 1) {
-            encryptionCore = threadAffinity.cores()[0];
+            criticalSensingCore = threadAffinity.cores()[0];
             HTTPCore = threadAffinity.cores()[0];
             sensingCore = threadAffinity.cores()[0];
             cronCore = threadAffinity.cores()[0];
         } else {
-            //if32core fuck off, use only one core
-            encryptionCore = threadAffinity.cores()[0];
+            criticalSensingCore = threadAffinity.cores()[0];
             HTTPCore = threadAffinity.cores()[0];
             sensingCore = threadAffinity.cores()[0];
             cronCore = threadAffinity.cores()[0];
         }
 
-        if (debug) {
-            System.out.println("Available cores: " + threadAffinity.cores().length);
-            System.out.println("encryptionCore: " + encryptionCore);
-            System.out.println("HTTPCore: " + HTTPCore);
-            System.out.println("sensingCore: " + sensingCore);
-            System.out.println("cronCore: " + cronCore);
-        }
-        encryptionCore.setC(this);
+        MyLogger.log("Available cores: " + threadAffinity.cores().length);
+        MyLogger.log("encryptionCore: " + criticalSensingCore);
+        MyLogger.log("HTTPCore: " + HTTPCore);
+        MyLogger.log("sensingCore: " + sensingCore);
+        MyLogger.log("cronCore: " + cronCore);
+        criticalSensingCore.setC(this);
         HTTPCore.setC(this);
         sensingCore.setC(this);
         cronCore.setC(this);
 
         try {
-            //So this apparently gets your LAN address, provided there is one
-            InetAddress addr = getFirstNonLoopbackAddress(true, false);
-            String ip = addr.getHostAddress();
-
-            //this could have been a nonlocal adress, but I'm such a bad person
-            String registryUnitIP = "127.0.0.1";
 
             messages = new Messaging(this);
-            jsonReply = HTTPRequest.sendPost(
-                    "http://" + registryUnitIP,
-                    8383,
-                    URLEncoder.encode("ip=" + ip + "&port=8181&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register");
+            jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register", addr);
             //registers itself to the registry unit
-
+            MyLogger.log("http://" + registryUnitIP + ":" + registryPort + "/register" + URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"));
             if (debug) {
-                System.out.println("reply is: " + jsonReply);
+                MyLogger.log("reply is: " + jsonReply);
             }
             JSONObject obj;
-
+            MyLogger.log("Error parsing this" + jsonReply);
             obj = new JSONObject(jsonReply);
 
             if (!obj.get("result").equals("success")) {
-                //parsing the json object token by token
                 if (debug) {
-                    System.out.println("jsonReply failed " + jsonReply);
+                    MyLogger.log("jsonReply failed " + jsonReply);
                 }
             } else {
                 uid = obj.getString("uid");
                 if (debug) {
-                    System.out.println("myUID is " + uid);
+                    MyLogger.log("myUID is " + uid);
                 }
             }
 
         } catch (Exception e) {
-            if (debug) {
-                System.out.println(jsonReply);
-            }
+
+            MyLogger.log(jsonReply);
+
             e.printStackTrace();
         }
-        motesList = new ArrayList<MicazMote>();
+        sensorsList = new ArrayList<MicazMote>();
         dropDaemon = createDropDaemon();
         dropDaemon.start();
         populate = constructPollDaemon();
@@ -130,56 +136,47 @@ public class Control {
     }
 
     private synchronized Thread createDropDaemon() {
-        //Creates a thread that drops innactive motes/sensors
         Thread t = new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {
                     cronCore.attachTo();
-                    //WOW SHINY attaches self to cronCore
                 } catch (Exception ex) {
                     Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 ArrayList<MicazMote> toRemove = new ArrayList<MicazMote>();
                 if (debug) {
-                    System.out.println("Drop daemon started");
+                    MyLogger.log("Drop daemon started");
                 }
                 while (true) {
-                    for (MicazMote m : motesList) {
-                        //i'm not going to go through this, it's obvious
+                    for (MicazMote m : sensorsList) {
+
                         if (m.getLatestActivity() < Util.getTime() - 10000) {
                             if (debug) {
-                                System.out.println("dropin " + m);
+                                MyLogger.log("dropin " + m);
                             }
 
                             toRemove.add(m);
                         } else if (debug) {
-                            System.out.println("Latest activity " + m.getLatestActivity());
+                            MyLogger.log("Latest activity " + m.getLatestActivity());
                         }
                     }
                     for (MicazMote m : toRemove) {
-                        //We have to build the delete statement for the registry unit
                         try {
                             String services = "{\"services\":[";
 
                             services += "{\"uri\" : \"/sensor/" + m.getId() + "\", \"description\" : \"returns data of specific sensor with id  " + m.getId() + "\"}";
-                            if (m.isPhotoService()) {
-                                services += ",{\"uri\" : \"/sensor/" + m.getId() + "/light\", \"description\" : \"returns data about light of specific sensor with id  " + m.getId() + "\"}";
-                            }
-                            if (m.isTempService()) {
-                                services += ",{\"uri\" : \"/sensor/" + m.getId() + "/temp\", \"description\" : \"returns data about temperature of specific sensor with id  " + m.getId() + "\"}";
-                            }
-                            if (m.isSwitchService()) {
-                                services += ",{\"uri\" : \"/sensor/" + m.getId() + "/switch\", \"description\" : \"switch toggles the switch available on the sensor node and returns the state of the sensor node as if aggregatorIP:8181/sensor/" + m.getId() + " was called\"}";
+                            for (Service s : m.getServices()) {
+                                services += ",{\"uri\" : \"/sensor/" + m.getId() + s.getURI() + "\", \"description\" : \"" + s.getDescription() + "  " + m.getId() + "\"}";
                             }
                             services += "]}";
                             if (debug) {
-                                System.out.println("My uid at update is " + uid);
+                                MyLogger.log("My uid at update is " + uid);
                             }
-                            String jsonReply = HTTPRequest.sendPost("http://127.0.0.1", 8383, URLEncoder.encode("uid=" + uid + "&services=" + services), "/delete");
+                            String jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("uid=" + uid + "&services=" + services), "/delete", addr);
                             if (debug) {
-                                System.out.println("reply is: " + jsonReply);
+                                MyLogger.log("reply is: " + jsonReply);
                             }
                             JSONObject obj;
 
@@ -187,12 +184,12 @@ public class Control {
                         } catch (Exception ex) {
                             Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        motesList.remove(m);
+                        sensorsList.remove(m);
                         //sendDeleteRequestToRU
                     }
                     toRemove.clear();
                     if (debug) {
-                        System.out.println("CurrentTime " + Util.getTime());
+                        //MyLogger.log("CurrentTime " + Util.getTime());
                     }
                     try {
                         Thread.sleep(2000);
@@ -205,53 +202,80 @@ public class Control {
         return t;
     }
 
-    public void reportPollAck(final MicazMote mote) {
+    public void reportReadingOfSensor(final MicazMote sensor) {
         Thread t = new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    //won't really analyze these, it's pretty self explanatory
                     sensingCore.attachTo();
 
                     boolean found = false;
-                    for (MicazMote m : motesList) {
-                        if (m.getId() == mote.getId()) {
+                    MicazMote foundSensor = null;
+                    for (MicazMote m : sensorsList) {
+                        if (m.getId() == sensor.getId()) {
+                            foundSensor = m;
                             m.setLatestActivity(Util.getTime());
                             found = true;
                             break;
                         }
                     }
                     if (!found) {
-                        motesList.add(mote);
-                        String jsonReply;
+                        sensorsList.add(sensor);
+                        String jsonReply = "";
                         if (uid.length() > 0) {
                             try {
                                 String services = "{\"services\":[";
 
-                                services += "{\"uri\" : \"/sensor/" + mote.getId() + "\", \"description\" : \"returns data of specific sensor with id  " + mote.getId() + "\"}";
-                                if (mote.isPhotoService()) {
-                                    services += ",{\"uri\" : \"/sensor/" + mote.getId() + "/light\", \"description\" : \"returns data about light of specific sensor with id  " + mote.getId() + "\"}";
-                                }
-                                if (mote.isTempService()) {
-                                    services += ",{\"uri\" : \"/sensor/" + mote.getId() + "/temp\", \"description\" : \"returns data about temperature of specific sensor with id  " + mote.getId() + "\"}";
-                                }
-                                if (mote.isSwitchService()) {
-                                    services += ",{\"uri\" : \"/sensor/" + mote.getId() + "/switch\", \"description\" : \"switch toggles the switch available on the sensor node and returns the state of the sensor node as if aggregatorIP:8181/sensor/" + mote.getId() + " was called\"}";
+                                services += "{\"uri\" : \"/sensor/" + sensor.getId() + "\", \"description\" : \"returns data of specific sensor with id  " + sensor.getId() + "\"}";
+                                for (Service s : sensor.getServices()) {
+                                    services += ",{\"uri\" : \"/sensor/" + sensor.getId() + s.getURI() + "\", \"description\" : \"" + s.getDescription() + "  " + sensor.getId() + "\"}";
                                 }
                                 services += "]}";
                                 if (debug) {
-                                    System.out.println("My uid at update is " + uid);
+                                    MyLogger.log("My uid at update is " + uid);
                                 }
-                                jsonReply = HTTPRequest.sendPost("http://127.0.0.1", 8383, URLEncoder.encode("uid=" + uid + "&services=" + services), "/update");
+                                jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("uid=" + uid + "&services=" + services), "/update", addr);
                                 if (debug) {
-                                    System.out.println("reply is: " + jsonReply);
+                                    MyLogger.log("reply is: " + jsonReply);
                                 }
                                 JSONObject obj;
 
+                                MyLogger.log("Error parsing this" + jsonReply);
                                 obj = new JSONObject(jsonReply);
                             } catch (Exception ex) {
                                 Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+                                MyLogger.log("Error parsing this" + jsonReply);
+                            }
+                        }
+
+                    } else {
+                        //Change existing services to latest standing
+                        for (Service serviceFromFoundSensor : foundSensor.getServices()) {
+                            for (Service ser : sensor.getServices()) {
+                                if (ser.getName().contentEquals(serviceFromFoundSensor.getName())) {
+                                    serviceFromFoundSensor.setDecimalValue(ser.getDecimalValue());
+                                    if (ser.getName().contains("Bluetooth")) {
+                                        //if (!serviceFromFoundSensor.getHw().containsKey(ser.getDecimalValue().split(" ")[0])) {
+                                        serviceFromFoundSensor.getHw().put(ser.getDecimalValue().split(" ")[0], new AssociatedHardware(ser.getDecimalValue().split(" ")[0], ser.getDecimalValue().split(" ")[1]));
+                                        //} else {
+                                        //serviceFromFoundSensor.getHw().put(ser.getDecimalValue().split(" ")[0], new AssociatedHardware(ser.getDecimalValue().split(" ")[0], ser.getDecimalValue().split(" ")[1]));
+                                        //}//add to hashmap the tag read
+                                    }
+                                }
+                            }
+                        }
+
+                        //Add missing services
+                        for (Service serviceFromReadSensor : sensor.getServices()) {
+                            boolean exists = false;
+                            for (Service ser : foundSensor.getServices()) {
+                                if (ser.getName().contentEquals(serviceFromReadSensor.getName())) {
+                                    exists = true;
+                                }
+                            }
+                            if (!exists) {
+                                foundSensor.getServices().add(serviceFromReadSensor);
                             }
                         }
 
@@ -260,67 +284,8 @@ public class Control {
                     Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        });
-        t.start();
-    }
-
-    public void reportReading(final int id, final int messageType, final int[] Readings) {
-        Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    sensingCore.attachTo();
-
-                    for (MicazMote m : motesList) {
-                        if (m.getId() == id) {
-                            switch (messageType) {
-                                case lib.Constants.TEMP: {
-                                    m.setTempReading(Util.median(Readings));
-                                    break;
-                                }
-                                case lib.Constants.PHOTO: {
-                                    m.setPhotoReading(Util.median(Readings));
-                                    break;
-                                }
-                                default: {
-                                    break;
-                                }
-
-                            }
-
-                        }
-                    }
-                } catch (Exception ex) {
-                    Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-        t.start();
-    }
-
-    public void reportSwitch(final int id, final int state) {
-        Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    sensingCore.attachTo();
-
-                    for (MicazMote m : motesList) {
-                        if (m.getId() == id) {
-                            m.setLatestActivity(Util.getTime());
-                            m.setSwitchState(state);
-                            if (debug) {
-                                System.out.println("State changed to " + state);
-                            }
-                        }
-                    }
-                } catch (Exception ex) {
-                    Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
+        }
+        );
         t.start();
     }
 
@@ -331,92 +296,32 @@ public class Control {
             public void run() {
                 try {
                     cronCore.attachTo();
+
                 } catch (Exception ex) {
-                    Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Control.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
-                while (true) {
-                    sendPoll();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
+                Thread serial = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (true) {
+                            messages.sendPoll();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
                     }
-                }
+                });
+                serial.start();
             }
         });
         return t;
     }
 
-    public void sendPoll() {
-        Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    sensingCore.attachTo();
-                    messages.sendPoll();
-                } catch (Exception ex) {
-                    Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-        t.start();
-
-    }
-
-    public void getSwitchInfo(final int id) {
-        Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    sensingCore.attachTo();
-                    messages.sendSwitchPoll(id);
-                } catch (Exception ex) {
-                    Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-        t.start();
-
-    }
-
-    public void toggleSwitch(final int id) {
-        Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    sensingCore.attachTo();
-                    messages.sendSwitchToggle(id);
-                } catch (Exception ex) {
-                    Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-        t.start();
-
-    }
-
-    public void sendReadingRequest(final int id, final int type) {
-        Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    sensingCore.attachTo();
-                    messages.sendReadingRequest(id, type);
-                } catch (Exception ex) {
-                    Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-        t.start();
-
-    }
-
     public ArrayList<MicazMote> getMotesList() {
-        return motesList;
+        return this.sensorsList;
     }
 
     //courtesy of How to get the ip of the computer on linux through Java? -> http://stackoverflow.com/questions/901755/how-to-get-the-ip-of-the-computer-on-linux-through-java
@@ -445,4 +350,115 @@ public class Control {
         return null;
     }
 
+    public void sendPoll() {
+        messages.sendPoll();
+    }
+
+    public void getSwitchInfo(int id) {
+        messages.sendSwitchPoll(id);
+    }
+
+    public void toggleSwitch(int id) {
+        messages.sendSwitchToggle(id);
+    }
+
+    public void sendReadingRequest(int id, int type,String ServiceURI) {
+        for(MicazMote m : sensorsList){
+            if(m.getId() == id){
+                m.RequestServiceReading(uid, debug, messages);
+            }
+        }
+        
+        ;
+    }
+
+    public void reportReading(int id, int messageType, int[] Readings) {
+        for (MicazMote m : sensorsList) {
+            if (m.getId() == id) {
+                switch (messageType) {
+                    case lib.Constants.TEMP: {
+                        m.setTempReading(Util.median(Readings));
+                        break;
+                    }
+                    case lib.Constants.PHOTO: {
+                        m.setPhotoReading(Util.median(Readings));
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+
+                }
+
+            }
+        }
+    }
+
+    public void reportSwitch(int id, int state) {
+        for (MicazMote m : sensorsList) {
+            if (m.getId() == id) {
+                m.setLatestActivity(Util.getTime());
+                m.setSwitchState(state);
+                System.out.println("State changed to " + state);
+            }
+        }
+    }
+
+    public void reportPollAck(MicazMote mote) {
+        boolean found = false;
+        for (MicazMote m : sensorsList) {
+            if (m.getId() == mote.getId()) {
+                m.setLatestActivity(Util.getTime());
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            sensorsList.add(mote);
+            String jsonReply;
+            if (uid.length() > 0) {
+                try {
+                    String services = "{\"services\":[";
+
+                    services += "{\"uri\" : \"/sensor/" + mote.getId() + "\", \"description\" : \"returns data of specific sensor with id  " + mote.getId() + "\"}";
+
+                    for (Service s : mote.getServices()) {
+                        services += ",{\"uri\" : \"/sensor/" + mote.getId() + s.getURI() + "\", \"description\" : \"" + s.getDescription() + "\"}";
+                    }
+
+                    services += "]}";
+                    System.out.println("My uid at update is " + uid);
+                    jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("uid=" + uid + "&services=" + services), "/update", addr);
+                    System.out.println("reply is: " + jsonReply);
+                    JSONObject obj;
+
+                    obj = new JSONObject(jsonReply);
+                } catch (Exception ex) {
+                    Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        }
+    }
+
+    public static double getProcessCpuLoad() throws Exception {
+
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
+        AttributeList list = mbs.getAttributes(name, new String[]{"ProcessCpuLoad"});
+
+        if (list.isEmpty()) {
+            return Double.NaN;
+        }
+
+        Attribute att = (Attribute) list.get(0);
+        Double value = (Double) att.getValue();
+
+        // usually takes a couple of seconds before we get real values
+        if (value == -1.0) {
+            return Double.NaN;
+        }
+        // returns a percentage value with 1 decimal point precision
+        return ((int) (value * 1000) / 10.0);
+    }
 }

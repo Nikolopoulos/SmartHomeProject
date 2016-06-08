@@ -92,9 +92,13 @@ public class SuperSmahtThread implements Runnable {
         }
         int ID = Integer.parseInt(ServiceArguements.split("/")[2]);
         String ServiceURI = "/" + ServiceArguements.split("/")[ServiceArguements.split("/").length - 1];
-        for (IMASensor m : this.c.getMotesList()) {
+        for (MicazMote m : this.c.getMotesList()) {
             if (m.getId() == ID) {
-                sirh += m.RequestServiceReading(ServiceURI);
+                if (this.getTsoulou().getClEstimation() > 2.5) {
+                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], false,c.messages);
+                } else {
+                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], true,c.messages);
+                }
                 break;
             }
         }
