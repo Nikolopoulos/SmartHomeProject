@@ -22,6 +22,14 @@ public class Service {
     private String units;
     private String decimalValue;
 
+    public long getLatestReading() {
+        return latestReading;
+    }
+
+    public void setLatestReading(long latestReading) {
+        this.latestReading = latestReading;
+    }
+
     
     
 

@@ -36,7 +36,7 @@ import sensorPlatforms.Service;
 public class Control {
 
     ArrayList<MicazMote> sensorsList;
-    Messaging messages;
+    public Messaging messages;
     Thread dropDaemon, populate;
     String uid = "";
     boolean debug;
@@ -365,11 +365,11 @@ public class Control {
     public void sendReadingRequest(int id, int type,String ServiceURI) {
         for(MicazMote m : sensorsList){
             if(m.getId() == id){
-                m.RequestServiceReading(uid, debug, this)
+                m.RequestServiceReading(uid, debug, messages);
             }
         }
         
-        messages.sendReadingRequest(id, type);
+        ;
     }
 
     public void reportReading(int id, int messageType, int[] Readings) {

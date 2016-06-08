@@ -95,9 +95,9 @@ public class SuperSmahtThread implements Runnable {
         for (MicazMote m : this.c.getMotesList()) {
             if (m.getId() == ID) {
                 if (this.getTsoulou().getClEstimation() > 2.5) {
-                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], false,c);
+                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], false,c.messages);
                 } else {
-                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], true,c);
+                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], true,c.messages);
                 }
                 break;
             }

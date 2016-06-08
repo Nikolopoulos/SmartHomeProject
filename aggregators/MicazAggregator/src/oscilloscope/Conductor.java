@@ -6,7 +6,6 @@
 package oscilloscope;
 
 import affinitySupport.ThreadAffinity;
-import gui.mainFrame;
 import util.Control;
 import webServer.Server;
 
@@ -25,18 +24,7 @@ public class Conductor {
     public static void main(String args[]) {
         
         Control c = new Control(true);
-        //So control holds most of the functionality provided by the aggregator
-        
-        if (args.length>1 && args[1].equals("debug")) {
-            //if ran from the cmd you may want to enter debug which opens up a 
-            //jframe that I haven't used in like 14 months, so I can't be
-            //sure about its quality. Don't use it or something
-            
-            mainFrame f = new mainFrame(c);
-            f.setVisible(true);
-        }
-        
-        //Sets the HTTPServer and starts it
+        Logging.MyLogger.init();
         Server myServer = new Server(c);
         myServer.startServer();
     }

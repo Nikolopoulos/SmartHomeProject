@@ -6,7 +6,8 @@
 package sensorPlatforms;
 
 import java.util.ArrayList;
-import util.Control;
+import lib.Constants;
+import oscilloscope.Messaging;
 import util.Util;
 
 /**
@@ -114,7 +115,13 @@ public class MicazMote {
     }
 
     public void setSwitchService(boolean switchService) {
-        this.switchService = switchService;
+        for (Service s : servicesList) {
+            if (s.getName().equals("switch")) {
+                s.setDecimalValue(((Integer.parseInt(s.getDecimalValue()) + 1) % 2) + "");
+                s.setLatestReading(Util.getTime());
+            }
+        }
+
     }
 
     public double getTempReading() {
@@ -138,10 +145,10 @@ public class MicazMote {
 
     public double getPhotoReading() {
         for (Service s : servicesList) {
-            if (s.getName().equals("photo")) {vvv                
+            if (s.getName().equals("photo")) {
                 return s.getDoubleUnits();
             }
-            
+
         }
         return 0.0;
     }
@@ -149,7 +156,7 @@ public class MicazMote {
     public void setPhotoReading(double photoReading) {
         for (Service s : servicesList) {
             if (s.getName().equals("photo")) {
-                
+                s.setLatestReading(Util.getTime());
                 s.setDecimalValue(photoReading + "");
             }
         }
@@ -197,14 +204,25 @@ public class MicazMote {
         return reply;
     }
 
-    public String RequestServiceReading(String ServiceURI, boolean cached,Control con) {
+    public String RequestServiceReading(String ServiceURI, boolean cached, Messaging messages) {
         String reply = "genericError";
+        int type = -99;
         for (Service s : servicesList) {
-            if (s.getURI().contentEquals(ServiceURI) && cached && this.latestActivity-System.currentTimeMillis()<30000) {
+            if (s.getURI().contentEquals(ServiceURI) && cached && s.getLatestReading() - System.currentTimeMillis() < 30000) {
                 reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
-            }
-            else{
-                con.
+            } else if (s.getURI().contentEquals(ServiceURI)) {
+                if (s.getURI().contains("/temp")) {
+                    type = Constants.TEMP;
+                    messages.sendReadingRequest(id, type);
+                }
+                if (s.getURI().contains("/photo")) {
+                    type = Constants.PHOTO;
+                    messages.sendReadingRequest(id, type);
+                }
+                if (s.getURI().contains("/switch")) {
+                    messages.sendSwitchToggle(id);
+                }
+                reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
             }
         }
 
