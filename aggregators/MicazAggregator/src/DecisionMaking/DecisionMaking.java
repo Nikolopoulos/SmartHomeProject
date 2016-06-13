@@ -29,6 +29,7 @@ public class DecisionMaking {
     public int add(String ServiceArguements) {
         System.out.println("ADD URL IS " + ServiceArguements);
         id = (id + 1) % 10000;
+<<<<<<< HEAD
         System.out.println("DM HERE ID IS" + id);
         ServiceEstimation service = new ServiceEstimation(ServiceArguements);
         System.out.println("COMPUTED CL");
@@ -38,6 +39,15 @@ public class DecisionMaking {
             threads.add(thread);
         }
         System.out.println("ADDED THREAD");
+=======
+        MyLogger.log("Decision making received request of "+ServiceArguements +" and assigned id of "+id);
+        
+        ServiceEstimation service = new ServiceEstimation(ServiceArguements);
+        MyLogger.log("Service with id "+id +" was assigned CL of "+service.getClEstimation()+"/3");
+        SuperSmahtThread thread = new SuperSmahtThread(id, service, myControl,ServiceArguements);
+        
+        threads.add(thread);
+>>>>>>> 82451c03364367e64fec0d55dd35693b6fa233bc
         return id;
     }
 
@@ -52,6 +62,7 @@ public class DecisionMaking {
 
             @Override
             public void run() {
+<<<<<<< HEAD
 
                 while (run) {
                     synchronized (threads) {
@@ -72,6 +83,25 @@ public class DecisionMaking {
                                 if (new Random().nextInt(10) > new Random().nextInt(5) + 5) {
                                     thread.run();
                                     //MyLogger.log(thread + "ran");
+=======
+                while(run){
+                    for(Iterator<SuperSmahtThread> iter = threads.iterator(); iter.hasNext();){
+                        SuperSmahtThread thread = iter.next();
+                            if(!thread.isRunning()){                               
+                                if(thread.getTsoulou().getClEstimation()>2){
+                                    //i should probably find a way to estimate per core load
+                                    MyLogger.log("Attaching service with id="+thread.getId() +" to critical core");
+                                    thread.setWhatCore(thread.getC().criticalSensingCore);
+                                }
+                                else{
+                                    MyLogger.log("Attaching service with id="+thread.getId() +" to non-critical core");
+                                    thread.setWhatCore(thread.getC().sensingCore);
+                                }
+                                
+                                if(new Random().nextInt(10)>new Random().nextInt(5)+5){
+                                    thread.run();    
+                                    MyLogger.log("Running service with id="+thread.getId());
+>>>>>>> 82451c03364367e64fec0d55dd35693b6fa233bc
                                 }
                             }
                         }
@@ -83,6 +113,7 @@ public class DecisionMaking {
     }
 
     public String getResultOf(int id) {
+<<<<<<< HEAD
         synchronized (threads) {
             SuperSmahtThread t = null;
             for (Iterator<SuperSmahtThread> iter = threads.iterator(); iter.hasNext();) {
@@ -92,6 +123,14 @@ public class DecisionMaking {
                     //MyLogger.log(thread + "got result");
                     break;
                 }
+=======
+        SuperSmahtThread t = null;
+        for (Iterator<SuperSmahtThread> iter = threads.iterator(); iter.hasNext();) {
+            SuperSmahtThread thread = iter.next();
+            if (thread.getId() == id) {
+                t = thread;                
+                break;
+>>>>>>> 82451c03364367e64fec0d55dd35693b6fa233bc
             }
 
             return (t == null || t.getReturnVal().equalsIgnoreCase("")) ? "" : t.getReturnVal();

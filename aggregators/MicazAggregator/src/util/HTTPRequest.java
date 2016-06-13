@@ -83,6 +83,7 @@ public class HTTPRequest {
             Socket s = new Socket(url.substring(7), port);
             //MyLogger.log("Socket done");
             PrintWriter pw = new PrintWriter(s.getOutputStream());
+<<<<<<< HEAD
             //MyLogger.log("pw init");
             pw.print("POST " + service + " HTTP/1.1\n");
             //MyLogger.log("pw print 1");
@@ -92,6 +93,17 @@ public class HTTPRequest {
             //MyLogger.log("pw3");
             pw.print("Host: " + url.substring(7) + ":8383\n");
             //MyLogger.log("pw4");
+=======
+            ///MyLogger.log("pw init");
+            pw.print("POST " + service + " HTTP/1.1\n");
+           // MyLogger.log("pw print 1");
+            pw.print("User-Agent: Mozilla/5.0\n");
+           // MyLogger.log("pw2");
+            pw.print("Accept-Language: en-US,en;q=0.5\n");
+            //MyLogger.log("pw3");
+            pw.print("Host: " + url.substring(7) + ":8383\n");
+           // MyLogger.log("pw4");
+>>>>>>> 82451c03364367e64fec0d55dd35693b6fa233bc
             pw.print("Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2\n");
 
             pw.print("Connection: keep-alive\n");

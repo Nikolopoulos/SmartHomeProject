@@ -97,7 +97,7 @@ public class Control {
         }
 
         MyLogger.log("Available cores: " + threadAffinity.cores().length);
-        MyLogger.log("encryptionCore: " + criticalSensingCore);
+        MyLogger.log("criticalCore: " + criticalSensingCore);
         MyLogger.log("HTTPCore: " + HTTPCore);
         MyLogger.log("sensingCore: " + sensingCore);
         MyLogger.log("cronCore: " + cronCore);
@@ -132,7 +132,11 @@ public class Control {
 
         } catch (Exception e) {
 
+<<<<<<< HEAD
 //            MyLogger.log(jsonReply);
+=======
+            MyLogger.log(jsonReply +e.getStackTrace());
+>>>>>>> 82451c03364367e64fec0d55dd35693b6fa233bc
 
             e.printStackTrace();
         }
@@ -251,6 +255,7 @@ public class Control {
                                 if (debug) {
                                     MyLogger.log("reply is: " + jsonReply);
                                 }
+<<<<<<< HEAD
                                 JSONObject obj;
 
                                 //MyLogger.log("Error parsing this" + jsonReply);
@@ -258,6 +263,12 @@ public class Control {
                             } catch (Exception ex) {
                                 Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
                                 //MyLogger.log("Error parsing this" + jsonReply);
+=======
+                                JSONObject obj;                               
+                                obj = new JSONObject(jsonReply);
+                            } catch (Exception ex) {
+                                Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);                                
+>>>>>>> 82451c03364367e64fec0d55dd35693b6fa233bc
                             }
                         }
 
@@ -316,8 +327,12 @@ public class Control {
                 Thread serial = new Thread(new Runnable() {
                     @Override
                     public void run() {
+<<<<<<< HEAD
                         while (true) {
                             //System.out.println("polling");
+=======
+                        while (true) {                            
+>>>>>>> 82451c03364367e64fec0d55dd35693b6fa233bc
                             messages.sendPoll();
                             try {
                                 Thread.sleep(1000);
@@ -391,6 +406,7 @@ public class Control {
                 switch (messageType) {
                     case lib.Constants.TEMP: {
                         m.setTempReading(Util.median(Readings));
+                        System.out.println("tried to set reading to "+Util.median(Readings));
                         break;
                     }
                     case lib.Constants.PHOTO: {

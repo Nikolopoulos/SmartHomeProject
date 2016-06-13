@@ -38,7 +38,7 @@ public class Server {
                 try {
                     try {
                         finalControl.HTTPCore.attachTo();
-                        MyLogger.log("Server attached!");
+                        //MyLogger.log("Server attached!");
                     } catch (Exception ex) {
                         Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -47,7 +47,7 @@ public class Server {
                     Socket server;
                     while ((i++ < maxConnections) || (maxConnections == 0)) {
                         server = listener.accept();
-                        MyLogger.log("Server Accepted!!");
+                        //MyLogger.log("Server Accepted!!");
                         DoComms conn_c = new DoComms(server, finalControl);
                         Thread clientConnectionThread = new Thread(conn_c);
                         clientConnectionThread.setName("clientConnectionThread" + i);
@@ -55,7 +55,7 @@ public class Server {
                     }
 
                 } catch (IOException ioe) {
-                    MyLogger.log("IOException on socket listen: " + ioe);
+                    //MyLogger.log("IOException on socket listen: " + ioe);
                     ioe.printStackTrace();
                 }
             }

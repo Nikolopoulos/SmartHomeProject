@@ -5,10 +5,10 @@
  */
 package Infrastructure;
 
+import Logging.MyLogger;
 import Util.Hasher;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import org.json.*;
 
@@ -358,7 +358,11 @@ public class Tassadar {
         } else if (request.getURI().equalsIgnoreCase("/whoIsAGoodTeapot")) {
             comm.setResponseType(Util.Statics.IM_A_TEAPOT_ERROR);
             errorRespond(comm, "I'M A GOOD TEAPOT :D");
-        } else {
+        } else if (request.getURI().equalsIgnoreCase("/log")){
+            comm.setResponseType(Util.Statics.OK_RESPONSE);
+            logRespond(comm);
+        }
+        else {
             comm.setResponseType(Util.Statics.SERVICE_UNAVAILABLE_ERROR);
             errorRespond(comm, "Service not found or service unavailable");
         }
@@ -386,6 +390,14 @@ public class Tassadar {
          return;
          */
 
+    }
+    private void logRespond(Communication comm) {
+        String response = MyLogger.readLog();
+        comm.setAnswer(response);
+        uni.comms.add(comm);
+        out.println(comm.getAnswer());
+        out.flush();
+        out.close();
     }
 
     private void errorRespond(Communication comm, String message) {

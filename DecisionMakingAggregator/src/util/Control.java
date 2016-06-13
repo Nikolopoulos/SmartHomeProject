@@ -89,7 +89,7 @@ public class Control {
         }
 
         MyLogger.log("Available cores: " + threadAffinity.cores().length);
-        MyLogger.log("encryptionCore: " + criticalSensingCore);
+        MyLogger.log("criticalSensingCore: " + criticalSensingCore);
         MyLogger.log("HTTPCore: " + HTTPCore);
         MyLogger.log("sensingCore: " + sensingCore);
         MyLogger.log("cronCore: " + cronCore);
@@ -103,12 +103,12 @@ public class Control {
             messages = new Messaging(this);
             jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register",addr);
             //registers itself to the registry unit
-            MyLogger.log("http://" + registryUnitIP+":"+registryPort+"/register"+ URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"));
+            //MyLogger.log("http://" + registryUnitIP+":"+registryPort+"/register"+ URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"));
             if (debug) {
                 MyLogger.log("reply is: " + jsonReply);
             }
             JSONObject obj;
-            MyLogger.log("Error parsing this" + jsonReply);
+            //MyLogger.log("Error parsing this" + jsonReply);
             obj = new JSONObject(jsonReply);
 
             if (!obj.get("result").equals("success")) {
@@ -124,7 +124,7 @@ public class Control {
 
         } catch (Exception e) {
            
-                MyLogger.log(jsonReply);
+                //MyLogger.log(jsonReply);
             
             e.printStackTrace();
         }
@@ -241,11 +241,11 @@ public class Control {
                                 }
                                 JSONObject obj;
 
-                                MyLogger.log("Error parsing this" + jsonReply);
+                                //MyLogger.log("Error parsing this" + jsonReply);
                                 obj = new JSONObject(jsonReply);
                             } catch (Exception ex) {
                                 Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
-                                MyLogger.log("Error parsing this" + jsonReply);
+                               //MyLogger.log("Error parsing this" + jsonReply);
                             }
                         }
 

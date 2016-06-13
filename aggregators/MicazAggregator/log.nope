@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [Mon Jun 13 16:46:12 EEST 2016]:  Available cores: 2
 [Mon Jun 13 16:46:12 EEST 2016]:  encryptionCore: Core[#0]
 [Mon Jun 13 16:46:12 EEST 2016]:  HTTPCore: Core[#1]
@@ -7,3 +8,71 @@
 [Mon Jun 13 16:46:40 EEST 2016]:  Attaching service of cl=2.6999998 to critical core
 [Mon Jun 13 16:46:55 EEST 2016]:  Attaching service of cl=5.0 to critical core
 [Mon Jun 13 16:47:01 EEST 2016]:  Attaching service of cl=1.0 to non-critical core
+=======
+[Wed Jun 08 16:47:38 UTC 2016]:  Available cores: 4
+[Wed Jun 08 16:47:38 UTC 2016]:  encryptionCore: Core[#0]
+[Wed Jun 08 16:47:38 UTC 2016]:  HTTPCore: Core[#1]
+[Wed Jun 08 16:47:38 UTC 2016]:  sensingCore: Core[#2]
+[Wed Jun 08 16:47:38 UTC 2016]:  cronCore: Core[#3]
+[Wed Jun 08 16:47:41 UTC 2016]:  http://192.168.2.5:8383/registerip%3D192.168.0.104%26port%3D8181%26services%3D%7B%22services%22%3A%5B%7B%22uri%22+%3A+%22%2Fsensors%22%2C+%22description%22+%3A+%22returns+a+list+of+sensors+available%22%7D%5D%7D
+[Wed Jun 08 16:47:41 UTC 2016]:  reply is: {}
+[Wed Jun 08 16:47:41 UTC 2016]:  Error parsing this{}
+[Wed Jun 08 16:47:41 UTC 2016]:  {}
+[Wed Jun 08 16:47:42 UTC 2016]:  Drop daemon started
+[Wed Jun 08 16:47:44 UTC 2016]:  Latest activity 1465404463546
+[Wed Jun 08 16:47:44 UTC 2016]:  Latest activity 1465404463552
+[Wed Jun 08 16:47:46 UTC 2016]:  Latest activity 1465404465544
+[Wed Jun 08 16:47:46 UTC 2016]:  Latest activity 1465404465540
+[Wed Jun 08 16:47:48 UTC 2016]:  Latest activity 1465404467538
+[Wed Jun 08 16:47:48 UTC 2016]:  Latest activity 1465404467542
+[Wed Jun 08 16:47:50 UTC 2016]:  Latest activity 1465404469537
+[Wed Jun 08 16:47:50 UTC 2016]:  Latest activity 1465404469540
+[Wed Jun 08 16:47:51 UTC 2016]:  DecisionMaking.SuperSmahtThread@5af311not running
+[Wed Jun 08 16:47:51 UTC 2016]:  Attaching service of cl=0.0 to non-critical core
+[Wed Jun 08 16:47:52 UTC 2016]:  Latest activity 1465404471529
+[Wed Jun 08 16:47:52 UTC 2016]:  Latest activity 1465404470539
+[Wed Jun 08 16:47:54 UTC 2016]:  Latest activity 1465404473543
+[Wed Jun 08 16:47:54 UTC 2016]:  Latest activity 1465404473551
+[Wed Jun 08 16:47:56 UTC 2016]:  Latest activity 1465404475560
+[Wed Jun 08 16:47:56 UTC 2016]:  Latest activity 1465404475565
+[Wed Jun 08 16:47:57 UTC 2016]:  DecisionMaking.SuperSmahtThread@5af311ran
+[Wed Jun 08 16:47:58 UTC 2016]:  Latest activity 1465404477557
+[Wed Jun 08 16:47:58 UTC 2016]:  Latest activity 1465404477572
+[Wed Jun 08 16:48:00 UTC 2016]:  Latest activity 1465404479569
+[Wed Jun 08 16:48:00 UTC 2016]:  Latest activity 1465404479574
+[Wed Jun 08 16:48:02 UTC 2016]:  Latest activity 1465404481576
+[Wed Jun 08 16:48:02 UTC 2016]:  Latest activity 1465404481572
+[Wed Jun 08 16:48:03 UTC 2016]:  DecisionMaking.SuperSmahtThread@1b5f608not running
+[Wed Jun 08 16:48:03 UTC 2016]:  Attaching service of cl=0.0 to non-critical core
+[Wed Jun 08 16:48:03 UTC 2016]:  DecisionMaking.SuperSmahtThread@1b5f608not running
+[Wed Jun 08 16:48:03 UTC 2016]:  Attaching service of cl=0.0 to non-critical core
+[Wed Jun 08 16:48:03 UTC 2016]:  DecisionMaking.SuperSmahtThread@1b5f608not running
+[Wed Jun 08 16:48:03 UTC 2016]:  Attaching service of cl=0.0 to non-critical core
+[Wed Jun 08 16:48:03 UTC 2016]:  DecisionMaking.SuperSmahtThread@1b5f608not running
+[Wed Jun 08 16:48:03 UTC 2016]:  Attaching service of cl=0.0 to non-critical core
+[Wed Jun 08 16:48:04 UTC 2016]:  Latest activity 1465404483568
+[Wed Jun 08 16:48:04 UTC 2016]:  Latest activity 1465404483575
+[Wed Jun 08 16:48:06 UTC 2016]:  Latest activity 1465404485581
+[Wed Jun 08 16:48:06 UTC 2016]:  Latest activity 1465404485581
+[Wed Jun 08 16:48:08 UTC 2016]:  Latest activity 1465404487595
+[Wed Jun 08 16:48:08 UTC 2016]:  Latest activity 1465404487594
+[Wed Jun 08 16:48:09 UTC 2016]:  DecisionMaking.SuperSmahtThread@1b5f608ran
+[Wed Jun 08 16:48:10 UTC 2016]:  Latest activity 1465404489581
+[Wed Jun 08 16:48:10 UTC 2016]:  Latest activity 1465404489584
+[Wed Jun 08 16:48:12 UTC 2016]:  Latest activity 1465404491581
+[Wed Jun 08 16:48:12 UTC 2016]:  Latest activity 1465404491573
+[Wed Jun 08 16:48:14 UTC 2016]:  Latest activity 1465404493586
+[Wed Jun 08 16:48:14 UTC 2016]:  Latest activity 1465404493582
+[Wed Jun 08 16:48:16 UTC 2016]:  Latest activity 1465404495596
+[Wed Jun 08 16:48:16 UTC 2016]:  Latest activity 1465404495589
+[Wed Jun 08 16:48:18 UTC 2016]:  Latest activity 1465404497593
+[Wed Jun 08 16:48:18 UTC 2016]:  Latest activity 1465404497600
+[Wed Jun 08 16:48:20 UTC 2016]:  Latest activity 1465404499592
+[Wed Jun 08 16:48:20 UTC 2016]:  Latest activity 1465404499596
+[Wed Jun 08 16:48:22 UTC 2016]:  Latest activity 1465404501597
+[Wed Jun 08 16:48:22 UTC 2016]:  Latest activity 1465404501597
+[Wed Jun 08 16:48:24 UTC 2016]:  Latest activity 1465404503601
+[Wed Jun 08 16:48:24 UTC 2016]:  Latest activity 1465404503593
+[Wed Jun 08 16:48:26 UTC 2016]:  Latest activity 1465404505604
+[Wed Jun 08 16:48:26 UTC 2016]:  Latest activity 1465404505604
+>>>>>>> 82451c03364367e64fec0d55dd35693b6fa233bc
