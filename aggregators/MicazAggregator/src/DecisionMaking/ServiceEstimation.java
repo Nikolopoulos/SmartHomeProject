@@ -5,6 +5,8 @@
  */
 package DecisionMaking;
 
+
+
 /**
  *
  * @author billaros
@@ -71,6 +73,7 @@ public class ServiceEstimation {
                 }
             }
             clEstimation = (QoSArguement / 10) * Domain;
+            
         }
     }
 }
