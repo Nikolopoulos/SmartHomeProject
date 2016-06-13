@@ -3,9 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/billaros/SmartHomeProject/aggregators/MicazAggregator/src/oscilloscope/Conductor.java</file>
+            <file>file:/home/billaros/SmartHomeProject/aggregators/MicazAggregator/src/util/Control.java</file>
             <file>file:/home/billaros/SmartHomeProject/aggregators/MicazAggregator/src/DecisionMaking/DecisionMaking.java</file>
             <file>file:/home/billaros/SmartHomeProject/aggregators/MicazAggregator/src/DecisionMaking/SuperSmahtThread.java</file>
             <file>file:/home/billaros/SmartHomeProject/aggregators/MicazAggregator/src/webServer/DoComms.java</file>
+            <file>file:/home/billaros/SmartHomeProject/aggregators/MicazAggregator/src/oscilloscope/Messaging.java</file>
         </group>
     </open-files>
 </project-private>

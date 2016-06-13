@@ -1,5 +1,9 @@
-[Wed Jun 08 18:54:50 EEST 2016]:  Available cores: 2
-[Wed Jun 08 18:54:51 EEST 2016]:  encryptionCore: Core[#0]
-[Wed Jun 08 18:54:51 EEST 2016]:  HTTPCore: Core[#1]
-[Wed Jun 08 18:54:51 EEST 2016]:  sensingCore: Core[#1]
-[Wed Jun 08 18:54:51 EEST 2016]:  cronCore: Core[#0]
+[Mon Jun 13 16:46:12 EEST 2016]:  Available cores: 2
+[Mon Jun 13 16:46:12 EEST 2016]:  encryptionCore: Core[#0]
+[Mon Jun 13 16:46:12 EEST 2016]:  HTTPCore: Core[#1]
+[Mon Jun 13 16:46:12 EEST 2016]:  sensingCore: Core[#1]
+[Mon Jun 13 16:46:12 EEST 2016]:  cronCore: Core[#0]
+[Mon Jun 13 16:46:18 EEST 2016]:  Attaching service of cl=1.8 to critical core
+[Mon Jun 13 16:46:40 EEST 2016]:  Attaching service of cl=2.6999998 to critical core
+[Mon Jun 13 16:46:55 EEST 2016]:  Attaching service of cl=5.0 to critical core
+[Mon Jun 13 16:47:01 EEST 2016]:  Attaching service of cl=1.0 to non-critical core

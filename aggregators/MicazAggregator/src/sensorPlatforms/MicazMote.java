@@ -6,6 +6,8 @@
 package sensorPlatforms;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lib.Constants;
 import oscilloscope.Messaging;
 import util.Util;
@@ -208,20 +210,26 @@ public class MicazMote {
         String reply = "genericError";
         int type = -99;
         for (Service s : servicesList) {
-            if (s.getURI().contentEquals(ServiceURI) && cached && s.getLatestReading() - System.currentTimeMillis() < 30000) {
+            System.out.println(s.getURI() + " vs " + ServiceURI);
+            if (s.getURI().contains(ServiceURI) && cached && s.getLatestReading() - System.currentTimeMillis() < 30000 && s.getDecimalValue()!=null) {
                 reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
-            } else if (s.getURI().contentEquals(ServiceURI)) {
+            } else if (s.getURI().contains(ServiceURI)) {
                 if (s.getURI().contains("/temp")) {
                     type = Constants.TEMP;
                     messages.sendReadingRequest(id, type);
+                    System.out.println("temp");
                 }
-                if (s.getURI().contains("/photo")) {
+                else if (s.getURI().contains("/photo")) {
                     type = Constants.PHOTO;
                     messages.sendReadingRequest(id, type);
                 }
-                if (s.getURI().contains("/switch")) {
+                else if (s.getURI().contains("/switch")) {
                     messages.sendSwitchToggle(id);
                 }
+                else{
+                    System.out.println(s.getURI());
+                }
+
                 reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
             }
         }

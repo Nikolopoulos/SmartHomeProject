@@ -5,6 +5,8 @@
  */
 package DecisionMaking;
 
+import Logging.MyLogger;
+
 /**
  *
  * @author billaros
@@ -56,8 +58,15 @@ public class ServiceEstimation {
         String[] parametersSplit = serviceArguements.split("\\?");
         if(parametersSplit.length<2){
             clEstimation = 0;
+            System.out.println("parametersSplit <2 = "+parametersSplit.length);
+            for(String s : parametersSplit){
+                //MyLogger.log(s);
+            }
         }
         else{
+            for(String s: parametersSplit)
+                System.out.println("parametersSplit !<2 = "+s);
+            
             String[] parameters = parametersSplit[1].split("&");
             
             for(String parameter : parameters){
@@ -70,7 +79,8 @@ public class ServiceEstimation {
                     Domain = Integer.parseInt(value);
                 }
             }
-            clEstimation = (QoSArguement / 10) * Domain;
+            clEstimation = (QoSArguement / 10.0f) * Domain;
+            System.out.println("CLESTIM= = "+clEstimation);
         }
     }
 }

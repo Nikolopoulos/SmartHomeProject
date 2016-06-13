@@ -24,7 +24,7 @@ public class Conductor {
     public static void main(String args[]) {
         
                 Logging.MyLogger.init();
-        Control c = new Control(true);
+        Control c = new Control(false);
 
         Server myServer = new Server(c);
         myServer.startServer();

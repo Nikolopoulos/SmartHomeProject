@@ -5,6 +5,7 @@
  */
 package util;
 
+import DecisionMaking.DecisionMaking;
 import Logging.MyLogger;
 import affinitySupport.Core;
 import affinitySupport.ThreadAffinity;
@@ -35,6 +36,7 @@ import sensorPlatforms.Service;
  */
 public class Control {
 
+    private DecisionMaking dm;
     ArrayList<MicazMote> sensorsList;
     public Messaging messages;
     Thread dropDaemon, populate;
@@ -46,18 +48,24 @@ public class Control {
     public final Core sensingCore;
     public final Core cronCore;
     public InetAddress addr = null;// = getFirstNonLoopbackAddress(true, false);
-    public final String ip;// = addr.getHostAddress();
+    public String ip;// = addr.getHostAddress();
     public final String registryUnitIP;// = "127.0.0.1";
     public final int registryPort;// = 8383;
     public final int myPort;// = 8282;
 
     public Control(boolean debug) {
+        dm = new DecisionMaking(this);
         try {
             addr = getFirstNonLoopbackAddress(true, false);
         } catch (SocketException ex) {
             System.exit(1);
         }
-        ip = addr.getHostAddress();
+        try{
+            ip = addr.getHostAddress();
+        }
+        catch(Exception e){
+            ip ="127.0.0.1";
+        }
         System.out.println("Percieved ip is " + ip + " first non loopbak is " + addr);
         registryUnitIP = "192.168.2.5";
         registryPort = 8383;
@@ -103,12 +111,12 @@ public class Control {
             messages = new Messaging(this);
             jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register", addr);
             //registers itself to the registry unit
-            MyLogger.log("http://" + registryUnitIP + ":" + registryPort + "/register" + URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"));
+            //MyLogger.log("http://" + registryUnitIP + ":" + registryPort + "/register" + URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"));
             if (debug) {
                 MyLogger.log("reply is: " + jsonReply);
             }
             JSONObject obj;
-            MyLogger.log("Error parsing this" + jsonReply);
+            //MyLogger.log("Error parsing this" + jsonReply);
             obj = new JSONObject(jsonReply);
 
             if (!obj.get("result").equals("success")) {
@@ -124,7 +132,7 @@ public class Control {
 
         } catch (Exception e) {
 
-            MyLogger.log(jsonReply);
+//            MyLogger.log(jsonReply);
 
             e.printStackTrace();
         }
@@ -133,6 +141,10 @@ public class Control {
         dropDaemon.start();
         populate = constructPollDaemon();
         populate.start();
+    }
+
+    public DecisionMaking getDm() {
+        return dm;
     }
 
     private synchronized Thread createDropDaemon() {
@@ -159,7 +171,7 @@ public class Control {
 
                             toRemove.add(m);
                         } else if (debug) {
-                            MyLogger.log("Latest activity " + m.getLatestActivity());
+                            //MyLogger.log("Latest activity " + m.getLatestActivity());
                         }
                     }
                     for (MicazMote m : toRemove) {
@@ -241,11 +253,11 @@ public class Control {
                                 }
                                 JSONObject obj;
 
-                                MyLogger.log("Error parsing this" + jsonReply);
+                                //MyLogger.log("Error parsing this" + jsonReply);
                                 obj = new JSONObject(jsonReply);
                             } catch (Exception ex) {
                                 Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
-                                MyLogger.log("Error parsing this" + jsonReply);
+                                //MyLogger.log("Error parsing this" + jsonReply);
                             }
                         }
 
@@ -305,7 +317,7 @@ public class Control {
                     @Override
                     public void run() {
                         while (true) {
-                            System.out.println("polling");
+                            //System.out.println("polling");
                             messages.sendPoll();
                             try {
                                 Thread.sleep(1000);
