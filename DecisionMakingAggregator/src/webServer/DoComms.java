@@ -53,7 +53,7 @@ class DoComms implements Runnable {
                 if (lineNumber == 1) {
                     String[] parts = line.split(" ");
                     requestedURL = parts[1];
-                    MyLogger.log("REQURL IS " + requestedURL);
+                    //MyLogger.log("REQURL IS " + requestedURL);
                 }
                 input = input + line + "\n";
                 noBreakInput = noBreakInput + line;
@@ -61,7 +61,7 @@ class DoComms implements Runnable {
             }
             String reply = "";
             for (String part : requestedURL.split("/")) {
-                MyLogger.log(part + " " + requestedURL.split("/").length);
+                //MyLogger.log(part + " " + requestedURL.split("/").length);
             }
             if (requestedURL.equals("/")) {
                 reply = con.ip + ":" + con.myPort + "/sensors -> returns a list of sensors available\n"
@@ -113,7 +113,7 @@ class DoComms implements Runnable {
             out.close();
             server.close();
         } catch (IOException ioe) {
-            MyLogger.log("IOException on socket listen: " + ioe);
+            //MyLogger.log("IOException on socket listen: " + ioe);
             ioe.printStackTrace();
         }
     }

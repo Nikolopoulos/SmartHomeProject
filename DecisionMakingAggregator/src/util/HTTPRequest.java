@@ -27,10 +27,10 @@ public class HTTPRequest {
 
      HttpURLConnectionExample http = new HttpURLConnectionExample();
 
-     MyLogger.log("Testing 1 - Send Http GET request");
+     //MyLogger.log("Testing 1 - Send Http GET request");
      http.sendGet();
 
-     MyLogger.log("\nTesting 2 - Send Http POST request");
+     //MyLogger.log("\nTesting 2 - Send Http POST request");
      http.sendPost();
 
      }*/
@@ -48,8 +48,8 @@ public class HTTPRequest {
         con.setRequestProperty("User-Agent", USER_AGENT);
 
         int responseCode = con.getResponseCode();
-        MyLogger.log("\nSending 'GET' request to URL : " + url);
-        MyLogger.log("Response Code : " + responseCode);
+        //MyLogger.log("\nSending 'GET' request to URL : " + url);
+        //MyLogger.log("Response Code : " + responseCode);
 
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
@@ -62,16 +62,16 @@ public class HTTPRequest {
         in.close();
 
         //print result
-        MyLogger.log(response.toString());
+        //MyLogger.log(response.toString());
 
     }
 
     // HTTP POST request
     public static String sendPost(String url, int port, String parameters, String service, InetAddress myIP) throws Exception {
         /*  URL obj = new URL(url);
-        MyLogger.log(url);
+        //MyLogger.log(url);
         for(String s : url.substring(7).split("\\.")){
-            MyLogger.log(s);
+            //MyLogger.log(s);
         }*/
 
  /*   byte[] urld = {
@@ -81,26 +81,26 @@ public class HTTPRequest {
             Byte.parseByte(url.substring(7).split("\\.")[3])};*/
         try {
             Socket s = new Socket(url.substring(7), port);
-            MyLogger.log("Socket done");
+            //MyLogger.log("Socket done");
             PrintWriter pw = new PrintWriter(s.getOutputStream());
-            MyLogger.log("pw init");
+            //MyLogger.log("pw init");
             pw.print("POST " + service + " HTTP/1.1\n");
-            MyLogger.log("pw print 1");
+            //MyLogger.log("pw print 1");
             pw.print("User-Agent: Mozilla/5.0\n");
-            MyLogger.log("pw2");
+            //MyLogger.log("pw2");
             pw.print("Accept-Language: en-US,en;q=0.5\n");
-            MyLogger.log("pw3");
+            //MyLogger.log("pw3");
             pw.print("Host: " + url.substring(7) + ":8383\n");
-            MyLogger.log("pw4");
+            //MyLogger.log("pw4");
             pw.print("Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2\n");
 
             pw.print("Connection: keep-alive\n");
 
             pw.print("Content-type: application/x-www-form-urlencoded\n");
-            MyLogger.log("pw8");
+            //MyLogger.log("pw8");
             pw.print("Content-Length: " + parameters.length() + "\n");
-            MyLogger.log("pw done");
-            MyLogger.log("Content-Length: " + parameters.length() + "\n");
+            //MyLogger.log("pw done");
+            //MyLogger.log("Content-Length: " + parameters.length() + "\n");
 
             pw.print(parameters);
             Object anull = null;
@@ -124,12 +124,12 @@ public class HTTPRequest {
             try {
                 while ((line = br.readLine()) != null) {
                     t += line;
-                    MyLogger.log("Line flush " + t);
+                    //MyLogger.log("Line flush " + t);
                 }
             } catch (SocketException e) {
                 e.printStackTrace();
             }
-            MyLogger.log(t);
+            //MyLogger.log(t);
             br.close();
 
             /*HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -147,13 +147,13 @@ public class HTTPRequest {
          wr.flush();
          wr.close();
 
-         MyLogger.log("\nSending 'POST' request to URL : " + url);
-         MyLogger.log("Post parameters : " + parameters);
+         //MyLogger.log("\nSending 'POST' request to URL : " + url);
+         //MyLogger.log("Post parameters : " + parameters);
          Thread.sleep(1000);
          StringBuffer response = new StringBuffer();
          int responseCode = con.getResponseCode();
 
-         MyLogger.log("Response Code : " + responseCode);
+         //MyLogger.log("Response Code : " + responseCode);
          try {
          BufferedReader in = new BufferedReader(
          new InputStreamReader(con.getInputStream()));

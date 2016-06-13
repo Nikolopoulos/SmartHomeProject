@@ -6,6 +6,7 @@
 package registryunit;
 
 import Infrastructure.Universe;
+import Logging.MyLogger;
 
 /**
  *
@@ -17,7 +18,8 @@ public class SmoothOperator {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-       new Universe();
+        MyLogger.init();
+        new Universe();
     }
 
 }
