@@ -5,11 +5,7 @@
  */
 package DecisionMaking;
 
-<<<<<<< HEAD
 import Logging.MyLogger;
-=======
-
->>>>>>> 82451c03364367e64fec0d55dd35693b6fa233bc
 
 /**
  *
@@ -83,13 +79,8 @@ public class ServiceEstimation {
                     Domain = Integer.parseInt(value);
                 }
             }
-<<<<<<< HEAD
             clEstimation = (QoSArguement / 10.0f) * Domain;
             System.out.println("CLESTIM= = "+clEstimation);
-=======
-            clEstimation = (QoSArguement / 10) * Domain;
-            
->>>>>>> 82451c03364367e64fec0d55dd35693b6fa233bc
         }
     }
 }

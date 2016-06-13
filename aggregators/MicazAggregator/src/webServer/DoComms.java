@@ -85,10 +85,7 @@ class DoComms implements Runnable {
                 reply = MyLogger.readLog();
 
             } else if (requestedURL.startsWith("/sensor/") && ((requestedURL.contains("photo")) || (requestedURL.contains("temp")) || (requestedURL.contains("switch")))) {
-<<<<<<< HEAD
                 System.out.println("starts with sensor but doesnt have required service name");
-=======
->>>>>>> 82451c03364367e64fec0d55dd35693b6fa233bc
                 if (requestedURL.length() < 9) {
                     reply = con.ip + ":" + con.myPort + "/sensors -> returns a list of sensors available\n"
                             + con.ip + ":" + con.myPort + "/sensor/ID -> returns data of specific sensor with id = ID\n"
