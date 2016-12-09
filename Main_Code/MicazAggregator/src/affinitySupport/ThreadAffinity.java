@@ -26,13 +26,14 @@ import util.Control;
 public class ThreadAffinity {
 
     private final Core[] cores;
+    private Control c;
 
     {
         final int coresCount = Runtime.getRuntime().availableProcessors();
         cores = new Core[coresCount];
 
         for (int i = 0; i < cores.length; i++) {
-            cores[i] = new Core(i, this, "Core" + (i + 1));
+            cores[i] = new Core(i, c);
         }
     }
 
@@ -105,7 +106,8 @@ public class ThreadAffinity {
         return cores;
     }
 
-    public ThreadAffinity() {
+    public ThreadAffinity(Control c) {
+        this.c = c;
 
     }
 

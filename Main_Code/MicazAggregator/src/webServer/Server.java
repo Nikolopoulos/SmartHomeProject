@@ -11,7 +11,6 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.Control;
-import util.CoreManagement;
 
 /**
  *
@@ -19,13 +18,13 @@ import util.CoreManagement;
  */
 public class Server {
 
-    private static int port = 80,
-            maxConnections = 0;
+    private static int port = 8181,
+                       maxConnections = 0;
     // Listen for incoming connections and handle them
     final Control finalControl;
 
     public Server(Control c) {
-
+        
         this.finalControl = c;
 
     }
@@ -36,20 +35,21 @@ public class Server {
             @Override
             public void run() {
                 try {
+                    try {
+                        finalControl.HTTPCore.attachTo();
+                         System.out.println("Server attached!");
+                    } catch (Exception ex) {
+                        Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     int i = 0;
                     ServerSocket listener = new ServerSocket(port);
                     Socket server;
                     while ((i++ < maxConnections) || (maxConnections == 0)) {
                         server = listener.accept();
-                        System.out.println("Server Accepted!!");
+                         System.out.println("Server Accepted!!");
                         DoComms conn_c = new DoComms(server, finalControl);
                         Thread clientConnectionThread = new Thread(conn_c);
-                        try {
-                            CoreManagement.getLeastBusyCore().addThread(clientConnectionThread);
-                        } catch (Exception ex) {
-                            Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        clientConnectionThread.setName("clientConnectionThread" + i);
+                        clientConnectionThread.setName("clientConnectionThread"+i);
                         clientConnectionThread.start();
                     }
 
@@ -59,11 +59,6 @@ public class Server {
                 }
             }
         });
-        try {
-            CoreManagement.getLeastBusyCore().addThread(serverThread);
-        } catch (Exception ex) {
-            Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
-        }
         serverThread.start();
         System.out.println("Server started!");
     }

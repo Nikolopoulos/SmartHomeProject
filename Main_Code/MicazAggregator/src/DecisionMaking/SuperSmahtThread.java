@@ -10,15 +10,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import sensorPlatforms.MicazMote;
 import util.Control;
-import util.CoreManagement;
 
 /**
  *
  * @author billaros
  */
-public class SuperSmahtThread extends Thread {
+public class SuperSmahtThread implements Runnable {
 
-    private int myId;
+    private int id;
     private String sirh;
     private ServiceEstimation tsoulou;
     private Core whatCore;
@@ -27,7 +26,7 @@ public class SuperSmahtThread extends Thread {
     String ServiceArguements;
 
     public SuperSmahtThread(int id, ServiceEstimation tsoulou, Control myControl, String ServiceArguements) {
-        this.myId = id;
+        this.id = id;
         this.sirh = "";
         this.tsoulou = tsoulou;
         this.ServiceArguements = ServiceArguements;
@@ -35,8 +34,8 @@ public class SuperSmahtThread extends Thread {
         running = false;
     }
 
-    public int getMyId() {
-        return myId;
+    public int getId() {
+        return id;
     }
 
     public ServiceEstimation getTsoulou() {
@@ -61,11 +60,6 @@ public class SuperSmahtThread extends Thread {
 
     public void setWhatCore(Core whatCore) {
         this.whatCore = whatCore;
-        try {
-            CoreManagement.getLeastBusyCore().addThread(this);
-        } catch (Exception ex) {
-            Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     public Control getC() {
@@ -77,7 +71,7 @@ public class SuperSmahtThread extends Thread {
     }
 
     public void setId(int id) {
-        this.myId = id;
+        this.id = id;
     }
 
     public String getReturnVal() {
@@ -91,14 +85,19 @@ public class SuperSmahtThread extends Thread {
     @Override
     public void run() {
         running = true;
+        try {
+            whatCore.attachTo();
+        } catch (Exception ex) {
+            Logger.getLogger(SuperSmahtThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
         int ID = Integer.parseInt(ServiceArguements.split("/")[2]);
         String ServiceURI = "/" + ServiceArguements.split("/")[ServiceArguements.split("/").length - 1];
-        for (MicazMote m : util.SensorManager.getSensorsList()) {
+        for (MicazMote m : this.c.getMotesList()) {
             if (m.getId() == ID) {
                 if (this.getTsoulou().getClEstimation() > 2.5) {
-                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], false,util.SensorManager.getMessages());
+                    sirh += c.messm.RequestServiceReading(ServiceURI.split("\\?")[0], false,c.messages);
                 } else {
-                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], true,util.SensorManager.getMessages());
+                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], true,c.messages);
                 }
                 break;
             }

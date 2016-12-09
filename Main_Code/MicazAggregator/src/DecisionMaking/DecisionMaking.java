@@ -60,17 +60,20 @@ public class DecisionMaking {
                             SuperSmahtThread thread = iter.next();
                             if (!thread.isRunning()) {
                                 //MyLogger.log(thread + "not running");
-                                /*if (!(thread.getWhatCore() == thread.getC().criticalSensingCore || thread.getWhatCore() == thread.getC().sensingCore)) {
-                                 if (thread.getTsoulou().getClEstimation() > 1.5) {
-                                 //i should probably find a way to estimate per core load
-                                 MyLogger.log("Attaching service of cl=" + thread.getTsoulou().getClEstimation() + " to critical core");
-                                        
-                                 } else {
-                                 MyLogger.log("Attaching service of cl=" + thread.getTsoulou().getClEstimation() + " to non-critical core");
-                                 thread.setWhatCore(thread.getC().sensingCore);
-                                 }
-                                 }*/
-                                thread.setWhatCore(util.CoreManagement.getLeastBusyCore().getCore());
+                                if(!(thread.getWhatCore()==thread.getC().criticalSensingCore || thread.getWhatCore()==thread.getC().sensingCore))
+                                if (thread.getTsoulou().getClEstimation() > 1.5) {
+                                    //i should probably find a way to estimate per core load
+                                    MyLogger.log("Attaching service of cl=" + thread.getTsoulou().getClEstimation() + " to critical core");
+                                    thread.setWhatCore(thread.getC().criticalSensingCore);
+                                } else {
+                                    MyLogger.log("Attaching service of cl=" + thread.getTsoulou().getClEstimation() + " to non-critical core");
+                                    thread.setWhatCore(thread.getC().sensingCore);
+                                }
+
+                                if (new Random().nextInt(10) > new Random().nextInt(5) + 5) {
+                                    thread.run();
+                                    //MyLogger.log(thread + "ran");
+                                }
                             }
                         }
                     }

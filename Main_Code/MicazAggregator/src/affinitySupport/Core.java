@@ -5,8 +5,6 @@
  */
 package affinitySupport;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.Control;
 
 /**
@@ -16,18 +14,24 @@ import util.Control;
 public class Core {
 
     private final int sequence;
-    private String name;
-    private ThreadAffinity threadAffinity;
-    
 
-    public Core(final int sequence,ThreadAffinity threadAffinity , String name) {
-        
-        this.name=name;
-        this.threadAffinity=threadAffinity;
+    private Control c;
+
+    public Core(final int sequence, Control c) {
+        this.c = c;
+
         this.sequence = sequence;
         if (sequence > Integer.SIZE) {
             throw new IllegalStateException("Too many cores (" + sequence + ") for integer mask");
         }
+    }
+
+    public Control getC() {
+        return c;
+    }
+
+    public void setC(Control c) {
+        this.c = c;
     }
 
     public int sequence() {
@@ -38,22 +42,19 @@ public class Core {
 
         final long mask = mask();
         try {
-            threadAffinity.setCurrentThreadAffinityMask(mask);
+            c.threadAffinity.setCurrentThreadAffinityMask(mask);
         } catch (NullPointerException E) {
             System.out.println("WHOS THAT POKEMON? ITS MASK " + mask);
-            System.out.println("WHOS THAT POKEMON? ITS THREAD AFFINITY " + threadAffinity);
-            System.out.println("WHOS THAT POKEMON?");
+             System.out.println("WHOS THAT POKEMON? ITS CONTROL " + c);
+              System.out.println("WHOS THAT POKEMON? ITS THREAD AFFINITY " + c.threadAffinity);
+               System.out.println("WHOS THAT POKEMON?" );
         }
     }
 
-    public void attach(final Thread thread) {
+    public void attach(final Thread thread) throws Exception {
         final long mask = mask();
-        try {
-            //fixme: it does not work for now!
-            threadAffinity.setThreadAffinityMask(thread.getId(), mask);
-        } catch (Exception ex) {
-            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        //fixme: it does not work for now!
+        c.threadAffinity.setThreadAffinityMask(thread.getId(), mask);
     }
 
     private int mask() {

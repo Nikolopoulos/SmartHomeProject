@@ -63,22 +63,21 @@ public class HTTPRequest {
 
         //print result
         //MyLogger.log(response.toString());
-
     }
 
     // HTTP POST request
     public static String sendPost(String url, int port, String parameters, String service, InetAddress myIP) throws Exception {
         /*  URL obj = new URL(url);
-        MyLogger.log(url);
-        for(String s : url.substring(7).split("\\.")){
-            MyLogger.log(s);
-        }*/
+         MyLogger.log(url);
+         for(String s : url.substring(7).split("\\.")){
+         MyLogger.log(s);
+         }*/
 
- /*   byte[] urld = {
-            Byte.parseByte(url.substring(7).split("\\.")[0]), 
-            Byte.parseByte(url.substring(7).split("\\.")[1]), 
-            Byte.parseByte(url.substring(7).split("\\.")[2]), 
-            Byte.parseByte(url.substring(7).split("\\.")[3])};*/
+        /*   byte[] urld = {
+         Byte.parseByte(url.substring(7).split("\\.")[0]), 
+         Byte.parseByte(url.substring(7).split("\\.")[1]), 
+         Byte.parseByte(url.substring(7).split("\\.")[2]), 
+         Byte.parseByte(url.substring(7).split("\\.")[3])};*/
         try {
             Socket s = new Socket(url.substring(7), port);
             //MyLogger.log("Socket done");
@@ -111,15 +110,15 @@ public class HTTPRequest {
             //pw.close();
             BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
             /* br.readLine();
-         br.readLine();
-         br.readLine();
-         br.readLine();
-         br.readLine();
-         br.readLine();
-         br.readLine();
-         br.readLine();
-         br.readLine();
-         br.readLine();*/
+             br.readLine();
+             br.readLine();
+             br.readLine();
+             br.readLine();
+             br.readLine();
+             br.readLine();
+             br.readLine();
+             br.readLine();
+             br.readLine();*/
             String t = "";
             String line = "";
             try {
@@ -135,52 +134,52 @@ public class HTTPRequest {
 
             /*HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-         //add reuqest header
-         con.setRequestMethod("POST");
-         con.setRequestProperty("User-Agent", USER_AGENT);
-         con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+             //add reuqest header
+             con.setRequestMethod("POST");
+             con.setRequestProperty("User-Agent", USER_AGENT);
+             con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 
-         //String urlParameters = "sn=C02G8416DRJM&cn=&locale=&caller=&num=12345";
-         // Send post request
-         con.setDoOutput(true);
-         DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-         wr.writeBytes(parameters);
-         wr.flush();
-         wr.close();
+             //String urlParameters = "sn=C02G8416DRJM&cn=&locale=&caller=&num=12345";
+             // Send post request
+             con.setDoOutput(true);
+             DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+             wr.writeBytes(parameters);
+             wr.flush();
+             wr.close();
 
-         MyLogger.log("\nSending 'POST' request to URL : " + url);
-         MyLogger.log("Post parameters : " + parameters);
-         Thread.sleep(1000);
-         StringBuffer response = new StringBuffer();
-         int responseCode = con.getResponseCode();
+             MyLogger.log("\nSending 'POST' request to URL : " + url);
+             MyLogger.log("Post parameters : " + parameters);
+             Thread.sleep(1000);
+             StringBuffer response = new StringBuffer();
+             int responseCode = con.getResponseCode();
 
-         MyLogger.log("Response Code : " + responseCode);
-         try {
-         BufferedReader in = new BufferedReader(
-         new InputStreamReader(con.getInputStream()));
-         String inputLine;
-         response = new StringBuffer();
+             MyLogger.log("Response Code : " + responseCode);
+             try {
+             BufferedReader in = new BufferedReader(
+             new InputStreamReader(con.getInputStream()));
+             String inputLine;
+             response = new StringBuffer();
 
-         while ((inputLine = in.readLine()) != null) {
-         response.append(inputLine);
-         }
-         in.close();
-         } catch (Exception e) {
-         e.printStackTrace();
-         try {
-         BufferedReader in = new BufferedReader(
-         new InputStreamReader(con.getErrorStream()));
-         String inputLine;
-         response = new StringBuffer();
+             while ((inputLine = in.readLine()) != null) {
+             response.append(inputLine);
+             }
+             in.close();
+             } catch (Exception e) {
+             e.printStackTrace();
+             try {
+             BufferedReader in = new BufferedReader(
+             new InputStreamReader(con.getErrorStream()));
+             String inputLine;
+             response = new StringBuffer();
 
-         while ((inputLine = in.readLine()) != null) {
-         response.append(inputLine);
-         }
-         in.close();
-         } catch (Exception ex) {
-         ex.printStackTrace();
-         }
-         }*/
+             while ((inputLine = in.readLine()) != null) {
+             response.append(inputLine);
+             }
+             in.close();
+             } catch (Exception ex) {
+             ex.printStackTrace();
+             }
+             }*/
             //print result 
             return t;
         } catch (Exception e) {

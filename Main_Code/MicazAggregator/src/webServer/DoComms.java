@@ -16,13 +16,10 @@ import java.util.logging.Logger;
 import sensorPlatforms.MicazMote;
 import util.Control;
 import static java.lang.Thread.sleep;
-import util.NetConfig;
 
 /**
  *
  * @author billaros
- * 
- * THIS CLASS NEEDS MAJOR REFACTORING. THE COMMUNICATION READ/WRITE IS WRONG
  */
 class DoComms implements Runnable {
 
@@ -38,7 +35,13 @@ class DoComms implements Runnable {
     }
 
     //So server listens for clients, and this class is runnable and executes the communication requests.
-    public void run() {       
+    public void run() {
+
+        try {
+            con.HTTPCore.attachTo();
+        } catch (Exception ex) {
+            Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
+        }
         input = "";
         noBreakInput = "";
         requestedURL = "";
@@ -63,14 +66,14 @@ class DoComms implements Runnable {
             System.out.println("checking request");
             if (requestedURL.equals("/")) {
                 System.out.println("is pure /");
-                reply = NetConfig.getIp() + ":" + NetConfig.getMyPort() + "/sensors -> returns a list of sensors available\n"
-                        + NetConfig.getIp() + ":" + NetConfig.getMyPort() + "/sensor/ID -> returns data of specific sensor with id = ID\n"
-                        + NetConfig.getIp() + ":" + NetConfig.getMyPort() + "/sensor/ID/ServiceName -> returns data from ServiceName runnign on Sensor ID\n";
+                reply = con.ip + ":" + con.myPort + "/sensors -> returns a list of sensors available\n"
+                        + con.ip + ":" + con.myPort + "/sensor/ID -> returns data of specific sensor with id = ID\n"
+                        + con.ip + ":" + con.myPort + "/sensor/ID/ServiceName -> returns data from ServiceName runnign on Sensor ID\n";
 
             } else if (requestedURL.startsWith("/sensors")) {
                 System.out.println("starts with sensors");
                 reply = "{\"sensors\":{[";
-                for (MicazMote m : util.SensorManager.getSensorsList()) {
+                for (MicazMote m : con.getMotesList()) {
                     reply += m.JSONDescription() + ",";
                 }
                 if (reply.length() > 10) {
@@ -84,9 +87,9 @@ class DoComms implements Runnable {
             } else if (requestedURL.startsWith("/sensor/") && ((requestedURL.contains("photo")) || (requestedURL.contains("temp")) || (requestedURL.contains("switch")))) {
                 System.out.println("starts with sensor but doesnt have required service name");
                 if (requestedURL.length() < 9) {
-                    reply = NetConfig.getIp() + ":" + NetConfig.getMyPort() + "/sensors -> returns a list of sensors available\n"
-                            + NetConfig.getIp() + ":" + NetConfig.getMyPort() + "/sensor/ID -> returns data of specific sensor with id = ID\n"
-                            + NetConfig.getIp() + ":" + NetConfig.getMyPort() + "/sensor/ID/ServiceName -> returns data from ServiceName runnign on Sensor ID\n";
+                    reply = con.ip + ":" + con.myPort + "/sensors -> returns a list of sensors available\n"
+                            + con.ip + ":" + con.myPort + "/sensor/ID -> returns data of specific sensor with id = ID\n"
+                            + con.ip + ":" + con.myPort + "/sensor/ID/ServiceName -> returns data from ServiceName runnign on Sensor ID\n";
 
                 } else if (requestedURL.startsWith("/sensor/")) {
                     System.out.println("starts with sensor and has both length and name");

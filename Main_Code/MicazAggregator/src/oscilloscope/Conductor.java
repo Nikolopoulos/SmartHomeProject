@@ -5,9 +5,8 @@
  */
 package oscilloscope;
 
-import affinitySupport.ThreadAffinity;
+import Simulator.Network;
 import util.Control;
-import util.UnitConfig;
 import webServer.Server;
 
 /**
@@ -25,8 +24,8 @@ public class Conductor {
     public static void main(String args[]) {
         
         Logging.MyLogger.init();
-        UnitConfig.setDebug(false);
-        Control c = new Control();
+        
+        Control c = new Control(false);
 
         Server myServer = new Server(c);
         myServer.startServer();

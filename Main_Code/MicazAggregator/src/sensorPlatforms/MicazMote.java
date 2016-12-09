@@ -37,6 +37,10 @@ public class MicazMote {
     private long latestActivity;
     private int switchState;
 
+    public int getServicesInt() {
+        return services;
+    }
+    
     public MicazMote(int id, int services, long latestActivity) {
         this.servicesList = new ArrayList<Service>();
         this.id = id;
@@ -74,8 +78,9 @@ public class MicazMote {
 
     public void setSwitchState(int switchState) {
         for (Service s : servicesList) {
-            if (s.getName().equals("temp")) {
-                s.setDecimalValue("1");
+            //if (s.getName().equals("temp")) { //hotfix maybe it;s wrong
+            if (s.getName().equals("switch")) {
+                s.setDecimalValue(switchState+"");
             }
         }
     }
