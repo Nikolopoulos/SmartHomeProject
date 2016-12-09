@@ -33,5 +33,6 @@ public class Statics {
     public static int INTERNAL_SERVER_ERROR = 500;
     public static int NOT_IMPLEMENTED_ERROR = 501;
     public static int SERVICE_UNAVAILABLE_ERROR = 501;
+    public static int PORT = 8383;
 
 }

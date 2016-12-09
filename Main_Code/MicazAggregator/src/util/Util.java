@@ -11,7 +11,7 @@ package util;
  */
 public class Util {
     //Utilities
-    
+
     public static int sum(int[] array) {
         int summary = 0;
         for (int x : array) {
@@ -44,7 +44,7 @@ public class Util {
         Rthr = a2d2engi(reading);
         temperature = 1 / (a + b * Math.log(Rthr) + c * Math.pow(Math.log(Rthr), 3));
         temperature -= 273.15; //Convert from Kelvin to Celcius
-     
+
         return temperature;
 
     }

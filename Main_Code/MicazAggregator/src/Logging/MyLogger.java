@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  * @author root
  */
 public class MyLogger {
-
+    
     public static File logfile;
     private static PrintWriter pw;
 

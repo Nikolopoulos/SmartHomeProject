@@ -7,7 +7,7 @@ package Infrastructure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import webServer.server;
+import webServer.Server;
 
 /**
  *
@@ -19,11 +19,11 @@ public class Universe {
     ArrayList<Aggregator> aggregators;
     ArrayList<Communication> comms;
     HashMap<String,Service> services; //uri object
-    server myServer;
+    Server myServer;
 
     public Universe() {
         services = new HashMap();
-        myServer = new server(this);
+        myServer = new Server(this);
         myServer.startServer();
         aggregators = new ArrayList<Aggregator>();
         comms = new ArrayList<Communication>();

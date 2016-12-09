@@ -19,13 +19,13 @@ import java.util.logging.Logger;
  *
  * @author billaros
  */
-class doComms implements Runnable {
+class DoComms implements Runnable {
 
     private Socket server;
     private String line, input, requestedURL, noBreakInput;
     public Universe universe;
 
-    public doComms(Socket server,Universe uniArg) {
+    public DoComms(Socket server,Universe uniArg) {
         this.server = server;
         universe = uniArg;
     }
@@ -48,7 +48,7 @@ class doComms implements Runnable {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
-                Logger.getLogger(doComms.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
             }
             out.flush();
             //out.print("testmessage");

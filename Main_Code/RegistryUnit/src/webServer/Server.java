@@ -16,14 +16,14 @@ import java.util.logging.Logger;
  *
  * @author billaros
  */
-public class server {
+public class Server {
 
-    private static int port = 8383,
+    private static int port = Util.Statics.PORT,
             maxConnections = 0;
     public Universe universe;
     // Listen for incoming connections and handle them
 
-    public server(Universe uniarg) {
+    public Server(Universe uniarg) {
         this.universe = uniarg;
 
     }
@@ -35,12 +35,13 @@ public class server {
             public synchronized void run() {
                 try {
                     int i = 0;
+                    //should really stop the counter before INT_MAX or else there may be an overflow
                     ServerSocket listener = new ServerSocket(port);
                     Socket server;
                     while ((i++ < maxConnections) || (maxConnections == 0)) {
                         server = listener.accept();
                         //server.getOutputStream().write('Q');
-                        doComms conn_c = new doComms(server,universe);
+                        DoComms conn_c = new DoComms(server,universe);
                         Thread clientConnectionThread = new Thread(conn_c);
                         clientConnectionThread.setName("clientConnectionThread" + i);
                         clientConnectionThread.start();

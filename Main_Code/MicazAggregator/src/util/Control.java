@@ -7,6 +7,9 @@ package util;
 
 import DecisionMaking.DecisionMaking;
 import Logging.MyLogger;
+import Simulator.MoteLibSimulator;
+import Simulator.Network;
+import Simulator.SimulatedMessaging;
 import affinitySupport.Core;
 import affinitySupport.ThreadAffinity;
 import java.lang.management.ManagementFactory;
@@ -25,7 +28,6 @@ import javax.management.AttributeList;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import org.json.JSONObject;
-import oscilloscope.Messaging;
 import sensorPlatforms.AssociatedHardware;
 import sensorPlatforms.MicazMote;
 import sensorPlatforms.Service;
@@ -37,12 +39,17 @@ import sensorPlatforms.Service;
 public class Control {
 
     private DecisionMaking dm;
+    public Network net;
+    public MoteLibSimulator mlbs;
     ArrayList<MicazMote> sensorsList;
-    public Messaging messages;
+    //public Messaging messages;
+    private boolean simulation = true;
+    public SimulatedMessaging messages;
     Thread dropDaemon, populate;
     String uid = "";
     boolean debug;
     public ThreadAffinity threadAffinity;
+    
     public final Core criticalSensingCore;
     public final Core HTTPCore;
     public final Core sensingCore;
@@ -107,8 +114,13 @@ public class Control {
         cronCore.setC(this);
 
         try {
-
-            messages = new Messaging(this);
+            //if(simulation == true){
+                mlbs = new MoteLibSimulator();
+                messages = new SimulatedMessaging(mlbs);
+                net = new Network(messages);
+                mlbs.setNet(net);
+            //}
+            
             jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register", addr);
             //registers itself to the registry unit
             //MyLogger.log("http://" + registryUnitIP + ":" + registryPort + "/register" + URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"));
@@ -378,7 +390,8 @@ public class Control {
     public void sendReadingRequest(int id, int type,String ServiceURI) {
         for(MicazMote m : sensorsList){
             if(m.getId() == id){
-                m.RequestServiceReading(uid, debug, messages);
+                messages.sendReadingRequest(id, type);
+                //m.RequestServiceReading(uid, debug, messages);
             }
         }
         
