@@ -77,9 +77,12 @@ public class Control {
         registryUnitIP = "192.168.2.5";
         registryPort = 8383;
         myPort = 8181;
+        System.out.println("Set ports");
         threadAffinity = new ThreadAffinity(this);
         this.debug = debug;
         String jsonReply = "";
+        System.out.println("setAffinity");
+                
 
         if (threadAffinity.cores().length == 4) {
             criticalSensingCore = threadAffinity.cores()[0];
@@ -112,7 +115,7 @@ public class Control {
         HTTPCore.setC(this);
         sensingCore.setC(this);
         cronCore.setC(this);
-
+        System.out.println("reached");
         try {
             //if(simulation == true){
                 mlbs = new MoteLibSimulator();
@@ -120,8 +123,9 @@ public class Control {
                 net = new Network(messages);
                 mlbs.setNet(net);
             //}
-            
+            System.out.println("Tryint to https reg unit");
             jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register", addr);
+            System.out.println("Done https reg unit");
             //registers itself to the registry unit
             //MyLogger.log("http://" + registryUnitIP + ":" + registryPort + "/register" + URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"));
             if (debug) {
@@ -390,12 +394,10 @@ public class Control {
     public void sendReadingRequest(int id, int type,String ServiceURI) {
         for(MicazMote m : sensorsList){
             if(m.getId() == id){
-                messages.sendReadingRequest(id, type);
-                //m.RequestServiceReading(uid, debug, messages);
+                //messages.sendReadingRequest(id, type);
+                m.RequestServiceReading(uid, debug, messages);
             }
         }
-        
-        ;
     }
 
     public void reportReading(int id, int messageType, int[] Readings) {

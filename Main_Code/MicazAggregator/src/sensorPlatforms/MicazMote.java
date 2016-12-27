@@ -5,6 +5,7 @@
  */
 package sensorPlatforms;
 
+import Simulator.SimulatedMessaging;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -215,6 +216,54 @@ public class MicazMote {
     }
 
     public String RequestServiceReading(String ServiceURI, boolean cached, Messaging messages) {
+        String reply = "genericError";
+        int type = -99;
+        for (Service s : servicesList) {
+            System.out.println(s.getURI() + " vs " + ServiceURI);
+            if (s.getURI().contains(ServiceURI) && cached && s.getLatestReading() - System.currentTimeMillis() < 30000 && s.getDecimalValue() != null) {
+                reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
+            } else if (s.getURI().contains(ServiceURI)) {
+                if (s.getURI().contains("/temp")) {
+                    System.out.println("ELSE INNER s.uri vs serviceuri " + s.getURI() + " vs " + ServiceURI + " is contained? " + s.getURI().contains(ServiceURI));
+                    System.out.println("Uri contains/temp " + ServiceURI);
+                    type = Constants.TEMP;
+                    messages.sendReadingRequest(id, type);
+
+                    System.out.println("temp");
+                } else if (s.getURI().contains("/photo")) {
+                    type = Constants.PHOTO;
+                    messages.sendReadingRequest(id, type);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(MicazMote.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
+                } else if (s.getURI().contains("/switch")) {
+                    messages.sendSwitchToggle(id);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(MicazMote.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(MicazMote.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
+                
+
+            }
+        }
+
+        return reply;
+    }
+    
+    public String RequestServiceReading(String ServiceURI, boolean cached, SimulatedMessaging messages) {
         String reply = "genericError";
         int type = -99;
         for (Service s : servicesList) {

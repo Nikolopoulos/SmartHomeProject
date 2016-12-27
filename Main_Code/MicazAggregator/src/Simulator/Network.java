@@ -46,7 +46,7 @@ public class Network {
         this.answerConsumer = this.createResponder();
         this.nodeMessages = new ArrayList<SimulatedMessage>();
         this.requests = new ArrayList<SimulatedRequest>();
-        
+
         this.answerConsumer.start();
         this.requestConsumer.start();
         this.networkActivity.start();
@@ -102,7 +102,9 @@ public class Network {
 
                             @Override
                             public void run() {
-                                messaging.messageReceived(nodeMessages.remove(0));
+                                if (nodeMessages.size() > 0) {
+                                    messaging.messageReceived(nodeMessages.remove(0));
+                                }
                             }
                         }).start();
 
@@ -125,20 +127,23 @@ public class Network {
                 Random rng = new Random();
                 rng.setSeed(System.currentTimeMillis());
                 while (true) {
-                    if (rng.nextInt()%Statics.ERROR_PROBABILITY==0) {
-                        nodes.remove(0);
+                    if (rng.nextInt() % Statics.ERROR_PROBABILITY == 0) {
+                        if (nodes.size() > 0) {
+                            nodes.remove(0);
+                        }
                         continue;
                     }
-                    if (rng.nextInt()%Statics.TURNOFF_PROBABILITY==0) {
-                        nodes.remove(0);
+                    if (rng.nextInt() % Statics.TURNOFF_PROBABILITY == 0) {
+                        if (nodes.size() > 0) {
+                            nodes.remove(0);
+                        }
                         continue;
                     }
-                    if (rng.nextInt()%Statics.NEWNODE_PROBABILITY==0) {
+                    if (rng.nextInt() % Statics.NEWNODE_PROBABILITY == 0) {
                         nodes.add(new MicazSimulator(myself));
                         continue;
                     }
-                    
-                    
+
                 }
             }
         });
