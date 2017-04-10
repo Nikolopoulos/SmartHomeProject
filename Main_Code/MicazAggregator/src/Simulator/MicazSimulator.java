@@ -6,8 +6,8 @@
 package Simulator;
 
 import java.util.Random;
-import lib.Constants;
-import sensorPlatforms.MicazMote;
+import SensorsCommunicationUnit.lib.Constants;
+import SensorsCommunicationUnit.MicazMote;
 import util.Statics;
 
 /**

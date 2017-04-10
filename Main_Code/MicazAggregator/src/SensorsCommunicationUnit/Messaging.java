@@ -3,15 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package oscilloscope;
+package SensorsCommunicationUnit;
 
+import SensorsCommunicationUnit.lib.Switch_Toggle;
+import SensorsCommunicationUnit.lib.ReadingMsgAnswer;
+import SensorsCommunicationUnit.lib.Constants;
+import SensorsCommunicationUnit.lib.ReadingMsgRequest;
+import SensorsCommunicationUnit.lib.Poll_Answer;
+import SensorsCommunicationUnit.lib.Switch_Poll;
+import SensorsCommunicationUnit.lib.Switch_Answer;
+import SensorsCommunicationUnit.lib.Poll_Request;
 import net.tinyos.message.Message;
 import net.tinyos.message.MessageListener;
 import net.tinyos.message.MoteIF;
 import net.tinyos.util.PrintStreamMessenger;
-import lib.*;
-import sensorPlatforms.MicazMote;
-import util.Control;
+import SensorsCommunicationUnit.MicazMote;
+import ControlUnit.Control;
 /**
  *
  * @author billaros
@@ -90,7 +97,7 @@ public class Messaging implements MessageListener {
             //System.out.println("POLL ANSWER" + msg);
             Poll_Answer cmsg = (Poll_Answer) msg;
             MicazMote mote = new MicazMote(cmsg.get_id(), cmsg.get_services(),util.Util.getTime());
-            c.reportPollAck(mote);
+            c.UpdateRecordInSHM(mote);
         }
         else if(msg instanceof ReadingMsgAnswer) {
             System.out.println("READING ANSWER" + msg);

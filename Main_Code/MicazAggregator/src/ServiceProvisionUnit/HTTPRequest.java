@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package util;
+package ServiceProvisionUnit;
 
 /**
  *
@@ -65,8 +65,38 @@ public class HTTPRequest {
         //MyLogger.log(response.toString());
     }
 
+    public static void sendGet(RequestObject request) throws Exception {
+
+        //String url = "http://www.google.com/search?q=mkyong";
+        URL obj = new URL(request.getUrl());
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+        // optional default is GET
+        con.setRequestMethod("GET");
+
+        //add request header
+        con.setRequestProperty("User-Agent", USER_AGENT);
+
+        int responseCode = con.getResponseCode();
+        //MyLogger.log("\nSending 'GET' request to URL : " + url);
+        //MyLogger.log("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        //print result
+        //MyLogger.log(response.toString());
+    }
+
     // HTTP POST request
-    public static String sendPost(String url, int port, String parameters, String service, InetAddress myIP) throws Exception {
+    public static String sendPost_old(String url, int port, String parameters, String service, InetAddress myIP) throws Exception {
         /*  URL obj = new URL(url);
          MyLogger.log(url);
          for(String s : url.substring(7).split("\\.")){
@@ -181,6 +211,51 @@ public class HTTPRequest {
              }
              }*/
             //print result 
+            return t;
+        } catch (Exception e) {
+            return "{}";
+        }
+
+    }
+
+    public static String sendPost(RequestObject request) {
+        String url = request.getUrl();
+        int port = request.getPort();
+        String parameters = request.getParameters();
+        String service = request.getService();
+        InetAddress myIP = request.getMyIP();
+        try {
+            Socket s = new Socket(url.substring(7), port);
+            PrintWriter pw = new PrintWriter(s.getOutputStream());
+            pw.print("POST " + service + " HTTP/1.1\n");
+            pw.print("User-Agent: Mozilla/5.0\n");
+            pw.print("Accept-Language: en-US,en;q=0.5\n");
+            pw.print("Host: " + url.substring(7) + ":8383\n");
+
+            pw.print("Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2\n");
+            pw.print("Connection: keep-alive\n");
+            pw.print("Content-type: application/x-www-form-urlencoded\n");
+            pw.print("Content-Length: " + parameters.length() + "\n");
+
+            pw.print(parameters);
+            Object anull = null;
+            pw.print(anull);
+
+            pw.flush();
+            BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+
+            String t = "";
+            String line = "";
+            try {
+                while ((line = br.readLine()) != null) {
+                    t += line;
+
+                }
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
+
+            br.close();
             return t;
         } catch (Exception e) {
             return "{}";

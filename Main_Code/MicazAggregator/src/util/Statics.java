@@ -16,4 +16,6 @@ public class Statics {
     
     public static int ROOM_TEMPERATURE = 20;
     public static int PHOTO = 20;
+    
+    public static boolean ShutingDown = false;
 }

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import util.Control;
+import ControlUnit.Control;
 
 import java.util.Random;
 
@@ -95,7 +95,8 @@ public class DecisionMaking {
                 }
             }
 
-            return (t == null || t.getReturnVal().equalsIgnoreCase("")) ? "" : t.getReturnVal();
+            //return (t == null || t.getReturnVal().equalsIgnoreCase("")) ? "-1" : t.getReturnVal();
+            return (t == null ? "-1" : t.getReturnVal());
         }
     }
 

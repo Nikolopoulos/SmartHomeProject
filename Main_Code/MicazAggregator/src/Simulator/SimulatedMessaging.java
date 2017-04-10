@@ -5,9 +5,9 @@
  */
 package Simulator;
 
-import lib.*;
-import sensorPlatforms.MicazMote;
-import util.Control;
+import SensorsCommunicationUnit.lib.Constants;
+import SensorsCommunicationUnit.MicazMote;
+import ControlUnit.Control;
 /**
  *
  * @author billaros
@@ -64,7 +64,7 @@ public class SimulatedMessaging{
         if (msg.instanceOf().equalsIgnoreCase("Poll_Answer")) {
             //System.out.println("POLL ANSWER" + msg);
             MicazMote cmote = new MicazMote(msg.get_id(), msg.get_services(),util.Util.getTime());
-            c.reportPollAck(cmote);
+            c.UpdateRecordInSHM(cmote);
         }
         else if(msg.instanceOf().equalsIgnoreCase("ReadingMsgAnswer")) {
             System.out.println("READING ANSWER" + msg);

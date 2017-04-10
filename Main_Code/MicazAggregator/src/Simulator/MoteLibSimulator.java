@@ -5,8 +5,8 @@
  */
 package Simulator;
 
-import lib.Constants;
-import util.Control;
+import SensorsCommunicationUnit.lib.Constants;
+import ControlUnit.Control;
 
 /**
  *

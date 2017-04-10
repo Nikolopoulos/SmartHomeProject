@@ -3,11 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package oscilloscope;
+package kickstart;
 
-import Simulator.Network;
-import util.Control;
-import webServer.Server;
+import ControlUnit.Control;
+import SharedMemory.SharedMemory;
 
 /**
  *
@@ -25,9 +24,10 @@ public class Conductor {
         
         Logging.MyLogger.init();
         
+        SharedMemory memory = new SharedMemory();
+        memory.<String,SharedMemory>set("SMU",memory);
         Control c = new Control(false);
 
-        Server myServer = new Server(c);
-        myServer.startServer();
+       
     }
 }

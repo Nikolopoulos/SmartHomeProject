@@ -3,27 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package webServer;
+package ServiceProvisionUnit;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import util.Control;
+import ControlUnit.Control;
+import java.util.concurrent.Semaphore;
 
 /**
  *
  * @author billaros
  */
-public class Server {
+public class ServiceProvisionUnit {
 
     private static int port = 8181,
                        maxConnections = 0;
     // Listen for incoming connections and handle them
     final Control finalControl;
 
-    public Server(Control c) {
+    public ServiceProvisionUnit(Control c) {
         
         this.finalControl = c;
 
@@ -39,7 +40,7 @@ public class Server {
                         finalControl.HTTPCore.attachTo();
                          System.out.println("Server attached!");
                     } catch (Exception ex) {
-                        Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(ServiceProvisionUnit.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     int i = 0;
                     ServerSocket listener = new ServerSocket(port);
@@ -47,7 +48,7 @@ public class Server {
                     while ((i++ < maxConnections) || (maxConnections == 0)) {
                         server = listener.accept();
                          System.out.println("Server Accepted!!");
-                        DoComms conn_c = new DoComms(server, finalControl);
+                        DoComms conn_c = new DoComms(server, finalControl,finalControl.HTTPCore);
                         Thread clientConnectionThread = new Thread(conn_c);
                         clientConnectionThread.setName("clientConnectionThread"+i);
                         clientConnectionThread.start();
@@ -61,6 +62,46 @@ public class Server {
         });
         serverThread.start();
         System.out.println("Server started!");
+    }
+    
+    public RequestObject httpContact(RequestObject request){
+        Semaphore reply = new Semaphore(0);
+        
+        if(request.getMethod().equalsIgnoreCase("POST")){
+            Thread requestThread = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    request.setResponse(HTTPRequest.sendPost(request));
+                    reply.release();
+                }
+            });
+            requestThread.run();
+        }
+        
+        else if (request.getMethod().equalsIgnoreCase("GET")){
+            Thread requestThread = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        HTTPRequest.sendGet(request);
+                        request.setResponse("");
+                        reply.release();
+                    } catch (Exception ex) {
+                        Logger.getLogger(ServiceProvisionUnit.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    reply.release();
+                }
+            });
+            requestThread.run();
+        }
+        try {
+            reply.acquire();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ServiceProvisionUnit.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return request;
     }
 
 }

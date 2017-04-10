@@ -3,14 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sensorPlatforms;
+package SensorsCommunicationUnit;
 
 import Simulator.SimulatedMessaging;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import lib.Constants;
-import oscilloscope.Messaging;
+import SensorsCommunicationUnit.lib.Constants;
 import util.Util;
 
 /**
@@ -46,19 +45,19 @@ public class MicazMote {
         this.servicesList = new ArrayList<Service>();
         this.id = id;
         this.services = services;
-        if (services / lib.Constants.PIN_S > 0.9) {
+        if (services / SensorsCommunicationUnit.lib.Constants.PIN_S > 0.9) {
             services -= 4;
             this.switchService = true;
             switchState = -1;
             servicesList.add(new Service("switch", "Switch service for accuator", "/switch", "boolean"));
         }
-        if (services / lib.Constants.PHOTO_S > 0.9) {
+        if (services / SensorsCommunicationUnit.lib.Constants.PHOTO_S > 0.9) {
             services -= 2;
             this.photoService = true;
             servicesList.add(new Service("photo", "Light levels service", "/photo", "lum?"));
         }
-        if (services % 2 == lib.Constants.TEMP_S) {
-            services -= lib.Constants.TEMP_S;
+        if (services % 2 == SensorsCommunicationUnit.lib.Constants.TEMP_S) {
+            services -= SensorsCommunicationUnit.lib.Constants.TEMP_S;
             this.tempService = true;
             servicesList.add(new Service("temp", "Temperature levels service", "/temp", "Celsious"));
         }

@@ -6,14 +6,14 @@
  *
  * @author Zolotas
  */
-package affinitySupport;
+package Libraries;
 
 import java.text.ParseException;
 import java.util.StringTokenizer;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.LongByReference;
-import util.Control;
+import ControlUnit.Control;
 
 /**
  * For attaching threads to cores

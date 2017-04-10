@@ -5,11 +5,13 @@
  */
 package DecisionMaking;
 
-import affinitySupport.Core;
+import Libraries.Core;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sensorPlatforms.MicazMote;
-import util.Control;
+import SensorsCommunicationUnit.MicazMote;
+import ControlUnit.Control;
+import SharedMemory.SharedMemory;
+import java.util.ArrayList;
 
 /**
  *
@@ -92,7 +94,7 @@ public class SuperSmahtThread implements Runnable {
         }
         int ID = Integer.parseInt(ServiceArguements.split("/")[2]);
         String ServiceURI = "/" + ServiceArguements.split("/")[ServiceArguements.split("/").length - 1];
-        for (MicazMote m : this.c.getMotesList()) {
+        for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == ID) {
                 if (this.getTsoulou().getClEstimation() > 2.5) {
                     sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], false,c.messages);

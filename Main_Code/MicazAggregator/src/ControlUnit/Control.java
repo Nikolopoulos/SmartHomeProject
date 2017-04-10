@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package util;
+package ControlUnit;
 
 import DecisionMaking.DecisionMaking;
 import Logging.MyLogger;
 import Simulator.MoteLibSimulator;
 import Simulator.Network;
 import Simulator.SimulatedMessaging;
-import affinitySupport.Core;
-import affinitySupport.ThreadAffinity;
+import Libraries.Core;
+import Libraries.ThreadAffinity;
 import java.lang.management.ManagementFactory;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -28,9 +28,13 @@ import javax.management.AttributeList;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import org.json.JSONObject;
-import sensorPlatforms.AssociatedHardware;
-import sensorPlatforms.MicazMote;
-import sensorPlatforms.Service;
+import SensorsCommunicationUnit.AssociatedHardware;
+import SensorsCommunicationUnit.MicazMote;
+import SensorsCommunicationUnit.Service;
+import ServiceProvisionUnit.RequestObject;
+import util.Util;
+import ServiceProvisionUnit.ServiceProvisionUnit;
+import SharedMemory.SharedMemory;
 
 /**
  *
@@ -39,9 +43,9 @@ import sensorPlatforms.Service;
 public class Control {
 
     private DecisionMaking dm;
+    private final SharedMemory memory;
     public Network net;
     public MoteLibSimulator mlbs;
-    ArrayList<MicazMote> sensorsList;
     //public Messaging messages;
     private boolean simulation = true;
     public SimulatedMessaging messages;
@@ -49,40 +53,48 @@ public class Control {
     String uid = "";
     boolean debug;
     public ThreadAffinity threadAffinity;
-    
+
     public final Core criticalSensingCore;
     public final Core HTTPCore;
     public final Core sensingCore;
     public final Core cronCore;
     public InetAddress addr = null;// = getFirstNonLoopbackAddress(true, false);
     public String ip;// = addr.getHostAddress();
-    public final String registryUnitIP;// = "127.0.0.1";
-    public final int registryPort;// = 8383;
-    public final int myPort;// = 8282;
+    ServiceProvisionUnit spu;
 
     public Control(boolean debug) {
+        memory = SharedMemory.<String,SharedMemory>get("SMU");
+        memory.<String,Control>set("MCU", this);
         dm = new DecisionMaking(this);
+        memory.<String,DecisionMaking>set("DMU", dm);
+        
         try {
             addr = getFirstNonLoopbackAddress(true, false);
+            memory.<String,InetAddress>set("addr", addr);
         } catch (SocketException ex) {
             System.exit(1);
         }
-        try{
+        try {
             ip = addr.getHostAddress();
+            
+        } catch (Exception e) {
+            ip = "127.0.0.1";
         }
-        catch(Exception e){
-            ip ="127.0.0.1";
-        }
+        memory.<String,String>set("ip", ip);
         System.out.println("Percieved ip is " + ip + " first non loopbak is " + addr);
-        registryUnitIP = "192.168.2.5";
-        registryPort = 8383;
-        myPort = 8181;
+        memory.<String,String>set("registryUnitIP", "192.168.2.5");
+        memory.<String,Integer>set("registryPort", 8383);
+        memory.<String,Integer>set("myPort", 8181);
+        spu = new ServiceProvisionUnit(this);
+        memory.<String,ServiceProvisionUnit>set("SPU", spu);
+        spu.startServer();
         System.out.println("Set ports");
         threadAffinity = new ThreadAffinity(this);
+        memory.<String,Integer>set("AvailableCores", threadAffinity.cores().length);
+        memory.<String,ThreadAffinity>set("Affinity", threadAffinity);
         this.debug = debug;
         String jsonReply = "";
         System.out.println("setAffinity");
-                
 
         if (threadAffinity.cores().length == 4) {
             criticalSensingCore = threadAffinity.cores()[0];
@@ -118,13 +130,14 @@ public class Control {
         System.out.println("reached");
         try {
             //if(simulation == true){
-                mlbs = new MoteLibSimulator();
-                messages = new SimulatedMessaging(mlbs);
-                net = new Network(messages);
-                mlbs.setNet(net);
+            mlbs = new MoteLibSimulator();
+            messages = new SimulatedMessaging(mlbs);
+            net = new Network(messages);
+            mlbs.setNet(net);
             //}
             System.out.println("Tryint to https reg unit");
-            jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register", addr);
+            jsonReply = "{result : \"success\", uid : \"1\"}";
+            //jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register", addr);
             System.out.println("Done https reg unit");
             //registers itself to the registry unit
             //MyLogger.log("http://" + registryUnitIP + ":" + registryPort + "/register" + URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"));
@@ -149,13 +162,13 @@ public class Control {
         } catch (Exception e) {
 
 //            MyLogger.log(jsonReply);
-
             e.printStackTrace();
         }
-        sensorsList = new ArrayList<MicazMote>();
+        
+        SharedMemory.<String,ArrayList<MicazMote>>set("SensorsList",new ArrayList<MicazMote>());
         dropDaemon = createDropDaemon();
         dropDaemon.start();
-        populate = constructPollDaemon();
+        populate = createPollDaemon();
         populate.start();
     }
 
@@ -178,7 +191,7 @@ public class Control {
                     MyLogger.log("Drop daemon started");
                 }
                 while (true) {
-                    for (MicazMote m : sensorsList) {
+                    for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
 
                         if (m.getLatestActivity() < Util.getTime() - 10000) {
                             if (debug) {
@@ -202,7 +215,9 @@ public class Control {
                             if (debug) {
                                 MyLogger.log("My uid at update is " + uid);
                             }
-                            String jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("uid=" + uid + "&services=" + services), "/delete", addr);
+                            RequestObject regReq = new RequestObject("http://" + SharedMemory.<String,String>get("registryUnitIP"), SharedMemory.<String,Integer>get("registryPort"), URLEncoder.encode("uid=" + uid + "&services=" + services), "/delete", addr, "POST");
+                            regReq = spu.httpContact(regReq);
+                            String jsonReply = regReq.getResponse();
                             if (debug) {
                                 MyLogger.log("reply is: " + jsonReply);
                             }
@@ -212,7 +227,7 @@ public class Control {
                         } catch (Exception ex) {
                             Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        sensorsList.remove(m);
+                        SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList").remove(m);
                         //sendDeleteRequestToRU
                     }
                     toRemove.clear();
@@ -240,7 +255,7 @@ public class Control {
 
                     boolean found = false;
                     MicazMote foundSensor = null;
-                    for (MicazMote m : sensorsList) {
+                    for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
                         if (m.getId() == sensor.getId()) {
                             foundSensor = m;
                             m.setLatestActivity(Util.getTime());
@@ -249,7 +264,7 @@ public class Control {
                         }
                     }
                     if (!found) {
-                        sensorsList.add(sensor);
+                        SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList").add(sensor);
                         String jsonReply = "";
                         if (uid.length() > 0) {
                             try {
@@ -263,7 +278,9 @@ public class Control {
                                 if (debug) {
                                     MyLogger.log("My uid at update is " + uid);
                                 }
-                                jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("uid=" + uid + "&services=" + services), "/update", addr);
+                                RequestObject regReq = new RequestObject("http://" + SharedMemory.<String,String>get("registryUnitIP"), SharedMemory.<String,Integer>get("registryPort"), URLEncoder.encode("uid=" + uid + "&services=" + services), "/update", addr, "POST");
+                                regReq = spu.httpContact(regReq);
+                                jsonReply = regReq.getResponse();
                                 if (debug) {
                                     MyLogger.log("reply is: " + jsonReply);
                                 }
@@ -317,7 +334,7 @@ public class Control {
         t.start();
     }
 
-    private Thread constructPollDaemon() {
+    private Thread createPollDaemon() {
         Thread t = new Thread(new Runnable() {
 
             @Override
@@ -347,10 +364,6 @@ public class Control {
             }
         });
         return t;
-    }
-
-    public ArrayList<MicazMote> getMotesList() {
-        return this.sensorsList;
     }
 
     //courtesy of How to get the ip of the computer on linux through Java? -> http://stackoverflow.com/questions/901755/how-to-get-the-ip-of-the-computer-on-linux-through-java
@@ -391,9 +404,9 @@ public class Control {
         messages.sendSwitchToggle(id);
     }
 
-    public void sendReadingRequest(int id, int type,String ServiceURI) {
-        for(MicazMote m : sensorsList){
-            if(m.getId() == id){
+    public void sendReadingRequest(int id, int type, String ServiceURI) {
+        for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
+            if (m.getId() == id) {
                 //messages.sendReadingRequest(id, type);
                 m.RequestServiceReading(uid, debug, messages);
             }
@@ -401,15 +414,15 @@ public class Control {
     }
 
     public void reportReading(int id, int messageType, int[] Readings) {
-        for (MicazMote m : sensorsList) {
+        for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == id) {
                 switch (messageType) {
-                    case lib.Constants.TEMP: {
+                    case SensorsCommunicationUnit.lib.Constants.TEMP: {
                         m.setTempReading(Util.median(Readings));
-                        System.out.println("tried to set reading to "+Util.median(Readings));
+                        System.out.println("tried to set reading to " + Util.median(Readings));
                         break;
                     }
-                    case lib.Constants.PHOTO: {
+                    case SensorsCommunicationUnit.lib.Constants.PHOTO: {
                         m.setPhotoReading(Util.median(Readings));
                         break;
                     }
@@ -424,7 +437,7 @@ public class Control {
     }
 
     public void reportSwitch(int id, int state) {
-        for (MicazMote m : sensorsList) {
+        for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == id) {
                 m.setLatestActivity(Util.getTime());
                 m.setSwitchState(state);
@@ -433,9 +446,9 @@ public class Control {
         }
     }
 
-    public void reportPollAck(MicazMote mote) {
+    public void UpdateRecordInSHM(MicazMote mote) {
         boolean found = false;
-        for (MicazMote m : sensorsList) {
+        for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == mote.getId()) {
                 m.setLatestActivity(Util.getTime());
                 found = true;
@@ -443,7 +456,7 @@ public class Control {
             }
         }
         if (!found) {
-            sensorsList.add(mote);
+            SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList").add(mote);
             String jsonReply;
             if (uid.length() > 0) {
                 try {
@@ -457,7 +470,11 @@ public class Control {
 
                     services += "]}";
                     System.out.println("My uid at update is " + uid);
-                    jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("uid=" + uid + "&services=" + services), "/update", addr);
+
+                    RequestObject regReq = new RequestObject("http://" + SharedMemory.<String,String>get("registryUnitIP"), SharedMemory.<String,Integer>get("registryPort"), URLEncoder.encode("uid=" + uid + "&services=" + services), "/update", addr, "POST");
+                    regReq = spu.httpContact(regReq);
+                    jsonReply = regReq.getResponse();
+
                     System.out.println("reply is: " + jsonReply);
                     JSONObject obj;
 
