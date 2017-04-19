@@ -5,31 +5,22 @@
  */
 package SensorsCommunicationUnit;
 
-import SensorsCommunicationUnit.lib.Switch_Toggle;
-import SensorsCommunicationUnit.lib.ReadingMsgAnswer;
-import SensorsCommunicationUnit.lib.Constants;
-import SensorsCommunicationUnit.lib.ReadingMsgRequest;
-import SensorsCommunicationUnit.lib.Poll_Answer;
-import SensorsCommunicationUnit.lib.Switch_Poll;
-import SensorsCommunicationUnit.lib.Switch_Answer;
-import SensorsCommunicationUnit.lib.Poll_Request;
 import net.tinyos.message.Message;
 import net.tinyos.message.MessageListener;
 import net.tinyos.message.MoteIF;
 import net.tinyos.util.PrintStreamMessenger;
-import SensorsCommunicationUnit.MicazMote;
 import ControlUnit.Control;
 /**
  *
  * @author billaros
  */
-public class Messaging implements MessageListener {
+public class SensorsCommunicationUnit implements MessageListener {
 
-    MoteIF mote;
+    static MoteIF mote;
     Control c;
     
-    public Messaging(Control c) {
-        this.c=c;
+    public SensorsCommunicationUnit() {
+        this.c=SharedMemory.SharedMemory.<String,Control>get("MCU");
         mote = new MoteIF(PrintStreamMessenger.err);
         mote.registerListener(new Poll_Answer(), this);
         mote.registerListener(new ReadingMsgAnswer(), this);
@@ -38,7 +29,7 @@ public class Messaging implements MessageListener {
     }
     /* Broadcast a version+interval message. */
 
-    public void sendPoll() {
+    public static void sendPoll() {
         Poll_Request pr = new Poll_Request();
         pr.set_messageType(Constants.POLL);
         
@@ -50,7 +41,7 @@ public class Messaging implements MessageListener {
         }
     }
     
-    public void sendReadingRequest(int id,int type) {
+    public static void sendReadingRequest(int id,int type) {
         ReadingMsgRequest req = new ReadingMsgRequest();
         req.set_id(id);
         req.set_messageType(Constants.READINGREQUEST);
@@ -65,7 +56,7 @@ public class Messaging implements MessageListener {
     }
     
     
-    public void sendSwitchPoll(int id) {
+    public static void sendSwitchPoll(int id) {
         Switch_Poll req = new Switch_Poll();
         req.set_id(id);
         req.set_messageType(Constants.SWITCHPOLL);        
@@ -78,7 +69,7 @@ public class Messaging implements MessageListener {
         }
     }
     
-    public void sendSwitchToggle(int id) {
+    public static void sendSwitchToggle(int id) {
         Switch_Toggle req = new Switch_Toggle();
         req.set_id(id);
         req.set_messageType(Constants.SWITCHCHANGE);        

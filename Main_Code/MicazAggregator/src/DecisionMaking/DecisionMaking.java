@@ -5,6 +5,7 @@
  */
 package DecisionMaking;
 
+import ControlUnit.RequestExecutionThread;
 import Logging.MyLogger;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,35 +21,17 @@ import java.util.Random;
  */
 public class DecisionMaking {
 
-    private final List<SuperSmahtThread> threads = Collections.synchronizedList(new ArrayList<SuperSmahtThread>());
-    private Control myControl;
+    private final List<RequestExecutionThread> threads = Collections.synchronizedList(new ArrayList<RequestExecutionThread>());
     private int id = 0;
     private Thread magic;
     private boolean run;
 
-    public int add(String ServiceArguements) {
-        System.out.println("ADD URL IS " + ServiceArguements);
-        id = (id + 1) % 10000;
-
-        System.out.println("DM HERE ID IS" + id);
-        ServiceEstimation service = new ServiceEstimation(ServiceArguements);
-        System.out.println("COMPUTED CL");
-        SuperSmahtThread thread = new SuperSmahtThread(id, service, myControl, ServiceArguements);
-        System.out.println("CREATED THREAD");
-        synchronized (threads) {
-            threads.add(thread);
-        }
-        System.out.println("ADDED THREAD");
-        return id;
-    }
-
-    public DecisionMaking(Control c) {
-        this.myControl = c;
+    public DecisionMaking() {
         run = true;
-        startDecisionDaemon();
+        //startDecisionDaemon();
     }
 
-    private void startDecisionDaemon() {
+    /*private void startDecisionDaemon() {
         new Thread(new Runnable() {
 
             @Override
@@ -56,8 +39,8 @@ public class DecisionMaking {
 
                 while (run) {
                     synchronized (threads) {
-                        for (Iterator<SuperSmahtThread> iter = threads.iterator(); iter.hasNext();) {
-                            SuperSmahtThread thread = iter.next();
+                        for (Iterator<RequestExecutionThread> iter = threads.iterator(); iter.hasNext();) {
+                            RequestExecutionThread thread = iter.next();
                             if (!thread.isRunning()) {
                                 //MyLogger.log(thread + "not running");
                                 if(!(thread.getWhatCore()==thread.getC().criticalSensingCore || thread.getWhatCore()==thread.getC().sensingCore))
@@ -81,13 +64,13 @@ public class DecisionMaking {
             }
         }).start();
 
-    }
+    }*/
 
     public String getResultOf(int id) {
         synchronized (threads) {
-            SuperSmahtThread t = null;
-            for (Iterator<SuperSmahtThread> iter = threads.iterator(); iter.hasNext();) {
-                SuperSmahtThread thread = iter.next();
+            RequestExecutionThread t = null;
+            for (Iterator<RequestExecutionThread> iter = threads.iterator(); iter.hasNext();) {
+                RequestExecutionThread thread = iter.next();
                 if (thread.getId() == id) {
                     t = thread;
                     //MyLogger.log(thread + "got result");

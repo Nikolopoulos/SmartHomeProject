@@ -24,12 +24,11 @@ import java.util.concurrent.Semaphore;
  *
  * @author billaros
  */
-class DoComms implements Runnable {
+public class DoComms implements Runnable {
 
     private Socket server;
     private String line, input, requestedURL, noBreakInput;
     private final Control con;
-    private DecisionMaking dm;
     private Core core;
     private String reply;
     private Semaphore sema;
@@ -38,7 +37,6 @@ class DoComms implements Runnable {
     DoComms(Socket server, Control c, Core core) {
         this.server = server;
         this.con = c;
-        this.dm = c.getDm();
         this.core = core;
         this.sema = new Semaphore(0, true);
         response = new ResponseObject(this.server);
@@ -174,8 +172,8 @@ class DoComms implements Runnable {
         System.out.println("starts with sensor and has both length and name");
         String reply = "{\"sensor\":{";
         System.out.println("adding to dm");
-        int threadID = dm.add(url);
-        System.out.println("added to dm");
+        int threadID = con.add(url,this);
+        System.out.println("added to bucket");
         String returnVal = "";
 
         while (returnVal.equalsIgnoreCase("")) {
@@ -184,8 +182,7 @@ class DoComms implements Runnable {
                 Thread.sleep(300);
             } catch (InterruptedException ex) {
                 Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            returnVal = dm.getResultOf(threadID);
+            }           
         }
 
         System.out.println("Returnval = " + returnVal);

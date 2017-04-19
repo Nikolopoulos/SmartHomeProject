@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package DecisionMaking;
+package ControlUnit;
 
 import Libraries.Core;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import SensorsCommunicationUnit.MicazMote;
 import ControlUnit.Control;
+import DecisionMaking.ServiceEstimation;
 import SharedMemory.SharedMemory;
 import java.util.ArrayList;
 
@@ -17,22 +18,20 @@ import java.util.ArrayList;
  *
  * @author billaros
  */
-public class SuperSmahtThread implements Runnable {
+public class RequestExecutionThread implements Runnable {
 
     private int id;
     private String sirh;
-    private ServiceEstimation tsoulou;
-    private Core whatCore;
-    private Control c;
+    private int criticality;
+    private Core core;
     private boolean running;
-    String ServiceArguements;
+    String url;
 
-    public SuperSmahtThread(int id, ServiceEstimation tsoulou, Control myControl, String ServiceArguements) {
+    public RequestExecutionThread(int id, int criticality, String url) {
         this.id = id;
         this.sirh = "";
-        this.tsoulou = tsoulou;
-        this.ServiceArguements = ServiceArguements;
-        c = myControl;
+        this.criticality = criticality;
+        this.url = url;
         running = false;
     }
 
@@ -40,14 +39,22 @@ public class SuperSmahtThread implements Runnable {
         return id;
     }
 
-    public ServiceEstimation getTsoulou() {
-        return tsoulou;
+    public int getCriticality() {
+        return criticality;
     }
 
-    public void setTsoulou(ServiceEstimation tsoulou) {
-        this.tsoulou = tsoulou;
+    public void setCriticality(int criticality) {
+        this.criticality = criticality;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+    
     public boolean isRunning() {
         return running;
     }
@@ -57,19 +64,11 @@ public class SuperSmahtThread implements Runnable {
     }
 
     public Core getWhatCore() {
-        return whatCore;
+        return core;
     }
 
     public void setWhatCore(Core whatCore) {
-        this.whatCore = whatCore;
-    }
-
-    public Control getC() {
-        return c;
-    }
-
-    public void setC(Control c) {
-        this.c = c;
+        this.core = whatCore;
     }
 
     public void setId(int id) {
@@ -88,19 +87,20 @@ public class SuperSmahtThread implements Runnable {
     public void run() {
         running = true;
         try {
-            whatCore.attachTo();
+            core.attachTo();
         } catch (Exception ex) {
-            Logger.getLogger(SuperSmahtThread.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RequestExecutionThread.class.getName()).log(Level.SEVERE, null, ex);
         }
-        int ID = Integer.parseInt(ServiceArguements.split("/")[2]);
-        String ServiceURI = "/" + ServiceArguements.split("/")[ServiceArguements.split("/").length - 1];
+        int ID = Integer.parseInt(url.split("/")[2]);
+        String ServiceURI = "/" + url.split("/")[url.split("/").length - 1];
         for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == ID) {
-                if (this.getTsoulou().getClEstimation() > 2.5) {
-                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], false,c.messages);
+                if (criticality > 2.5) {
+                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], false);
                 } else {
-                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], true,c.messages);
+                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], true);
                 }
+                SharedMemory.<String,Control>get("MCU").setResponseOfRequest(id, sirh);
                 break;
             }
         }

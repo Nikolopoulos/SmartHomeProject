@@ -18,4 +18,6 @@ public class Statics {
     public static int PHOTO = 20;
     
     public static boolean ShutingDown = false;
+    
+    public static int CriticallityLevels = 6;
 }

@@ -37,7 +37,7 @@ public class ServiceProvisionUnit {
             public void run() {
                 try {
                     try {
-                        finalControl.HTTPCore.attachTo();
+                        finalControl.findCoreById(0).getCore().attachTo();
                          System.out.println("Server attached!");
                     } catch (Exception ex) {
                         Logger.getLogger(ServiceProvisionUnit.class.getName()).log(Level.SEVERE, null, ex);
@@ -48,7 +48,7 @@ public class ServiceProvisionUnit {
                     while ((i++ < maxConnections) || (maxConnections == 0)) {
                         server = listener.accept();
                          System.out.println("Server Accepted!!");
-                        DoComms conn_c = new DoComms(server, finalControl,finalControl.HTTPCore);
+                        DoComms conn_c = new DoComms(server, finalControl,finalControl.findCoreById(0).getCore());
                         Thread clientConnectionThread = new Thread(conn_c);
                         clientConnectionThread.setName("clientConnectionThread"+i);
                         clientConnectionThread.start();

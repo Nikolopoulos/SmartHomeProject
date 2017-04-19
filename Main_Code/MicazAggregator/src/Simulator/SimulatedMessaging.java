@@ -5,7 +5,7 @@
  */
 package Simulator;
 
-import SensorsCommunicationUnit.lib.Constants;
+import SensorsCommunicationUnit.Constants;
 import SensorsCommunicationUnit.MicazMote;
 import ControlUnit.Control;
 /**

@@ -31,6 +31,7 @@ import org.json.JSONObject;
 import SensorsCommunicationUnit.AssociatedHardware;
 import SensorsCommunicationUnit.MicazMote;
 import SensorsCommunicationUnit.Service;
+import ServiceProvisionUnit.DoComms;
 import ServiceProvisionUnit.RequestObject;
 import util.Util;
 import ServiceProvisionUnit.ServiceProvisionUnit;
@@ -46,7 +47,7 @@ public class Control {
     private final SharedMemory memory;
     public Network net;
     public MoteLibSimulator mlbs;
-    //public Messaging messages;
+
     private boolean simulation = true;
     public SimulatedMessaging messages;
     Thread dropDaemon, populate;
@@ -54,79 +55,102 @@ public class Control {
     boolean debug;
     public ThreadAffinity threadAffinity;
 
-    public final Core criticalSensingCore;
-    public final Core HTTPCore;
-    public final Core sensingCore;
-    public final Core cronCore;
+    /*public final Core criticalSensingCore;
+     public final Core HTTPCore;
+     public final Core sensingCore;
+     public final Core cronCore;*/
     public InetAddress addr = null;// = getFirstNonLoopbackAddress(true, false);
     public String ip;// = addr.getHostAddress();
     ServiceProvisionUnit spu;
+    int threadId = 0;
 
     public Control(boolean debug) {
-        memory = SharedMemory.<String,SharedMemory>get("SMU");
-        memory.<String,Control>set("MCU", this);
-        dm = new DecisionMaking(this);
-        memory.<String,DecisionMaking>set("DMU", dm);
-        
+        memory = SharedMemory.<String, SharedMemory>get("SMU");
+        memory.<String, Control>set("MCU", this);
+        dm = new DecisionMaking();
+        memory.<String, DecisionMaking>set("DMU", dm);
+        SensorsCommunicationUnit.SensorsCommunicationUnit SCU = new SensorsCommunicationUnit.SensorsCommunicationUnit();
+        memory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>set("SCU", SCU);
+        memory.<String, Integer>set("CriticalityLevels", util.Statics.CriticallityLevels);
+        memory.<String, String>set("ServingAlgorithm", "CAFIFO");
+
+        for (int i = 1; i < memory.<String, Integer>get("CriticalityLevels") + 1; i++) {
+            memory.<String, ArrayList>set("ThreadBucket" + i, new ArrayList<RequestExecutionThread>());
+        }
+        memory.<String, ArrayList>set("RequestBucket", new ArrayList<PendingRequest>());
         try {
             addr = getFirstNonLoopbackAddress(true, false);
-            memory.<String,InetAddress>set("addr", addr);
+            memory.<String, InetAddress>set("addr", addr);
         } catch (SocketException ex) {
             System.exit(1);
         }
         try {
             ip = addr.getHostAddress();
-            
+
         } catch (Exception e) {
             ip = "127.0.0.1";
         }
-        memory.<String,String>set("ip", ip);
+        memory.<String, String>set("ip", ip);
         System.out.println("Percieved ip is " + ip + " first non loopbak is " + addr);
-        memory.<String,String>set("registryUnitIP", "192.168.2.5");
-        memory.<String,Integer>set("registryPort", 8383);
-        memory.<String,Integer>set("myPort", 8181);
+        memory.<String, String>set("registryUnitIP", "192.168.2.5");
+        memory.<String, Integer>set("registryPort", 8383);
+        memory.<String, Integer>set("myPort", 8181);
         spu = new ServiceProvisionUnit(this);
-        memory.<String,ServiceProvisionUnit>set("SPU", spu);
+        memory.<String, ServiceProvisionUnit>set("SPU", spu);
         spu.startServer();
         System.out.println("Set ports");
         threadAffinity = new ThreadAffinity(this);
-        memory.<String,Integer>set("AvailableCores", threadAffinity.cores().length);
-        memory.<String,ThreadAffinity>set("Affinity", threadAffinity);
+        memory.<String, Integer>set("AvailableCores", threadAffinity.cores().length);
+        memory.<String, ThreadAffinity>set("Affinity", threadAffinity);
+
         this.debug = debug;
         String jsonReply = "";
         System.out.println("setAffinity");
 
-        if (threadAffinity.cores().length == 4) {
-            criticalSensingCore = threadAffinity.cores()[0];
-            HTTPCore = threadAffinity.cores()[1];
-            sensingCore = threadAffinity.cores()[2];
-            cronCore = threadAffinity.cores()[3];
-        } else if (threadAffinity.cores().length == 2) {
-            criticalSensingCore = threadAffinity.cores()[0];
-            HTTPCore = threadAffinity.cores()[1];
-            sensingCore = threadAffinity.cores()[1];
-            cronCore = threadAffinity.cores()[0];
-        } else if (threadAffinity.cores().length == 1) {
-            criticalSensingCore = threadAffinity.cores()[0];
-            HTTPCore = threadAffinity.cores()[0];
-            sensingCore = threadAffinity.cores()[0];
-            cronCore = threadAffinity.cores()[0];
-        } else {
-            criticalSensingCore = threadAffinity.cores()[0];
-            HTTPCore = threadAffinity.cores()[0];
-            sensingCore = threadAffinity.cores()[0];
-            cronCore = threadAffinity.cores()[0];
+        memory.<String, ArrayList<CoreDefinition>>set("Cores", new ArrayList<CoreDefinition>());
+        for (int i = 0; i < threadAffinity.cores().length; i++) {
+            boolean pub, run;
+            if (i == 0) {
+                pub = false;
+                run = true;
+            } else {
+                pub = true;
+                run = false;
+            }
+            memory.<String, ArrayList<CoreDefinition>>get("Cores").add(new CoreDefinition(threadAffinity.cores()[i], run, 0, i, pub));
         }
 
-        MyLogger.log("Available cores: " + threadAffinity.cores().length);
-        MyLogger.log("criticalCore: " + criticalSensingCore);
-        MyLogger.log("HTTPCore: " + HTTPCore);
-        MyLogger.log("sensingCore: " + sensingCore);
-        MyLogger.log("cronCore: " + cronCore);
-        criticalSensingCore.setC(this);
-        HTTPCore.setC(this);
-        sensingCore.setC(this);
-        cronCore.setC(this);
+        /*if (threadAffinity.cores().length == 4) {
+         criticalSensingCore = threadAffinity.cores()[0];
+         HTTPCore = threadAffinity.cores()[1];
+         sensingCore = threadAffinity.cores()[2];
+         cronCore = threadAffinity.cores()[3];
+         } else if (threadAffinity.cores().length == 2) {
+         criticalSensingCore = threadAffinity.cores()[0];
+         HTTPCore = threadAffinity.cores()[1];
+         sensingCore = threadAffinity.cores()[1];
+         cronCore = threadAffinity.cores()[0];
+         } else if (threadAffinity.cores().length == 1) {
+         criticalSensingCore = threadAffinity.cores()[0];
+         HTTPCore = threadAffinity.cores()[0];
+         sensingCore = threadAffinity.cores()[0];
+         cronCore = threadAffinity.cores()[0];
+         } else {
+         criticalSensingCore = threadAffinity.cores()[0];
+         HTTPCore = threadAffinity.cores()[0];
+         sensingCore = threadAffinity.cores()[0];
+         cronCore = threadAffinity.cores()[0];
+         }
+
+         MyLogger.log("Available cores: " + threadAffinity.cores().length);
+         MyLogger.log("criticalCore: " + criticalSensingCore);
+         MyLogger.log("HTTPCore: " + HTTPCore);
+         MyLogger.log("sensingCore: " + sensingCore);
+         MyLogger.log("cronCore: " + cronCore);
+         criticalSensingCore.setC(this);
+         HTTPCore.setC(this);
+         sensingCore.setC(this);
+         cronCore.setC(this);*/
         System.out.println("reached");
         try {
             //if(simulation == true){
@@ -164,8 +188,8 @@ public class Control {
 //            MyLogger.log(jsonReply);
             e.printStackTrace();
         }
-        
-        SharedMemory.<String,ArrayList<MicazMote>>set("SensorsList",new ArrayList<MicazMote>());
+
+        SharedMemory.<String, ArrayList<MicazMote>>set("SensorsList", new ArrayList<MicazMote>());
         dropDaemon = createDropDaemon();
         dropDaemon.start();
         populate = createPollDaemon();
@@ -182,7 +206,7 @@ public class Control {
             @Override
             public void run() {
                 try {
-                    cronCore.attachTo();
+                    findCoreById(0).getCore().attachTo();
                 } catch (Exception ex) {
                     Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -191,7 +215,7 @@ public class Control {
                     MyLogger.log("Drop daemon started");
                 }
                 while (true) {
-                    for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
+                    for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
 
                         if (m.getLatestActivity() < Util.getTime() - 10000) {
                             if (debug) {
@@ -215,7 +239,7 @@ public class Control {
                             if (debug) {
                                 MyLogger.log("My uid at update is " + uid);
                             }
-                            RequestObject regReq = new RequestObject("http://" + SharedMemory.<String,String>get("registryUnitIP"), SharedMemory.<String,Integer>get("registryPort"), URLEncoder.encode("uid=" + uid + "&services=" + services), "/delete", addr, "POST");
+                            RequestObject regReq = new RequestObject("http://" + SharedMemory.<String, String>get("registryUnitIP"), SharedMemory.<String, Integer>get("registryPort"), URLEncoder.encode("uid=" + uid + "&services=" + services), "/delete", addr, "POST");
                             regReq = spu.httpContact(regReq);
                             String jsonReply = regReq.getResponse();
                             if (debug) {
@@ -227,7 +251,7 @@ public class Control {
                         } catch (Exception ex) {
                             Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList").remove(m);
+                        SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList").remove(m);
                         //sendDeleteRequestToRU
                     }
                     toRemove.clear();
@@ -251,11 +275,11 @@ public class Control {
             @Override
             public void run() {
                 try {
-                    sensingCore.attachTo();
+                    findCoreById(0).getCore().attachTo();
 
                     boolean found = false;
                     MicazMote foundSensor = null;
-                    for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
+                    for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
                         if (m.getId() == sensor.getId()) {
                             foundSensor = m;
                             m.setLatestActivity(Util.getTime());
@@ -264,7 +288,7 @@ public class Control {
                         }
                     }
                     if (!found) {
-                        SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList").add(sensor);
+                        SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList").add(sensor);
                         String jsonReply = "";
                         if (uid.length() > 0) {
                             try {
@@ -278,7 +302,7 @@ public class Control {
                                 if (debug) {
                                     MyLogger.log("My uid at update is " + uid);
                                 }
-                                RequestObject regReq = new RequestObject("http://" + SharedMemory.<String,String>get("registryUnitIP"), SharedMemory.<String,Integer>get("registryPort"), URLEncoder.encode("uid=" + uid + "&services=" + services), "/update", addr, "POST");
+                                RequestObject regReq = new RequestObject("http://" + SharedMemory.<String, String>get("registryUnitIP"), SharedMemory.<String, Integer>get("registryPort"), URLEncoder.encode("uid=" + uid + "&services=" + services), "/update", addr, "POST");
                                 regReq = spu.httpContact(regReq);
                                 jsonReply = regReq.getResponse();
                                 if (debug) {
@@ -340,7 +364,7 @@ public class Control {
             @Override
             public void run() {
                 try {
-                    cronCore.attachTo();
+                    findCoreById(0).getCore().attachTo();
 
                 } catch (Exception ex) {
                     Logger.getLogger(Control.class
@@ -404,25 +428,25 @@ public class Control {
         messages.sendSwitchToggle(id);
     }
 
-    public void sendReadingRequest(int id, int type, String ServiceURI) {
-        for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
+    public void sendReadingRequest(int id, boolean cached, String ServiceURI) {
+        for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == id) {
                 //messages.sendReadingRequest(id, type);
-                m.RequestServiceReading(uid, debug, messages);
+                m.RequestServiceReading(uid, cached);
             }
         }
     }
 
     public void reportReading(int id, int messageType, int[] Readings) {
-        for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
+        for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == id) {
                 switch (messageType) {
-                    case SensorsCommunicationUnit.lib.Constants.TEMP: {
+                    case SensorsCommunicationUnit.Constants.TEMP: {
                         m.setTempReading(Util.median(Readings));
                         System.out.println("tried to set reading to " + Util.median(Readings));
                         break;
                     }
-                    case SensorsCommunicationUnit.lib.Constants.PHOTO: {
+                    case SensorsCommunicationUnit.Constants.PHOTO: {
                         m.setPhotoReading(Util.median(Readings));
                         break;
                     }
@@ -437,7 +461,7 @@ public class Control {
     }
 
     public void reportSwitch(int id, int state) {
-        for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
+        for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == id) {
                 m.setLatestActivity(Util.getTime());
                 m.setSwitchState(state);
@@ -448,7 +472,7 @@ public class Control {
 
     public void UpdateRecordInSHM(MicazMote mote) {
         boolean found = false;
-        for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
+        for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == mote.getId()) {
                 m.setLatestActivity(Util.getTime());
                 found = true;
@@ -456,7 +480,7 @@ public class Control {
             }
         }
         if (!found) {
-            SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList").add(mote);
+            SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList").add(mote);
             String jsonReply;
             if (uid.length() > 0) {
                 try {
@@ -471,7 +495,7 @@ public class Control {
                     services += "]}";
                     System.out.println("My uid at update is " + uid);
 
-                    RequestObject regReq = new RequestObject("http://" + SharedMemory.<String,String>get("registryUnitIP"), SharedMemory.<String,Integer>get("registryPort"), URLEncoder.encode("uid=" + uid + "&services=" + services), "/update", addr, "POST");
+                    RequestObject regReq = new RequestObject("http://" + SharedMemory.<String, String>get("registryUnitIP"), SharedMemory.<String, Integer>get("registryPort"), URLEncoder.encode("uid=" + uid + "&services=" + services), "/update", addr, "POST");
                     regReq = spu.httpContact(regReq);
                     jsonReply = regReq.getResponse();
 
@@ -485,6 +509,65 @@ public class Control {
             }
 
         }
+    }
+
+    public int add(String url, DoComms request) {
+        System.out.println("ADD URL IS " + url);
+        threadId = (threadId + 1) % 10000;
+
+        addRequestToBucket(request, threadId);
+        System.out.println("DM HERE ID IS" + threadId);
+        int criticality = getCriticalityLevelOfRequest(url);
+        RequestExecutionThread thread = new RequestExecutionThread(threadId, criticality, url);
+        System.out.println("CREATED THREAD");
+        memory.<String, ArrayList<RequestExecutionThread>>get("ThreadBucket" + criticality).add(thread);
+
+        System.out.println("ADDED THREAD");
+        return threadId;
+    }
+
+    private void addRequestToBucket(DoComms request, int id) {
+        memory.<String, ArrayList<PendingRequest>>get("RequestBucket").add(new PendingRequest(request, id));
+    }
+
+    private PendingRequest findRequestFromBucket(int id) {
+        for (PendingRequest p : memory.<String, ArrayList<PendingRequest>>get("RequestBucket")) {
+            if (p.getId() == id) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public void setResponseOfRequest(int id, String reply) {
+        findRequestFromBucket(id).setReply(reply);
+    }
+
+    private int getCriticalityLevelOfRequest(String url) {
+        int criticality = 1;
+        String[] parametersSplit = url.split("\\?");
+        if (parametersSplit.length < 1) {
+            criticality = 1;
+            System.out.println("parametersSplit <2 = " + parametersSplit.length);
+            for (String s : parametersSplit) {
+                //MyLogger.log(s);
+            }
+        } else {
+            for (String s : parametersSplit) {
+                System.out.println("parametersSplit !<2 = " + s);
+            }
+
+            String[] parameters = parametersSplit[1].split("&");
+
+            for (String parameter : parameters) {
+                if (parameter.startsWith("crit")) {
+                    String value = parameter.split("=")[1];
+                    criticality = Integer.parseInt(value);
+                    break;
+                }
+            }
+        }
+        return criticality;
     }
 
     public static double getProcessCpuLoad() throws Exception {
@@ -506,5 +589,29 @@ public class Control {
         }
         // returns a percentage value with 1 decimal point precision
         return ((int) (value * 1000) / 10.0);
+    }
+
+    public CoreDefinition findCoreById(int id) {
+
+        for (int i = 0; i < memory.<String, ArrayList<CoreDefinition>>get("Cores").size(); i++) {
+            if (memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i).getId() == id) {
+                memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i);
+            }
+        }
+        return null;
+    }
+
+    private PendingRequest getNextRequestToServe() {
+        switch (memory.<String, String>get("ServingAlgorithm")) {
+            case "CAFIFO": {
+                for (int i = memory.<String, Integer>get("AvailableCores"); i > 0; i--) {
+                    if(memory.<String, ArrayList>get("ThreadBucket" + i).size()>0){
+                        return memory.<String, ArrayList<PendingRequest>>get("ThreadBucket" + i).remove(0);
+                    }
+                }
+                break;
+            }
+        }
+        return null;
     }
 }

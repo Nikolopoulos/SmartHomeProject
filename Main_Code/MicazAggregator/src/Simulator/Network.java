@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import SensorsCommunicationUnit.lib.Constants;
+import SensorsCommunicationUnit.Constants;
 import util.Statics;
 
 /**
