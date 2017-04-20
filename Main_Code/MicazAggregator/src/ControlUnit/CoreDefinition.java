@@ -33,8 +33,11 @@ public class CoreDefinition {
     public void setPublicResource(boolean publicResource) {
         this.publicResource = publicResource;
     }
-
-
+    
+    public void attachTo(RequestExecutionThread req){
+        req.setWhatCore(this);
+        this.load++;
+    }
 
     public Core getCore() {
         return core;
