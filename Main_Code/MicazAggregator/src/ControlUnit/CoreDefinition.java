@@ -61,6 +61,11 @@ public class CoreDefinition {
         return utility == 0;
     }
 
+    public void attachTo(RequestExecutionThread req) {
+        req.setWhatCore(this);
+        this.load++;
+    }
+
     public Core getCore() {
         return core;
     }

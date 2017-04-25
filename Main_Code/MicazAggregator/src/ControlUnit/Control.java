@@ -118,7 +118,6 @@ public class Control {
             }
             memory.<String, ArrayList<CoreDefinition>>get("Cores").add(new CoreDefinition(threadAffinity.cores()[i], run, 0, i, pub));
         }
-
         System.out.println("reached");
         try {
             if (simulation == true) {
@@ -162,6 +161,7 @@ public class Control {
         dropDaemon.start();
         populate = createPollDaemon();
         populate.start();
+        requestServingDaemon();
     }
 
     public DecisionMaking getDm() {
@@ -569,17 +569,55 @@ public class Control {
         return null;
     }
 
-    private PendingRequest getNextRequestToServe() {
+    public void requestServingDaemon() {
+        Thread daemon = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    CoreDefinition core = getServingCore();
+                    if (core == null) {
+                        //raise dmu exception
+                        continue;
+                    }
+                    RequestExecutionThread req = getNextRequestToServe();
+                    if (req == null) {
+                        continue;
+                    }
+                    core.attachTo(req);
+                    req.run();
+                }
+            }
+        });
+        daemon.start();
+    }
+
+    private RequestExecutionThread getNextRequestToServe() {
         switch (memory.<String, String>get("ServingAlgorithm")) {
             case "CAFIFO": {
                 for (int i = memory.<String, Integer>get("AvailableCores"); i > 0; i--) {
                     if (memory.<String, ArrayList>get("ThreadBucket" + i).size() > 0) {
-                        return memory.<String, ArrayList<PendingRequest>>get("ThreadBucket" + i).remove(0);
+                        return memory.<String, ArrayList<RequestExecutionThread>>get("ThreadBucket" + i).remove(0);
                     }
                 }
                 break;
             }
         }
         return null;
+    }
+
+    private CoreDefinition getServingCore() {
+        CoreDefinition currentCandidate = null;
+        for (CoreDefinition core : memory.<String, ArrayList<CoreDefinition>>get("Cores")) {
+            if (core.publicResource
+                    && core.running
+                    && core.getLoad() < util.Statics.maxThreads) {
+                if (currentCandidate == null) {
+                    currentCandidate = core;
+                } else if (currentCandidate.getLoad() > core.getLoad()) {
+                    currentCandidate = core;
+                }
+            }
+        }
+        return currentCandidate;
     }
 }

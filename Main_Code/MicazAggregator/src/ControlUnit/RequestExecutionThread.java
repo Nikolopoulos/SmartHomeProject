@@ -23,7 +23,7 @@ public class RequestExecutionThread implements Runnable {
     private int id;
     private String sirh;
     private int criticality;
-    private Core core;
+    private CoreDefinition core;
     private boolean running;
     String url;
 
@@ -63,11 +63,11 @@ public class RequestExecutionThread implements Runnable {
         this.running = running;
     }
 
-    public Core getWhatCore() {
+    public CoreDefinition getWhatCore() {
         return core;
     }
 
-    public void setWhatCore(Core whatCore) {
+    public void setWhatCore(CoreDefinition whatCore) {
         this.core = whatCore;
     }
 
@@ -87,7 +87,7 @@ public class RequestExecutionThread implements Runnable {
     public void run() {
         running = true;
         try {
-            core.attachTo();
+            core.attachTo(this);
         } catch (Exception ex) {
             Logger.getLogger(RequestExecutionThread.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -101,7 +101,8 @@ public class RequestExecutionThread implements Runnable {
                     sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], true);
                 }
                 SharedMemory.<String,Control>get("MCU").setResponseOfRequest(id, sirh);
-                break;
+                core.setLoad(core.getLoad()-1);
+                break;                
             }
         }
 

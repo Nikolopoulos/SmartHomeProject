@@ -20,4 +20,5 @@ public class Statics {
     public static boolean ShutingDown = false;
     
     public static int CriticallityLevels = 6;
+    public static int maxThreads = 15;
 }
