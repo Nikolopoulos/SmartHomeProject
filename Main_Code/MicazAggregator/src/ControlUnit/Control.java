@@ -6,11 +6,13 @@
 package ControlUnit;
 
 import DecisionMaking.DecisionMaking;
+import DecisionMakingUnit.DecisionMakingUnit;
 import Logging.MyLogger;
 import Simulator.MoteLibSimulator;
 import Simulator.Network;
 import Simulator.SimulatedMessaging;
 import Libraries.ThreadAffinity;
+import MonitoringUnit.MonitoredVariable;
 import MonitoringUnit.MonitoringUnit;
 import java.lang.management.ManagementFactory;
 import java.net.Inet4Address;
@@ -36,6 +38,7 @@ import ServiceProvisionUnit.RequestObject;
 import util.Util;
 import ServiceProvisionUnit.ServiceProvisionUnit;
 import SharedMemory.SharedMemory;
+import util.CustomException;
 
 /**
  *
@@ -43,7 +46,7 @@ import SharedMemory.SharedMemory;
  */
 public class Control {
 
-    private DecisionMaking dm;
+    private DecisionMakingUnit dm;
     private final SharedMemory memory;
     public Network net;
     public MoteLibSimulator mlbs;
@@ -63,8 +66,8 @@ public class Control {
     public Control(boolean debug) {
         memory = SharedMemory.<String, SharedMemory>get("SMU");
         memory.<String, Control>set("MCU", this);
-        dm = new DecisionMaking();
-        memory.<String, DecisionMaking>set("DMU", dm);
+        dm = new DecisionMakingUnit();
+        memory.<String, DecisionMakingUnit>set("DMU", dm);
         SensorsCommunicationUnit.SensorsCommunicationUnit SCU = new SensorsCommunicationUnit.SensorsCommunicationUnit();
         memory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>set("SCU", SCU);
         memory.<String, Integer>set("CriticalityLevels", util.Statics.CriticallityLevels);
@@ -161,10 +164,12 @@ public class Control {
         dropDaemon.start();
         populate = createPollDaemon();
         populate.start();
+        loadMonitoredVariables();
         requestServingDaemon();
+
     }
 
-    public DecisionMaking getDm() {
+    public DecisionMakingUnit getDm() {
         return dm;
     }
 
@@ -619,5 +624,57 @@ public class Control {
             }
         }
         return currentCandidate;
+    }
+
+    public void setCoreMode(int id, int mode) {
+        for (CoreDefinition core : SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")) {
+            if (core.getId() == id) {
+                switch (mode) {
+                    case -1: {
+                        core.setUnderUtilized();
+                        break;
+                    }
+                    case 0: {
+                        core.setNormalLoad();
+                        break;
+                    }
+                    case 1: {
+                        core.setOverLoadLimit();
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    public void setCoreAvailability(int id, boolean mode) {
+        for (CoreDefinition core : SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")) {
+            if (core.getId() == id) {
+                core.setRunning(debug);
+                break;
+            }
+        }
+    }
+
+    private void loadMonitoredVariables() {
+        //this SHOULD be done dynamically from a file during the mon unit 
+        //initialiation. this is bakalistikos way
+
+        memory.<String, ArrayList<MonitoredVariable>>get("monitoredVariables").add(
+                new MonitoredVariable("CpuLoad", 1, util.Statics.overloadLevel, new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (CoreDefinition core : memory.<String, ArrayList<CoreDefinition>>get("Cores")) {
+                            if (core.getLoad() > util.Statics.overloadLevel && !core.isOverLoadLimit()) {
+                                SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("woah", "woaaaaah", "CoreReconfiguration"));
+                            } else if (core.getLoad() < util.Statics.underUtilizedLevel && !core.isUnderUtilized()) {
+                                SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("woah", "woaaaaah", "CoreReconfiguration"));
+                            } else if (!core.isNormalLoad()) {
+                                SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("woah", "woaaaaah", "CoreReconfiguration"));
+                            }
+                        }
+                    }
+                })));
     }
 }

@@ -13,7 +13,7 @@ public class MonitoredVariable {
 
     private String variableName;
     private float seconds;
-    private float threshold;
+    private final float threshold;
     private Thread monitoringAction;
 
     public MonitoredVariable(String variableName, float seconds, float threshold, Thread action) {
@@ -41,10 +41,6 @@ public class MonitoredVariable {
 
     public float getThreshold() {
         return threshold;
-    }
-
-    public void setThreshold(float threshold) {
-        this.threshold = threshold;
     }
 
     public Thread getAction() {
