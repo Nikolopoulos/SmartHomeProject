@@ -10,8 +10,8 @@ import Logging.MyLogger;
 import Simulator.MoteLibSimulator;
 import Simulator.Network;
 import Simulator.SimulatedMessaging;
-import Libraries.Core;
 import Libraries.ThreadAffinity;
+import MonitoringUnit.MonitoringUnit;
 import java.lang.management.ManagementFactory;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -55,10 +55,6 @@ public class Control {
     boolean debug;
     public ThreadAffinity threadAffinity;
 
-    /*public final Core criticalSensingCore;
-     public final Core HTTPCore;
-     public final Core sensingCore;
-     public final Core cronCore;*/
     public InetAddress addr = null;// = getFirstNonLoopbackAddress(true, false);
     public String ip;// = addr.getHostAddress();
     ServiceProvisionUnit spu;
@@ -73,6 +69,9 @@ public class Control {
         memory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>set("SCU", SCU);
         memory.<String, Integer>set("CriticalityLevels", util.Statics.CriticallityLevels);
         memory.<String, String>set("ServingAlgorithm", "CAFIFO");
+
+        MonitoringUnit mon = new MonitoringUnit();
+        memory.<String, MonitoringUnit>set("MON", mon);
 
         for (int i = 1; i < memory.<String, Integer>get("CriticalityLevels") + 1; i++) {
             memory.<String, ArrayList>set("ThreadBucket" + i, new ArrayList<RequestExecutionThread>());
@@ -120,48 +119,17 @@ public class Control {
             memory.<String, ArrayList<CoreDefinition>>get("Cores").add(new CoreDefinition(threadAffinity.cores()[i], run, 0, i, pub));
         }
 
-        /*if (threadAffinity.cores().length == 4) {
-         criticalSensingCore = threadAffinity.cores()[0];
-         HTTPCore = threadAffinity.cores()[1];
-         sensingCore = threadAffinity.cores()[2];
-         cronCore = threadAffinity.cores()[3];
-         } else if (threadAffinity.cores().length == 2) {
-         criticalSensingCore = threadAffinity.cores()[0];
-         HTTPCore = threadAffinity.cores()[1];
-         sensingCore = threadAffinity.cores()[1];
-         cronCore = threadAffinity.cores()[0];
-         } else if (threadAffinity.cores().length == 1) {
-         criticalSensingCore = threadAffinity.cores()[0];
-         HTTPCore = threadAffinity.cores()[0];
-         sensingCore = threadAffinity.cores()[0];
-         cronCore = threadAffinity.cores()[0];
-         } else {
-         criticalSensingCore = threadAffinity.cores()[0];
-         HTTPCore = threadAffinity.cores()[0];
-         sensingCore = threadAffinity.cores()[0];
-         cronCore = threadAffinity.cores()[0];
-         }
-
-         MyLogger.log("Available cores: " + threadAffinity.cores().length);
-         MyLogger.log("criticalCore: " + criticalSensingCore);
-         MyLogger.log("HTTPCore: " + HTTPCore);
-         MyLogger.log("sensingCore: " + sensingCore);
-         MyLogger.log("cronCore: " + cronCore);
-         criticalSensingCore.setC(this);
-         HTTPCore.setC(this);
-         sensingCore.setC(this);
-         cronCore.setC(this);*/
         System.out.println("reached");
         try {
-            //if(simulation == true){
-            mlbs = new MoteLibSimulator();
-            messages = new SimulatedMessaging(mlbs);
-            net = new Network(messages);
-            mlbs.setNet(net);
-            //}
+            if (simulation == true) {
+                mlbs = new MoteLibSimulator();
+                messages = new SimulatedMessaging(mlbs);
+                net = new Network(messages);
+                mlbs.setNet(net);
+            }
             System.out.println("Tryint to https reg unit");
             jsonReply = "{result : \"success\", uid : \"1\"}";
-            //jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register", addr);
+            //jsonReply = memory.<String,ServiceProvisionUnit>get("SPU").httpContact(new RequestObject(uid, threadId, jsonReply, uid, addr, uid)) ;  //sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register", addr);
             System.out.println("Done https reg unit");
             //registers itself to the registry unit
             //MyLogger.log("http://" + registryUnitIP + ":" + registryPort + "/register" + URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"));
@@ -169,7 +137,7 @@ public class Control {
                 MyLogger.log("reply is: " + jsonReply);
             }
             JSONObject obj;
-            //MyLogger.log("Error parsing this" + jsonReply);
+            MyLogger.log("Error parsing this" + jsonReply);
             obj = new JSONObject(jsonReply);
 
             if (!obj.get("result").equals("success")) {
@@ -185,7 +153,7 @@ public class Control {
 
         } catch (Exception e) {
 
-//            MyLogger.log(jsonReply);
+            MyLogger.log(jsonReply);
             e.printStackTrace();
         }
 
@@ -605,7 +573,7 @@ public class Control {
         switch (memory.<String, String>get("ServingAlgorithm")) {
             case "CAFIFO": {
                 for (int i = memory.<String, Integer>get("AvailableCores"); i > 0; i--) {
-                    if(memory.<String, ArrayList>get("ThreadBucket" + i).size()>0){
+                    if (memory.<String, ArrayList>get("ThreadBucket" + i).size() > 0) {
                         return memory.<String, ArrayList<PendingRequest>>get("ThreadBucket" + i).remove(0);
                     }
                 }

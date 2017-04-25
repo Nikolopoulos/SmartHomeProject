@@ -12,11 +12,13 @@ import Libraries.Core;
  * @author Basil Nikolopoulos <nikolopoulosbasil.com>
  */
 public class CoreDefinition {
+
     Core core;
     Boolean running;
     int load;
     int id;
     boolean publicResource;
+    int utility;
 
     public CoreDefinition(Core core, Boolean running, int load, int id, boolean publicResource) {
         this.core = core;
@@ -24,6 +26,7 @@ public class CoreDefinition {
         this.load = load;
         this.id = id;
         this.publicResource = publicResource;
+        utility = 0;
     }
 
     public boolean isPublicResource() {
@@ -34,10 +37,36 @@ public class CoreDefinition {
         this.publicResource = publicResource;
     }
 
+    public void setUnderUtilized() {
+        utility = -1;
+    }
 
+    public void setOverLoadLimit() {
+        utility = 1;
+    }
+
+    public void setNormalLoad() {
+        utility = 0;
+    }
+
+    public boolean isUnderUtilized() {
+        return utility == -1;
+    }
+
+    public boolean isOverLoadLimit() {
+        return utility == 1;
+    }
+
+    public boolean isNormalLoad() {
+        return utility == 0;
+    }
 
     public Core getCore() {
         return core;
+    }
+
+    public int getUtility() {
+        return utility;
     }
 
     public void setCore(Core core) {
@@ -67,6 +96,5 @@ public class CoreDefinition {
     public void setId(int id) {
         this.id = id;
     }
-    
-    
+
 }
