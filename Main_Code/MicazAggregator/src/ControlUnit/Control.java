@@ -6,12 +6,14 @@
 package ControlUnit;
 
 import DecisionMaking.DecisionMaking;
+import DecisionMakingUnit.DecisionMakingUnit;
 import Logging.MyLogger;
 import Simulator.MoteLibSimulator;
 import Simulator.Network;
 import Simulator.SimulatedMessaging;
-import Libraries.Core;
 import Libraries.ThreadAffinity;
+import MonitoringUnit.MonitoredVariable;
+import MonitoringUnit.MonitoringUnit;
 import java.lang.management.ManagementFactory;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -36,6 +38,7 @@ import ServiceProvisionUnit.RequestObject;
 import util.Util;
 import ServiceProvisionUnit.ServiceProvisionUnit;
 import SharedMemory.SharedMemory;
+import util.CustomException;
 
 /**
  *
@@ -43,7 +46,7 @@ import SharedMemory.SharedMemory;
  */
 public class Control {
 
-    private DecisionMaking dm;
+    private DecisionMakingUnit dm;
     private final SharedMemory memory;
     public Network net;
     public MoteLibSimulator mlbs;
@@ -55,10 +58,6 @@ public class Control {
     boolean debug;
     public ThreadAffinity threadAffinity;
 
-    /*public final Core criticalSensingCore;
-     public final Core HTTPCore;
-     public final Core sensingCore;
-     public final Core cronCore;*/
     public InetAddress addr = null;// = getFirstNonLoopbackAddress(true, false);
     public String ip;// = addr.getHostAddress();
     ServiceProvisionUnit spu;
@@ -67,12 +66,15 @@ public class Control {
     public Control(boolean debug) {
         memory = SharedMemory.<String, SharedMemory>get("SMU");
         memory.<String, Control>set("MCU", this);
-        dm = new DecisionMaking();
-        memory.<String, DecisionMaking>set("DMU", dm);
+        dm = new DecisionMakingUnit();
+        memory.<String, DecisionMakingUnit>set("DMU", dm);
         SensorsCommunicationUnit.SensorsCommunicationUnit SCU = new SensorsCommunicationUnit.SensorsCommunicationUnit();
         memory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>set("SCU", SCU);
         memory.<String, Integer>set("CriticalityLevels", util.Statics.CriticallityLevels);
         memory.<String, String>set("ServingAlgorithm", "CAFIFO");
+
+        MonitoringUnit mon = new MonitoringUnit();
+        memory.<String, MonitoringUnit>set("MON", mon);
 
         for (int i = 1; i < memory.<String, Integer>get("CriticalityLevels") + 1; i++) {
             memory.<String, ArrayList>set("ThreadBucket" + i, new ArrayList<RequestExecutionThread>());
@@ -119,18 +121,17 @@ public class Control {
             }
             memory.<String, ArrayList<CoreDefinition>>get("Cores").add(new CoreDefinition(threadAffinity.cores()[i], run, 0, i, pub));
         }
-        
         System.out.println("reached");
         try {
-            //if(simulation == true){
-            mlbs = new MoteLibSimulator();
-            messages = new SimulatedMessaging(mlbs);
-            net = new Network(messages);
-            mlbs.setNet(net);
-            //}
+            if (simulation == true) {
+                mlbs = new MoteLibSimulator();
+                messages = new SimulatedMessaging(mlbs);
+                net = new Network(messages);
+                mlbs.setNet(net);
+            }
             System.out.println("Tryint to https reg unit");
             jsonReply = "{result : \"success\", uid : \"1\"}";
-            //jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register", addr);
+            //jsonReply = memory.<String,ServiceProvisionUnit>get("SPU").httpContact(new RequestObject(uid, threadId, jsonReply, uid, addr, uid)) ;  //sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register", addr);
             System.out.println("Done https reg unit");
             //registers itself to the registry unit
             //MyLogger.log("http://" + registryUnitIP + ":" + registryPort + "/register" + URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"));
@@ -138,7 +139,7 @@ public class Control {
                 MyLogger.log("reply is: " + jsonReply);
             }
             JSONObject obj;
-            //MyLogger.log("Error parsing this" + jsonReply);
+            MyLogger.log("Error parsing this" + jsonReply);
             obj = new JSONObject(jsonReply);
 
             if (!obj.get("result").equals("success")) {
@@ -154,7 +155,7 @@ public class Control {
 
         } catch (Exception e) {
 
-//            MyLogger.log(jsonReply);
+            MyLogger.log(jsonReply);
             e.printStackTrace();
         }
 
@@ -163,10 +164,12 @@ public class Control {
         dropDaemon.start();
         populate = createPollDaemon();
         populate.start();
+        loadMonitoredVariables();
         requestServingDaemon();
+
     }
 
-    public DecisionMaking getDm() {
+    public DecisionMakingUnit getDm() {
         return dm;
     }
 
@@ -577,12 +580,12 @@ public class Control {
             public void run() {
                 while (true) {
                     CoreDefinition core = getServingCore();
-                    if(core == null){                        
+                    if (core == null) {
                         //raise dmu exception
                         continue;
                     }
                     RequestExecutionThread req = getNextRequestToServe();
-                    if(req == null){
+                    if (req == null) {
                         continue;
                     }                    
                     //the attachment happens during the running of the thread so
@@ -622,5 +625,57 @@ public class Control {
             }
         }
         return currentCandidate;
+    }
+
+    public void setCoreMode(int id, int mode) {
+        for (CoreDefinition core : SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")) {
+            if (core.getId() == id) {
+                switch (mode) {
+                    case -1: {
+                        core.setUnderUtilized();
+                        break;
+                    }
+                    case 0: {
+                        core.setNormalLoad();
+                        break;
+                    }
+                    case 1: {
+                        core.setOverLoadLimit();
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    public void setCoreAvailability(int id, boolean mode) {
+        for (CoreDefinition core : SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")) {
+            if (core.getId() == id) {
+                core.setRunning(debug);
+                break;
+            }
+        }
+    }
+
+    private void loadMonitoredVariables() {
+        //this SHOULD be done dynamically from a file during the mon unit 
+        //initialiation. this is bakalistikos way
+
+        memory.<String, ArrayList<MonitoredVariable>>get("monitoredVariables").add(
+                new MonitoredVariable("CpuLoad", 1, util.Statics.overloadLevel, new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (CoreDefinition core : memory.<String, ArrayList<CoreDefinition>>get("Cores")) {
+                            if (core.getLoad() > util.Statics.overloadLevel && !core.isOverLoadLimit()) {
+                                SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("woah", "woaaaaah", "CoreReconfiguration"));
+                            } else if (core.getLoad() < util.Statics.underUtilizedLevel && !core.isUnderUtilized()) {
+                                SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("woah", "woaaaaah", "CoreReconfiguration"));
+                            } else if (!core.isNormalLoad()) {
+                                SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("woah", "woaaaaah", "CoreReconfiguration"));
+                            }
+                        }
+                    }
+                })));
     }
 }
