@@ -585,7 +585,8 @@ public class Control {
                     if(req == null){
                         continue;
                     }                    
-                    core.attachTo(req);
+                    //the attachment happens during the running of the thread so
+                    //this statement is now redundant core.attachTo(req);
                     req.run();
                 }
             }
