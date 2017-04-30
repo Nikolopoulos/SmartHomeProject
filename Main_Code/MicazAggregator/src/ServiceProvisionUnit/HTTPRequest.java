@@ -96,18 +96,7 @@ public class HTTPRequest {
     }
 
     // HTTP POST request
-    public static String sendPost_old(String url, int port, String parameters, String service, InetAddress myIP) throws Exception {
-        /*  URL obj = new URL(url);
-         MyLogger.log(url);
-         for(String s : url.substring(7).split("\\.")){
-         MyLogger.log(s);
-         }*/
-
-        /*   byte[] urld = {
-         Byte.parseByte(url.substring(7).split("\\.")[0]), 
-         Byte.parseByte(url.substring(7).split("\\.")[1]), 
-         Byte.parseByte(url.substring(7).split("\\.")[2]), 
-         Byte.parseByte(url.substring(7).split("\\.")[3])};*/
+    public static String sendPost_old(String url, int port, String parameters, String service, InetAddress myIP) throws Exception {       
         try {
             Socket s = new Socket(url.substring(7), port);
             //MyLogger.log("Socket done");

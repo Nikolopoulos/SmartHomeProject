@@ -87,6 +87,12 @@ public class RequestObject {
     public void setMyIP(InetAddress myIP) {
         this.myIP = myIP;
     }
+
+    @Override
+    public String toString() {
+        return "RequestObject{" + "url=" + url + ", port=" + port + ", parameters=" + parameters + ", service=" + service + ", myIP=" + myIP + ", method=" + method + ", response=" + response + '}';
+    }
+    
     
     
 }
