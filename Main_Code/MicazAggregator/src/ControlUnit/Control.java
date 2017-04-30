@@ -131,10 +131,21 @@ public class Control {
             }
             System.out.println("Tryint to https reg unit");
             jsonReply = "{result : \"success\", uid : \"1\"}";
-            //jsonReply = memory.<String,ServiceProvisionUnit>get("SPU").httpContact(new RequestObject(uid, threadId, jsonReply, uid, addr, uid)) ;  //sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register", addr);
+            ;
+
+            RequestObject ro = memory.<String, ServiceProvisionUnit>get("SPU").httpContact(
+                    new RequestObject(
+                            "http://" +memory.<String, String>get("registryUnitIP"),
+                            memory.<String, Integer>get("registryPort").intValue(),
+                            URLEncoder.encode("ip=" + memory.<String, String>get("ip") + "&port=" + memory.<String, Integer>get("myPort") + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"),
+                            "/register",
+                            memory.<String, InetAddress>get("addr"),
+                            "Post"));
+            
+            jsonReply =   ro.getResponse();
             System.out.println("Done https reg unit");
             //registers itself to the registry unit
-            //MyLogger.log("http://" + registryUnitIP + ":" + registryPort + "/register" + URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"));
+            MyLogger.log(ro.toString());
             if (debug) {
                 MyLogger.log("reply is: " + jsonReply);
             }
@@ -197,7 +208,7 @@ public class Control {
 
                             toRemove.add(m);
                         } else if (debug) {
-                            //MyLogger.log("Latest activity " + m.getLatestActivity());
+                            MyLogger.log("Latest activity " + m.getLatestActivity());
                         }
                     }
                     for (MicazMote m : toRemove) {
@@ -229,7 +240,7 @@ public class Control {
                     }
                     toRemove.clear();
                     if (debug) {
-                        //MyLogger.log("CurrentTime " + Util.getTime());
+                        MyLogger.log("CurrentTime " + Util.getTime());
                     }
                     try {
                         Thread.sleep(2000);
