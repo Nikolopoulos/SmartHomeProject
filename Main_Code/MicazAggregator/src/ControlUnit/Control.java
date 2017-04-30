@@ -72,7 +72,7 @@ public class Control {
         memory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>set("SCU", SCU);
         memory.<String, Integer>set("CriticalityLevels", util.Statics.CriticallityLevels);
         memory.<String, String>set("ServingAlgorithm", "CAFIFO");
-
+        System.out.println("STEP 1");
         MonitoringUnit mon = new MonitoringUnit();
         memory.<String, MonitoringUnit>set("MON", mon);
 
@@ -104,7 +104,7 @@ public class Control {
         threadAffinity = new ThreadAffinity(this);
         memory.<String, Integer>set("AvailableCores", threadAffinity.cores().length);
         memory.<String, ThreadAffinity>set("Affinity", threadAffinity);
-
+System.out.println("STEP 2");
         this.debug = debug;
         String jsonReply = "";
         System.out.println("setAffinity");
@@ -129,6 +129,7 @@ public class Control {
                 net = new Network(messages);
                 mlbs.setNet(net);
             }
+            System.out.println("STEP 3");
             System.out.println("Tryint to https reg unit");
             jsonReply = "{result : \"success\", uid : \"1\"}";
             //jsonReply = memory.<String,ServiceProvisionUnit>get("SPU").httpContact(new RequestObject(uid, threadId, jsonReply, uid, addr, uid)) ;  //sendPost("http://" + registryUnitIP, registryPort, URLEncoder.encode("ip=" + ip + "&port=" + myPort + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register", addr);
