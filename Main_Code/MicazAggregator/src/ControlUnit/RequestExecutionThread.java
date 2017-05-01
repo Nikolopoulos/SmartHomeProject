@@ -101,7 +101,10 @@ public class RequestExecutionThread implements Runnable {
                     sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], true);
                 }
                 SharedMemory.<String,Control>get("MCU").setResponseOfRequest(id, sirh);
+                System.out.println(core);
+                System.out.println(core.getLoad());
                 core.setLoad(core.getLoad()-1);
+                
                 break;                
             }
         }

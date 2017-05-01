@@ -42,11 +42,11 @@ public class Core {
 
         final long mask = mask();
         try {
-            c.threadAffinity.setCurrentThreadAffinityMask(mask);
+            SharedMemory.SharedMemory.<String,ThreadAffinity>get("Affinity").setCurrentThreadAffinityMask(mask);
         } catch (NullPointerException E) {
             System.out.println("WHOS THAT POKEMON? ITS MASK " + mask);
              System.out.println("WHOS THAT POKEMON? ITS CONTROL " + c);
-              System.out.println("WHOS THAT POKEMON? ITS THREAD AFFINITY " + c.threadAffinity);
+              System.out.println("WHOS THAT POKEMON? ITS THREAD AFFINITY " + SharedMemory.SharedMemory.<String,ThreadAffinity>get("Affinity"));
                System.out.println("WHOS THAT POKEMON?" );
         }
     }
@@ -54,7 +54,7 @@ public class Core {
     public void attach(final Thread thread) throws Exception {
         final long mask = mask();
         //fixme: it does not work for now!
-        c.threadAffinity.setThreadAffinityMask(thread.getId(), mask);
+        SharedMemory.SharedMemory.<String,ThreadAffinity>get("Affinity").setThreadAffinityMask(thread.getId(), mask);
     }
 
     private int mask() {

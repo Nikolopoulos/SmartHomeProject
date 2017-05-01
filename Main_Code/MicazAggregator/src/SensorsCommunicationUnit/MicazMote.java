@@ -195,7 +195,7 @@ public class MicazMote {
         for (Service s : servicesList) {
             reply += "\"" + s.getName() + "\":\"true\"";
         }
-        reply += "\"} ";
+        reply += "\"}";
         return reply;
     }
 

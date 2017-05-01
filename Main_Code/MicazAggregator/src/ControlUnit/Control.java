@@ -48,11 +48,7 @@ public class Control {
 
     private DecisionMakingUnit dm;
     private final SharedMemory memory;
-    public Network net;
-    public MoteLibSimulator mlbs;
-
-    private boolean simulation = true;
-    public SimulatedMessaging messages;
+    
     Thread dropDaemon, populate;
     String uid = "";
     boolean debug;
@@ -68,46 +64,9 @@ public class Control {
         memory.<String, Control>set("MCU", this);
         dm = new DecisionMakingUnit();
         memory.<String, DecisionMakingUnit>set("DMU", dm);
-        SensorsCommunicationUnit.SensorsCommunicationUnit SCU = new SensorsCommunicationUnit.SensorsCommunicationUnit();
-        memory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>set("SCU", SCU);
-        memory.<String, Integer>set("CriticalityLevels", util.Statics.CriticallityLevels);
-        memory.<String, String>set("ServingAlgorithm", "CAFIFO");
-        System.out.println("STEP 1");
-        MonitoringUnit mon = new MonitoringUnit();
-        memory.<String, MonitoringUnit>set("MON", mon);
-
-        for (int i = 1; i < memory.<String, Integer>get("CriticalityLevels") + 1; i++) {
-            memory.<String, ArrayList>set("ThreadBucket" + i, new ArrayList<RequestExecutionThread>());
-        }
-        memory.<String, ArrayList>set("RequestBucket", new ArrayList<PendingRequest>());
-        try {
-            addr = getFirstNonLoopbackAddress(true, false);
-            memory.<String, InetAddress>set("addr", addr);
-        } catch (SocketException ex) {
-            System.exit(1);
-        }
-        try {
-            ip = addr.getHostAddress();
-
-        } catch (Exception e) {
-            ip = "127.0.0.1";
-        }
-        memory.<String, String>set("ip", ip);
-        System.out.println("Percieved ip is " + ip + " first non loopbak is " + addr);
-        memory.<String, String>set("registryUnitIP", "192.168.2.5");
-        memory.<String, Integer>set("registryPort", 8383);
-        memory.<String, Integer>set("myPort", 8181);
-        spu = new ServiceProvisionUnit(this);
-        memory.<String, ServiceProvisionUnit>set("SPU", spu);
-        spu.startServer();
-        System.out.println("Set ports");
         threadAffinity = new ThreadAffinity(this);
         memory.<String, Integer>set("AvailableCores", threadAffinity.cores().length);
         memory.<String, ThreadAffinity>set("Affinity", threadAffinity);
-System.out.println("STEP 2");
-        this.debug = debug;
-        String jsonReply = "";
-        System.out.println("setAffinity");
 
         memory.<String, ArrayList<CoreDefinition>>set("Cores", new ArrayList<CoreDefinition>());
         for (int i = 0; i < threadAffinity.cores().length; i++) {
@@ -115,35 +74,84 @@ System.out.println("STEP 2");
             if (i == 0) {
                 pub = false;
                 run = true;
-            } else {
+            }if (i == 1) {
+                pub = true;
+                run = true;
+            }
+            else {
                 pub = true;
                 run = false;
             }
             memory.<String, ArrayList<CoreDefinition>>get("Cores").add(new CoreDefinition(threadAffinity.cores()[i], run, 0, i, pub));
+            System.out.println("added "+threadAffinity.cores()[i]+" to arrayList "+memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i).core);
         }
+        System.out.println("WTF");
+        System.out.println("Cores available = "+threadAffinity.cores().length);
+        System.out.println("Cores in arrayList = "+ memory.<String, ArrayList<CoreDefinition>>get("Cores").size());
+        
+        System.out.println("WTF");
+        SensorsCommunicationUnit.SensorsCommunicationUnit SCU = new SensorsCommunicationUnit.SensorsCommunicationUnit();
+        memory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>set("SCU", SCU);
+        memory.<String, Integer>set("CriticalityLevels", util.Statics.CriticallityLevels);
+        memory.<String, String>set("ServingAlgorithm", "CAFIFO");
+        System.out.println("STEP 1");
+        MonitoringUnit mon = new MonitoringUnit();
+        memory.<String, MonitoringUnit>set("MON", mon);
+        System.out.println("STEP 1.0.1");
+        for (int i = 1; i < memory.<String, Integer>get("CriticalityLevels") + 1; i++) {
+            memory.<String, ArrayList>set("ThreadBucket" + i, new ArrayList<RequestExecutionThread>());
+        }
+        System.out.println("STEP 1.0.2");
+        memory.<String, ArrayList>set("RequestBucket", new ArrayList<PendingRequest>());
+        try {
+            System.out.println("STEP 1.0.3");
+            addr = getFirstNonLoopbackAddress(true, false);
+            memory.<String, InetAddress>set("addr", addr);
+        } catch (SocketException ex) {
+            System.exit(1);
+            System.out.println("STEP 1.0.4");
+        }
+        try {
+            ip = addr.getHostAddress();
+            System.out.println("STEP 1.0.5");
+
+        } catch (Exception e) {
+            ip = "127.0.0.1";
+        }
+        System.out.println("STEP 1.0.6");
+        memory.<String, String>set("ip", ip);
+        System.out.println("Percieved ip is " + ip + " first non loopbak is " + addr);
+        //memory.<String, String>set("registryUnitIP", "192.168.2.5");
+        memory.<String, String>set("registryUnitIP", "localhost");
+        memory.<String, Integer>set("registryPort", 8383);
+        memory.<String, Integer>set("myPort", 8181);
+        spu = new ServiceProvisionUnit(this);
+        memory.<String, ServiceProvisionUnit>set("SPU", spu);
+        System.out.println("STEP 1.1");
+        spu.startServer();
+        System.out.println("STEP 1.2");
+        System.out.println("Set ports");
+        System.out.println("STEP 2");
+        this.debug = debug;
+        String jsonReply = "";
+        System.out.println("setAffinity");
         System.out.println("reached");
         try {
-            if (simulation == true) {
-                mlbs = new MoteLibSimulator();
-                messages = new SimulatedMessaging(mlbs);
-                net = new Network(messages);
-                mlbs.setNet(net);
-            }
             System.out.println("STEP 3");
             System.out.println("Tryint to https reg unit");
             jsonReply = "{result : \"success\", uid : \"1\"}";
-            ;
 
             RequestObject ro = memory.<String, ServiceProvisionUnit>get("SPU").httpContact(
                     new RequestObject(
-                            "http://" +memory.<String, String>get("registryUnitIP"),
+                            "http://" + memory.<String, String>get("registryUnitIP"),
                             memory.<String, Integer>get("registryPort").intValue(),
                             URLEncoder.encode("ip=" + memory.<String, String>get("ip") + "&port=" + memory.<String, Integer>get("myPort") + "&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"),
                             "/register",
                             memory.<String, InetAddress>get("addr"),
                             "Post"));
-            
-            jsonReply =   ro.getResponse();
+
+            jsonReply = ro.getResponse();
+            System.out.println("json reply is "+jsonReply);
             System.out.println("Done https reg unit");
             //registers itself to the registry unit
             MyLogger.log(ro.toString());
@@ -154,7 +162,7 @@ System.out.println("STEP 2");
             MyLogger.log("Error parsing this" + jsonReply);
             obj = new JSONObject(jsonReply);
 
-            if (!obj.get("result").equals("success")) {
+            if (!obj.has("result")&&!obj.get("result").equals("success")) {
                 if (debug) {
                     MyLogger.log("jsonReply failed " + jsonReply);
                 }
@@ -360,7 +368,8 @@ System.out.println("STEP 2");
                     public void run() {
                         while (true) {
                             //System.out.println("polling");
-                            messages.sendPoll();
+                            SharedMemory.<String,SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendPoll();
+                            //System.out.println("polling");
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException ex) {
@@ -402,15 +411,15 @@ System.out.println("STEP 2");
     }
 
     public void sendPoll() {
-        messages.sendPoll();
+        SharedMemory.<String,SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendPoll();
     }
 
     public void getSwitchInfo(int id) {
-        messages.sendSwitchPoll(id);
+        SharedMemory.<String,SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendSwitchPoll(id);
     }
 
     public void toggleSwitch(int id) {
-        messages.sendSwitchToggle(id);
+        SharedMemory.<String,SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendSwitchToggle(id);
     }
 
     public void sendReadingRequest(int id, boolean cached, String ServiceURI) {
@@ -540,6 +549,7 @@ System.out.println("STEP 2");
         } else {
             for (String s : parametersSplit) {
                 System.out.println("parametersSplit !<2 = " + s);
+                return 1;
             }
 
             String[] parameters = parametersSplit[1].split("&");
@@ -580,7 +590,10 @@ System.out.println("STEP 2");
 
         for (int i = 0; i < memory.<String, ArrayList<CoreDefinition>>get("Cores").size(); i++) {
             if (memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i).getId() == id) {
-                memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i);
+                return memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i);
+            }
+            else{
+                System.out.println("current get id is "+memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i).getId() +" while id given is "+id);
             }
         }
         return null;
@@ -593,13 +606,14 @@ System.out.println("STEP 2");
                 while (true) {
                     CoreDefinition core = getServingCore();
                     if (core == null) {
-                        //raise dmu exception
+                        System.out.println("No core available :(");
                         continue;
                     }
                     RequestExecutionThread req = getNextRequestToServe();
                     if (req == null) {
                         continue;
-                    }                    
+                    }
+                    req.setWhatCore(core);
                     //the attachment happens during the running of the thread so
                     //this statement is now redundant core.attachTo(req);
                     req.run();

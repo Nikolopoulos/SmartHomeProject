@@ -37,6 +37,9 @@ public class ServiceProvisionUnit {
             public void run() {
                 try {
                     try {
+                        System.out.println(finalControl);
+                        System.out.println(finalControl.findCoreById(0));
+                            System.out.println(finalControl.findCoreById(0).getCore());
                         finalControl.findCoreById(0).getCore().attachTo();
                          System.out.println("Server attached!");
                     } catch (Exception ex) {

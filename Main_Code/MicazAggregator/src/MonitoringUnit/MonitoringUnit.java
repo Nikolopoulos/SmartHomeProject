@@ -19,8 +19,11 @@ public class MonitoringUnit {
     static int cycle;
 
     public MonitoringUnit() {
+        System.out.println("STEP 0.1");
         SharedMemory.SharedMemory.<String, ArrayList<MonitoredVariable>>set("monitoredVariables", new ArrayList<MonitoredVariable>());
+        System.out.println("STEP 0.2");
         initiate();
+        System.out.println("STEP 0.3");
     }
 
     private void initiate() {
@@ -43,7 +46,8 @@ public class MonitoringUnit {
                 }
             }
         });
-        t.run();
+        t.start();
+        return;
     }
 
 }

@@ -35,6 +35,7 @@ public class SensorsCommunicationUnit implements MessageListener {
         
         try{
             mote.send(MoteIF.TOS_BCAST_ADDR, pr);
+            
         }
         catch(Exception e){
             e.printStackTrace();

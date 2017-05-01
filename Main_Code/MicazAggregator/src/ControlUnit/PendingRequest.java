@@ -36,6 +36,7 @@ public class PendingRequest {
     }
     
     public void setReply(String reply){
+        System.out.println("Got my reply set from control unit and the result is "+reply);
         request.setResponse(reply);
     }
 }

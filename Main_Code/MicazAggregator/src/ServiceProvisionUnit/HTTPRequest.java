@@ -236,7 +236,7 @@ public class HTTPRequest {
             String t = "";
             String line = "";
             try {
-                while ((line = br.readLine()) != null) {
+                while (((line = br.readLine()) != null)&&!s.isInputShutdown()) {
                     t += line;
 
                 }

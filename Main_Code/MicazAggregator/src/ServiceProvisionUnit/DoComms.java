@@ -136,7 +136,7 @@ public class DoComms implements Runnable {
             return 1;
         } else if (Url.startsWith("/log")) {
             return 2;
-        } else if (Url.startsWith("/sensor/") && ((Url.contains("photo")) || (Url.contains("temp")) || (Url.contains("switch")))) {
+        } else if (Url.startsWith("/sensor/") /*&& !((Url.contains("photo")) || (Url.contains("temp")) || (Url.contains("switch")))*/) {
             System.out.println("starts with sensor but doesnt have required service name");
             if (Url.length() < 9) {
                 return 3;
@@ -156,27 +156,33 @@ public class DoComms implements Runnable {
     }
 
     private void getSensorsList() {
+        System.out.println("GetSensorsList");
         if (SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList").isEmpty()) {
             reply = "{\"sensors\":{}}";
+            System.out.println("1. set reply to "+reply);
             sema.release();
         } else {
-            String reply = "{\"sensors\":{[";
+            reply = "{\"sensors\":{[";
             for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
                 reply += m.JSONDescription() + ",";
             }
+            reply = reply.substring(0, reply.length()-1);
+            reply+="]}}";
+            System.out.println("2. set reply to "+reply);
             sema.release();
         }
+        System.out.println("3. set reply to "+reply);
     }
 
     private void getSpecificSensor(String url) {
         System.out.println("starts with sensor and has both length and name");
-        String reply = "{\"sensor\":{";
+        reply = "";
         System.out.println("adding to dm");
         int threadID = con.add(url,this);
         System.out.println("added to bucket");
         String returnVal = "";
 
-        while (returnVal.equalsIgnoreCase("")) {
+        while (reply.length() == "".length()) {
             System.out.println("return val not acceptable");
             try {
                 Thread.sleep(300);
@@ -184,8 +190,8 @@ public class DoComms implements Runnable {
                 Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
             }           
         }
-
-        System.out.println("Returnval = " + returnVal);
+        reply = "{\"sensor\":{"+reply;
+        System.out.println("Returnval = " + reply);
         reply += returnVal + "}}";
         sema.release();
     }
@@ -205,11 +211,14 @@ public class DoComms implements Runnable {
     }
 
     public void setResponse(String response) {
+        System.out.println("SetResponse from 1");
         this.response.setReply(response);
-        this.sema.release();
+        this.reply = response;
+        //this.sema.release();
     }
 
     public void setResponse(ResponseObject response) {
+        System.out.println("SetResponse from 2");
         this.response = response;
         this.sema.release();
     }
