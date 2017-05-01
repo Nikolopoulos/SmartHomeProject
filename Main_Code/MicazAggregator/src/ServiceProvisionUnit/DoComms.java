@@ -33,6 +33,7 @@ public class DoComms implements Runnable {
     private String reply;
     private Semaphore sema;
     private ResponseObject response;
+    private int criticality = 0;
 
     DoComms(Socket server, Control c, Core core) {
         this.server = server;
@@ -145,6 +146,19 @@ public class DoComms implements Runnable {
             }
         }
         return -1;
+    }
+
+    public int getCriticality() {
+        return criticality;
+    }
+
+    public void setCriticality(int criticality) {
+        this.criticality = criticality;
+    }
+
+    
+    public Socket getServer() {
+        return server;
     }
 
     private void getGenericResponse() {

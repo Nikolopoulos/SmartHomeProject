@@ -5,13 +5,10 @@
  */
 package ControlUnit;
 
-import DecisionMaking.DecisionMaking;
 import DecisionMakingUnit.DecisionMakingUnit;
 import Logging.MyLogger;
-import Simulator.MoteLibSimulator;
-import Simulator.Network;
-import Simulator.SimulatedMessaging;
 import Libraries.ThreadAffinity;
+import Logging.AggregatorStatusReport;
 import MonitoringUnit.MonitoredVariable;
 import MonitoringUnit.MonitoringUnit;
 import java.lang.management.ManagementFactory;
@@ -38,6 +35,7 @@ import ServiceProvisionUnit.RequestObject;
 import util.Util;
 import ServiceProvisionUnit.ServiceProvisionUnit;
 import SharedMemory.SharedMemory;
+import java.util.ConcurrentModificationException;
 import util.CustomException;
 
 /**
@@ -48,7 +46,7 @@ public class Control {
 
     private DecisionMakingUnit dm;
     private final SharedMemory memory;
-    
+
     Thread dropDaemon, populate;
     String uid = "";
     boolean debug;
@@ -74,21 +72,21 @@ public class Control {
             if (i == 0) {
                 pub = false;
                 run = true;
-            }if (i == 1) {
+            }
+            if (i == 1) {
                 pub = true;
                 run = true;
-            }
-            else {
+            } else {
                 pub = true;
                 run = false;
             }
             memory.<String, ArrayList<CoreDefinition>>get("Cores").add(new CoreDefinition(threadAffinity.cores()[i], run, 0, i, pub));
-            System.out.println("added "+threadAffinity.cores()[i]+" to arrayList "+memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i).core);
+            System.out.println("added " + threadAffinity.cores()[i] + " to arrayList " + memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i).core);
         }
         System.out.println("WTF");
-        System.out.println("Cores available = "+threadAffinity.cores().length);
-        System.out.println("Cores in arrayList = "+ memory.<String, ArrayList<CoreDefinition>>get("Cores").size());
-        
+        System.out.println("Cores available = " + threadAffinity.cores().length);
+        System.out.println("Cores in arrayList = " + memory.<String, ArrayList<CoreDefinition>>get("Cores").size());
+
         System.out.println("WTF");
         SensorsCommunicationUnit.SensorsCommunicationUnit SCU = new SensorsCommunicationUnit.SensorsCommunicationUnit();
         memory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>set("SCU", SCU);
@@ -102,7 +100,7 @@ public class Control {
             memory.<String, ArrayList>set("ThreadBucket" + i, new ArrayList<RequestExecutionThread>());
         }
         System.out.println("STEP 1.0.2");
-        memory.<String, ArrayList>set("RequestBucket", new ArrayList<PendingRequest>());
+        memory.<String, ArrayList<PendingRequest>>set("RequestBucket", new ArrayList<PendingRequest>());
         try {
             System.out.println("STEP 1.0.3");
             addr = getFirstNonLoopbackAddress(true, false);
@@ -151,7 +149,7 @@ public class Control {
                             "Post"));
 
             jsonReply = ro.getResponse();
-            System.out.println("json reply is "+jsonReply);
+            System.out.println("json reply is " + jsonReply);
             System.out.println("Done https reg unit");
             //registers itself to the registry unit
             MyLogger.log(ro.toString());
@@ -162,7 +160,7 @@ public class Control {
             MyLogger.log("Error parsing this" + jsonReply);
             obj = new JSONObject(jsonReply);
 
-            if (!obj.has("result")&&!obj.get("result").equals("success")) {
+            if (!obj.has("result") && !obj.get("result").equals("success")) {
                 if (debug) {
                     MyLogger.log("jsonReply failed " + jsonReply);
                 }
@@ -186,6 +184,8 @@ public class Control {
         populate.start();
         loadMonitoredVariables();
         requestServingDaemon();
+        requestsTidier();
+        AggregatorStatusReport.init();
 
     }
 
@@ -368,7 +368,7 @@ public class Control {
                     public void run() {
                         while (true) {
                             //System.out.println("polling");
-                            SharedMemory.<String,SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendPoll();
+                            SharedMemory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendPoll();
                             //System.out.println("polling");
                             try {
                                 Thread.sleep(1000);
@@ -411,15 +411,15 @@ public class Control {
     }
 
     public void sendPoll() {
-        SharedMemory.<String,SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendPoll();
+        SharedMemory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendPoll();
     }
 
     public void getSwitchInfo(int id) {
-        SharedMemory.<String,SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendSwitchPoll(id);
+        SharedMemory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendSwitchPoll(id);
     }
 
     public void toggleSwitch(int id) {
-        SharedMemory.<String,SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendSwitchToggle(id);
+        SharedMemory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendSwitchToggle(id);
     }
 
     public void sendReadingRequest(int id, boolean cached, String ServiceURI) {
@@ -512,6 +512,7 @@ public class Control {
         addRequestToBucket(request, threadId);
         System.out.println("DM HERE ID IS" + threadId);
         int criticality = getCriticalityLevelOfRequest(url);
+        request.setCriticality(criticality);
         RequestExecutionThread thread = new RequestExecutionThread(threadId, criticality, url);
         System.out.println("CREATED THREAD");
         memory.<String, ArrayList<RequestExecutionThread>>get("ThreadBucket" + criticality).add(thread);
@@ -591,9 +592,8 @@ public class Control {
         for (int i = 0; i < memory.<String, ArrayList<CoreDefinition>>get("Cores").size(); i++) {
             if (memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i).getId() == id) {
                 return memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i);
-            }
-            else{
-                System.out.println("current get id is "+memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i).getId() +" while id given is "+id);
+            } else {
+                System.out.println("current get id is " + memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i).getId() + " while id given is " + id);
             }
         }
         return null;
@@ -617,10 +617,60 @@ public class Control {
                     //the attachment happens during the running of the thread so
                     //this statement is now redundant core.attachTo(req);
                     req.run();
+                    removeRequest(req);
+
                 }
             }
         });
         daemon.start();
+    }
+
+    public void requestsTidier() {
+        Thread daemon = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    //System.out.println("Tidier ran");
+                    PendingRequest req = null;
+                    for (PendingRequest request : SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket")) {
+                        if (request.getTimeOut() <= System.currentTimeMillis()) {
+                            req = request;
+                            request.setComplete(true);
+                        }
+                    }
+                    try {
+                        if (req != null) {
+                            //SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket").remove(req);
+                        }
+                        Thread.sleep(150);
+                    } catch (ConcurrentModificationException ex) {
+                        Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+        daemon.start();
+    }
+
+    private void removeRequest(RequestExecutionThread req) {
+        PendingRequest removable = null;
+        for (PendingRequest request : SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket")) {
+            if (request.getId() == req.getId()) {
+                removable = request;
+                request.setComplete(true);
+            }
+        }
+        try {
+            if (removable != null) {
+                //SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket").remove(removable);
+            }
+            //Thread.sleep(500);
+        } catch (ConcurrentModificationException ex) {
+            Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     private RequestExecutionThread getNextRequestToServe() {

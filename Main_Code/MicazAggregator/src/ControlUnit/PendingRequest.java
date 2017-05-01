@@ -13,7 +13,22 @@ import ServiceProvisionUnit.DoComms;
 public class PendingRequest {
     private DoComms request;
     private int id;
+    private long timeOut = System.currentTimeMillis() + 3000;
+    private boolean complete = false;
 
+    public long getTimeOut() {
+        return timeOut;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
+
+    
     public PendingRequest(DoComms request, int id) {
         this.request = request;
         this.id = id;
