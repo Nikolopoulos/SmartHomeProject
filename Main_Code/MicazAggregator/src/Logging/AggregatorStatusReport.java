@@ -60,7 +60,7 @@ public class AggregatorStatusReport {
                 }
             }
         });
-        daemon.run();
+        daemon.start();
     }
 
     public static void log() {

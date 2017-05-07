@@ -16,14 +16,14 @@ import java.util.logging.Logger;
 public class MonitoringUnit {
 
     ArrayList<MonitoredVariable> monitoredVariables;
-    static int cycle;
+    static long cycle;
 
     public MonitoringUnit() {
-        System.out.println("STEP 0.1");
+        //System.out.println("STEP 0.1");
         SharedMemory.SharedMemory.<String, ArrayList<MonitoredVariable>>set("monitoredVariables", new ArrayList<MonitoredVariable>());
-        System.out.println("STEP 0.2");
+        //System.out.println("STEP 0.2");
         initiate();
-        System.out.println("STEP 0.3");
+        //System.out.println("STEP 0.3");
     }
 
     private void initiate() {
@@ -39,7 +39,7 @@ public class MonitoringUnit {
                         cycle++;
                     }
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(util.Statics.monitoringQuantum);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(MonitoringUnit.class.getName()).log(Level.SEVERE, null, ex);
                     }

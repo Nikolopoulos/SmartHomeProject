@@ -5,12 +5,9 @@
  */
 package ControlUnit;
 
-import Libraries.Core;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import SensorsCommunicationUnit.MicazMote;
-import ControlUnit.Control;
-import DecisionMaking.ServiceEstimation;
 import SharedMemory.SharedMemory;
 import java.util.ArrayList;
 
@@ -21,7 +18,7 @@ import java.util.ArrayList;
 public class RequestExecutionThread implements Runnable {
 
     private int id;
-    private String sirh;
+    private String returnValueString;
     private int criticality;
     private CoreDefinition core;
     private boolean running;
@@ -29,8 +26,9 @@ public class RequestExecutionThread implements Runnable {
 
     public RequestExecutionThread(int id, int criticality, String url) {
         this.id = id;
-        this.sirh = "";
+        this.returnValueString = "";
         this.criticality = criticality;
+        //System.out.println("Set criticality to "+criticality);
         this.url = url;
         running = false;
     }
@@ -44,6 +42,7 @@ public class RequestExecutionThread implements Runnable {
     }
 
     public void setCriticality(int criticality) {
+        //System.out.println("Changed criticality to "+criticality);
         this.criticality = criticality;
     }
 
@@ -54,7 +53,7 @@ public class RequestExecutionThread implements Runnable {
     public void setUrl(String url) {
         this.url = url;
     }
-    
+
     public boolean isRunning() {
         return running;
     }
@@ -76,11 +75,11 @@ public class RequestExecutionThread implements Runnable {
     }
 
     public String getReturnVal() {
-        return sirh;
+        return returnValueString;
     }
 
     public void setReturnVal(String returnVal) {
-        this.sirh = returnVal;
+        this.returnValueString = returnVal;
     }
 
     @Override
@@ -93,20 +92,47 @@ public class RequestExecutionThread implements Runnable {
         }
         int ID = Integer.parseInt(url.split("/")[2]);
         String ServiceURI = "/" + url.split("/")[url.split("/").length - 1];
-        for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
+        boolean found = false;
+        for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == ID) {
-                if (criticality > 2.5) {
-                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], false);
-                } else {
-                    sirh += m.RequestServiceReading(ServiceURI.split("\\?")[0], true);
+                found = true;
+                if (criticality > 4) {
+                    System.out.println("Should go to push");
                 }
-                SharedMemory.<String,Control>get("MCU").setResponseOfRequest(id, sirh);
-                System.out.println(core);
-                System.out.println(core.getLoad());
-                core.setLoad(core.getLoad()-1);
-                
-                break;                
+
+                if (criticality > 4 && !m.isPush()) {
+                    m.setPush(true);
+                    Thread t = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (m.isPush()) {
+                                returnValueString += m.RequestServiceReading(ServiceURI.split("\\?")[0], false, criticality);
+                                try {
+                                    Thread.sleep(10);
+                                } catch (InterruptedException ex) {
+                                    Logger.getLogger(RequestExecutionThread.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                        }
+                    });
+                    Logging.MyLogger.log("Mote " + m.getId() + " turned to push protocol");
+                    t.start();
+
+                } else if (criticality > 2 && !m.isPush()) {
+                    returnValueString += m.RequestServiceReading(ServiceURI.split("\\?")[0], false, criticality);
+                } else {
+                    returnValueString += m.RequestServiceReading(ServiceURI.split("\\?")[0], true, criticality);
+                }
+                SharedMemory.<String, Control>get("MCU").setResponseOfRequest(id, returnValueString);
+                //System.out.println(core);
+                //System.out.println(core.getLoad());
+                //
+
+                break;
             }
+        }
+        if (!found) {
+            SharedMemory.<String, Control>get("MCU").setResponseOfRequest(id, "");
         }
 
     }

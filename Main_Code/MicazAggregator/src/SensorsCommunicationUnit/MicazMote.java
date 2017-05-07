@@ -6,7 +6,6 @@
 package SensorsCommunicationUnit;
 
 import SharedMemory.SharedMemory;
-import Simulator.SimulatedMessaging;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +24,10 @@ public class MicazMote {
     private boolean photoService = false;
     private boolean switchService = false;
     private ArrayList<Service> servicesList;
+    private int callsSinceLastMonitoring;
+    private int highestCritSinceLastMonitoring;
+    
+    private boolean push = false;
 
     private enum voltage {
 
@@ -76,6 +79,16 @@ public class MicazMote {
         return -1;
     }
 
+    public boolean isPush() {
+        return push;
+    }
+
+    public void setPush(boolean push) {
+        this.push = push;
+    }
+
+    
+    
     public void setSwitchState(int switchState) {
         for (Service s : servicesList) {
             //if (s.getName().equals("temp")) { //hotfix maybe it;s wrong
@@ -143,11 +156,11 @@ public class MicazMote {
 
     public void setTempReading(double tempReading) {
         for (Service s : servicesList) {
-            System.out.println("Setting temp to " + tempReading);
+            //System.out.println("Setting temp to " + tempReading);
             if (s.getName().equals("temp")) {
-                System.out.println("Found service " + tempReading);
+                //System.out.println("Found service " + tempReading);
                 s.setDecimalValue(tempReading + "");
-                System.out.println("Set temp to " + s.getDecimalValue());
+                //System.out.println("Set temp to " + s.getDecimalValue());
                 s.setLatestReading(Util.getTime());
             }
         }
@@ -214,73 +227,46 @@ public class MicazMote {
         return reply;
     }
 
-    public String RequestServiceReading(String ServiceURI, boolean cached) {
-        String reply = "genericError";
-        int type = -99;
-        for (Service s : servicesList) {
-            System.out.println(s.getURI() + " vs " + ServiceURI);
-            if (s.getURI().contains(ServiceURI) && cached && s.getLatestReading() - System.currentTimeMillis() < 30000 && s.getDecimalValue() != null) {
-                reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
-            } else if (s.getURI().contains(ServiceURI)) {
-                if (s.getURI().contains("/temp")) {
-                    System.out.println("ELSE INNER s.uri vs serviceuri " + s.getURI() + " vs " + ServiceURI + " is contained? " + s.getURI().contains(ServiceURI));
-                    System.out.println("Uri contains/temp " + ServiceURI);
-                    type = Constants.TEMP;
-                    SharedMemory.<String,SensorsCommunicationUnit>get("SCU").sendReadingRequest(id, type);
-
-                    System.out.println("temp");
-                } else if (s.getURI().contains("/photo")) {
-                    type = Constants.PHOTO;
-                    SharedMemory.<String,SensorsCommunicationUnit>get("SCU").sendReadingRequest(id, type);
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(MicazMote.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
-                } else if (s.getURI().contains("/switch")) {
-                    SharedMemory.<String,SensorsCommunicationUnit>get("SCU").sendSwitchToggle(id);
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(MicazMote.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(MicazMote.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
-                
-
-            }
-        }
-
-        return reply;
+    public int getCallsSinceLastMonitoring() {
+        return callsSinceLastMonitoring;
     }
+
+    public void upCallsSinceLastMonitoring() {
+        this.callsSinceLastMonitoring++;
+    }
+
+    public void reset() {
+        this.callsSinceLastMonitoring = 0;
+        this.highestCritSinceLastMonitoring = 0;
+        this.push=false;
+    }
+    public int getHighestCritSinceLastMonitoring() {
+        return highestCritSinceLastMonitoring;
+    }
+
+    public void setHighestCritSinceLastMonitoring(int highestCritSinceLastMonitoring) {
+        if(highestCritSinceLastMonitoring > this.highestCritSinceLastMonitoring)
+            this.highestCritSinceLastMonitoring = highestCritSinceLastMonitoring;
+    }
+
+    public String RequestServiceReading(String ServiceURI, boolean cached, int criticality) {
     
-    public String RequestServiceReading(String ServiceURI, int criticality) {
+        setHighestCritSinceLastMonitoring(criticality);
+        upCallsSinceLastMonitoring();
         String reply = "genericError";
-        boolean cached = false;
-        if(criticality<3){
-            cached = true;
-        }
         int type = -99;
         for (Service s : servicesList) {
-            System.out.println(s.getURI() + " vs " + ServiceURI);
+            //System.out.println(s.getURI() + " vs " + ServiceURI);
             if (s.getURI().contains(ServiceURI) && cached && s.getLatestReading() - System.currentTimeMillis() < 30000 && s.getDecimalValue() != null) {
                 reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
             } else if (s.getURI().contains(ServiceURI)) {
                 if (s.getURI().contains("/temp")) {
-                    System.out.println("ELSE INNER s.uri vs serviceuri " + s.getURI() + " vs " + ServiceURI + " is contained? " + s.getURI().contains(ServiceURI));
-                    System.out.println("Uri contains/temp " + ServiceURI);
+                    //System.out.println("ELSE INNER s.uri vs serviceuri " + s.getURI() + " vs " + ServiceURI + " is contained? " + s.getURI().contains(ServiceURI));
+                    //System.out.println("Uri contains/temp " + ServiceURI);
                     type = Constants.TEMP;
                     SharedMemory.<String,SensorsCommunicationUnit>get("SCU").sendReadingRequest(id, type);
 
-                    System.out.println("temp");
+                    //System.out.println("temp");
                 } else if (s.getURI().contains("/photo")) {
                     type = Constants.PHOTO;
                     SharedMemory.<String,SensorsCommunicationUnit>get("SCU").sendReadingRequest(id, type);

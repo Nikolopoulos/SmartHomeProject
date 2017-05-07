@@ -15,7 +15,17 @@ public class PendingRequest {
     private int id;
     private long timeOut = System.currentTimeMillis() + 3000;
     private boolean complete = false;
+    private RequestExecutionThread ret;
 
+    public RequestExecutionThread getRet() {
+        return ret;
+    }
+
+    public void setRet(RequestExecutionThread ret) {
+        this.ret = ret;
+    }
+
+    
     public long getTimeOut() {
         return timeOut;
     }
@@ -51,7 +61,12 @@ public class PendingRequest {
     }
     
     public void setReply(String reply){
-        System.out.println("Got my reply set from control unit and the result is "+reply);
+        //System.out.println("Got my reply set from control unit and the result is "+reply);
+        if(this.ret!=null){
+            if(ret.getWhatCore()!=null){
+                ret.getWhatCore().remove();
+            }
+        }
         request.setResponse(reply);
     }
 }

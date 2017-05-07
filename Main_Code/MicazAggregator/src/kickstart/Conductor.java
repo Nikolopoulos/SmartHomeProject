@@ -6,6 +6,7 @@
 package kickstart;
 
 import ControlUnit.Control;
+import GUI.GUI;
 import SharedMemory.SharedMemory;
 
 /**
@@ -22,12 +23,16 @@ public class Conductor {
     
     public static void main(String args[]) {
         
+        GUI graph = new GUI();
+        graph.setVisible(true);
         Logging.MyLogger.init();
+        
         
         SharedMemory memory = new SharedMemory();
         memory.<String,SharedMemory>set("SMU",memory);
         Control c = new Control(false);
-
+        Logging.MyLogger.g = graph;
+        
        
     }
 }

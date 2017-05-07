@@ -60,6 +60,7 @@ public class Control {
     public Control(boolean debug) {
         memory = SharedMemory.<String, SharedMemory>get("SMU");
         memory.<String, Control>set("MCU", this);
+        SharedMemory.<String, Boolean>set("OverLoadStatus", false);
         dm = new DecisionMakingUnit();
         memory.<String, DecisionMakingUnit>set("DMU", dm);
         threadAffinity = new ThreadAffinity(this);
@@ -71,52 +72,53 @@ public class Control {
             boolean pub, run;
             if (i == 0) {
                 pub = false;
+                pub = true; //remove this line for raspi
                 run = true;
-            }
-            if (i == 1) {
+            } else if (i == 1) {
                 pub = true;
                 run = true;
             } else {
                 pub = true;
                 run = false;
             }
-            memory.<String, ArrayList<CoreDefinition>>get("Cores").add(new CoreDefinition(threadAffinity.cores()[i], run, 0, i, pub));
-            System.out.println("added " + threadAffinity.cores()[i] + " to arrayList " + memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i).core);
+            CoreDefinition core = new CoreDefinition(threadAffinity.cores()[i], run, 0, i, pub);
+            memory.<String, ArrayList<CoreDefinition>>get("Cores").add(core);
+            System.out.println("added " + core);
         }
-        System.out.println("WTF");
+        //System.out.println("WTF");
         System.out.println("Cores available = " + threadAffinity.cores().length);
         System.out.println("Cores in arrayList = " + memory.<String, ArrayList<CoreDefinition>>get("Cores").size());
 
-        System.out.println("WTF");
+        //System.out.println("WTF");
         SensorsCommunicationUnit.SensorsCommunicationUnit SCU = new SensorsCommunicationUnit.SensorsCommunicationUnit();
         memory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>set("SCU", SCU);
         memory.<String, Integer>set("CriticalityLevels", util.Statics.CriticallityLevels);
         memory.<String, String>set("ServingAlgorithm", "CAFIFO");
-        System.out.println("STEP 1");
+        //System.out.println("STEP 1");
         MonitoringUnit mon = new MonitoringUnit();
         memory.<String, MonitoringUnit>set("MON", mon);
-        System.out.println("STEP 1.0.1");
+        //System.out.println("STEP 1.0.1");
         for (int i = 1; i < memory.<String, Integer>get("CriticalityLevels") + 1; i++) {
             memory.<String, ArrayList>set("ThreadBucket" + i, new ArrayList<RequestExecutionThread>());
         }
-        System.out.println("STEP 1.0.2");
+        //System.out.println("STEP 1.0.2");
         memory.<String, ArrayList<PendingRequest>>set("RequestBucket", new ArrayList<PendingRequest>());
         try {
-            System.out.println("STEP 1.0.3");
+            //System.out.println("STEP 1.0.3");
             addr = getFirstNonLoopbackAddress(true, false);
             memory.<String, InetAddress>set("addr", addr);
         } catch (SocketException ex) {
             System.exit(1);
-            System.out.println("STEP 1.0.4");
+            //System.out.println("STEP 1.0.4");
         }
         try {
             ip = addr.getHostAddress();
-            System.out.println("STEP 1.0.5");
+            //System.out.println("STEP 1.0.5");
 
         } catch (Exception e) {
             ip = "127.0.0.1";
         }
-        System.out.println("STEP 1.0.6");
+        //System.out.println("STEP 1.0.6");
         memory.<String, String>set("ip", ip);
         System.out.println("Percieved ip is " + ip + " first non loopbak is " + addr);
         //memory.<String, String>set("registryUnitIP", "192.168.2.5");
@@ -125,17 +127,17 @@ public class Control {
         memory.<String, Integer>set("myPort", 8181);
         spu = new ServiceProvisionUnit(this);
         memory.<String, ServiceProvisionUnit>set("SPU", spu);
-        System.out.println("STEP 1.1");
+        //System.out.println("STEP 1.1");
         spu.startServer();
-        System.out.println("STEP 1.2");
+        //System.out.println("STEP 1.2");
         System.out.println("Set ports");
-        System.out.println("STEP 2");
+        //System.out.println("STEP 2");
         this.debug = debug;
         String jsonReply = "";
         System.out.println("setAffinity");
         System.out.println("reached");
         try {
-            System.out.println("STEP 3");
+            //System.out.println("STEP 3");
             System.out.println("Tryint to https reg unit");
             jsonReply = "{result : \"success\", uid : \"1\"}";
 
@@ -174,18 +176,29 @@ public class Control {
         } catch (Exception e) {
 
             MyLogger.log(jsonReply);
-            e.printStackTrace();
+            //e.printStackTrace();
         }
-
+        //System.out.println("Step 2.01");
         SharedMemory.<String, ArrayList<MicazMote>>set("SensorsList", new ArrayList<MicazMote>());
+        SharedMemory.<String, ArrayList<MicazMote>>set("BlackList", new ArrayList<MicazMote>());
+        //System.out.println("Step 2.02");
         dropDaemon = createDropDaemon();
+        //System.out.println("Step 2.03");
         dropDaemon.start();
+        //System.out.println("Step 2.04");
         populate = createPollDaemon();
+        //System.out.println("Step 2.05");
         populate.start();
+        //System.out.println("Step 2.06");
         loadMonitoredVariables();
+        //System.out.println("Step 2.07");
         requestServingDaemon();
+        //System.out.println("Step 2.08");
         requestsTidier();
-        AggregatorStatusReport.init();
+        //System.out.println("Step 2.09");
+        //AggregatorStatusReport.init();
+        //System.out.println("Step 2.10");
+        return;
 
     }
 
@@ -422,22 +435,21 @@ public class Control {
         SharedMemory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendSwitchToggle(id);
     }
 
-    public void sendReadingRequest(int id, boolean cached, String ServiceURI) {
+    /*public void sendReadingRequest(int id, boolean cached, String ServiceURI) {
         for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == id) {
                 //messages.sendReadingRequest(id, type);
                 m.RequestServiceReading(uid, cached);
             }
         }
-    }
-
+    }*/
     public void reportReading(int id, int messageType, int[] Readings) {
         for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == id) {
                 switch (messageType) {
                     case SensorsCommunicationUnit.Constants.TEMP: {
                         m.setTempReading(Util.median(Readings));
-                        System.out.println("tried to set reading to " + Util.median(Readings));
+                        //System.out.println("tried to set reading to " + Util.median(Readings));
                         break;
                     }
                     case SensorsCommunicationUnit.Constants.PHOTO: {
@@ -464,8 +476,21 @@ public class Control {
         }
     }
 
+    public void addToBlackList(MicazMote mote) {
+        SharedMemory.<String, ArrayList<MicazMote>>get("BlackList").add(mote);
+    }
+
     public void UpdateRecordInSHM(MicazMote mote) {
         boolean found = false;
+
+        if (SharedMemory.<String, Boolean>get("OverLoadStatus")) {
+            for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("BlackList")) {
+                if (m.getId() == mote.getId()) {
+                    return;
+                }
+            }
+        }
+
         for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == mote.getId()) {
                 m.setLatestActivity(Util.getTime());
@@ -506,23 +531,25 @@ public class Control {
     }
 
     public int add(String url, DoComms request) {
-        System.out.println("ADD URL IS " + url);
+        //System.out.println("ADD URL IS " + url);
         threadId = (threadId + 1) % 10000;
 
-        addRequestToBucket(request, threadId);
-        System.out.println("DM HERE ID IS" + threadId);
+        //System.out.println("DM HERE ID IS" + threadId);
         int criticality = getCriticalityLevelOfRequest(url);
         request.setCriticality(criticality);
         RequestExecutionThread thread = new RequestExecutionThread(threadId, criticality, url);
-        System.out.println("CREATED THREAD");
+        addRequestToBucket(request, threadId, thread);
+        //System.out.println("CREATED THREAD");
         memory.<String, ArrayList<RequestExecutionThread>>get("ThreadBucket" + criticality).add(thread);
 
-        System.out.println("ADDED THREAD");
+        //System.out.println("ADDED THREAD in bucket " + "ThreadBucket" + criticality);
         return threadId;
     }
 
-    private void addRequestToBucket(DoComms request, int id) {
-        memory.<String, ArrayList<PendingRequest>>get("RequestBucket").add(new PendingRequest(request, id));
+    private void addRequestToBucket(DoComms request, int id, RequestExecutionThread ret) {
+        PendingRequest pr = new PendingRequest(request, id);
+        pr.setRet(ret);
+        memory.<String, ArrayList<PendingRequest>>get("RequestBucket").add(pr);
     }
 
     private PendingRequest findRequestFromBucket(int id) {
@@ -536,28 +563,33 @@ public class Control {
 
     public void setResponseOfRequest(int id, String reply) {
         findRequestFromBucket(id).setReply(reply);
+        removeRequest(id);
+
     }
 
     private int getCriticalityLevelOfRequest(String url) {
         int criticality = 1;
         String[] parametersSplit = url.split("\\?");
-        if (parametersSplit.length < 1) {
+        if (parametersSplit.length < 2) {
             criticality = 1;
-            System.out.println("parametersSplit <2 = " + parametersSplit.length);
+            // System.out.println("parametersSplit <2 = " + parametersSplit.length);
             for (String s : parametersSplit) {
                 //MyLogger.log(s);
             }
         } else {
-            for (String s : parametersSplit) {
-                System.out.println("parametersSplit !<2 = " + s);
-                return 1;
-            }
+            //for (String s : parametersSplit) {
+            //   System.out.println("parametersSplit !<2 = " + s);
+            //return 1;
+            //}
 
+            //System.out.println("Param split is " +parametersSplit);
             String[] parameters = parametersSplit[1].split("&");
 
             for (String parameter : parameters) {
+                //System.out.println("Checking parm " +parameter);
                 if (parameter.startsWith("crit")) {
                     String value = parameter.split("=")[1];
+                    //System.out.println("crit val is "+value + "from "+parameter);
                     criticality = Integer.parseInt(value);
                     break;
                 }
@@ -593,7 +625,7 @@ public class Control {
             if (memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i).getId() == id) {
                 return memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i);
             } else {
-                System.out.println("current get id is " + memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i).getId() + " while id given is " + id);
+                //System.out.println("current get id is " + memory.<String, ArrayList<CoreDefinition>>get("Cores").get(i).getId() + " while id given is " + id);
             }
         }
         return null;
@@ -603,21 +635,38 @@ public class Control {
         Thread daemon = new Thread(new Runnable() {
             @Override
             public void run() {
+
                 while (true) {
+
                     CoreDefinition core = getServingCore();
+
                     if (core == null) {
-                        System.out.println("No core available :(");
+                        //System.out.println("No core available :(");
                         continue;
                     }
-                    RequestExecutionThread req = getNextRequestToServe();
-                    if (req == null) {
+                    if (!hasNextRequestToServe()) {
                         continue;
                     }
-                    req.setWhatCore(core);
-                    //the attachment happens during the running of the thread so
-                    //this statement is now redundant core.attachTo(req);
-                    req.run();
-                    removeRequest(req);
+                    Thread t = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            RequestExecutionThread req = getNextRequestToServe();
+                            //thread is removed form bucket from the call
+
+                            if (req == null) {
+                                return;
+                            }
+
+                            //System.out.println("Serving " + req.getId() + " of criticality " + req.getCriticality());
+                            req.setWhatCore(core);
+                            //the attachment happens during the running of the thread so
+                            //this statement is now redundant core.attachTo(req);
+                            req.run();
+
+                        }
+                    });
+
+                    t.start();
 
                 }
             }
@@ -631,14 +680,15 @@ public class Control {
             public void run() {
                 while (true) {
                     //System.out.println("Tidier ran");
-                    PendingRequest req = null;
-                    for (PendingRequest request : SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket")) {
-                        if (request.getTimeOut() <= System.currentTimeMillis()) {
-                            req = request;
-                            request.setComplete(true);
-                        }
-                    }
                     try {
+                        PendingRequest req = null;
+                        for (PendingRequest request : SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket")) {
+                            if (request.getTimeOut() <= System.currentTimeMillis()) {
+                                req = request;
+                                request.setComplete(true);
+                            }
+                        }
+
                         if (req != null) {
                             //SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket").remove(req);
                         }
@@ -654,17 +704,18 @@ public class Control {
         daemon.start();
     }
 
-    private void removeRequest(RequestExecutionThread req) {
+    private void removeRequest(int id) {
+        System.out.println("Done with request " + id);
         PendingRequest removable = null;
         for (PendingRequest request : SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket")) {
-            if (request.getId() == req.getId()) {
+            if (request.getId() == id) {
                 removable = request;
                 request.setComplete(true);
             }
         }
         try {
             if (removable != null) {
-                //SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket").remove(removable);
+                SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket").remove(removable);
             }
             //Thread.sleep(500);
         } catch (ConcurrentModificationException ex) {
@@ -676,15 +727,35 @@ public class Control {
     private RequestExecutionThread getNextRequestToServe() {
         switch (memory.<String, String>get("ServingAlgorithm")) {
             case "CAFIFO": {
-                for (int i = memory.<String, Integer>get("AvailableCores"); i > 0; i--) {
-                    if (memory.<String, ArrayList>get("ThreadBucket" + i).size() > 0) {
-                        return memory.<String, ArrayList<RequestExecutionThread>>get("ThreadBucket" + i).remove(0);
+                for (int i = memory.<String, Integer>get("CriticalityLevels"); i > 0; i--) {
+                    if (!memory.<String, ArrayList>get("ThreadBucket" + i).isEmpty()) {
+                        try {
+                            return memory.<String, ArrayList<RequestExecutionThread>>get("ThreadBucket" + i).remove(0);
+                        } catch (Exception e) {
+                        }
                     }
                 }
                 break;
             }
         }
         return null;
+    }
+
+    private boolean hasNextRequestToServe() {
+        switch (memory.<String, String>get("ServingAlgorithm")) {
+            case "CAFIFO": {
+                for (int i = memory.<String, Integer>get("CriticalityLevels"); i > 0; i--) {
+                    if (!memory.<String, ArrayList>get("ThreadBucket" + i).isEmpty()) {
+                        try {
+                            return true;
+                        } catch (Exception e) {
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        return false;
     }
 
     private CoreDefinition getServingCore() {
@@ -704,6 +775,7 @@ public class Control {
     }
 
     public void setCoreMode(int id, int mode) {
+        System.out.println("Setting core " + id + " to " + mode);
         for (CoreDefinition core : SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")) {
             if (core.getId() == id) {
                 switch (mode) {
@@ -728,7 +800,7 @@ public class Control {
     public void setCoreAvailability(int id, boolean mode) {
         for (CoreDefinition core : SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")) {
             if (core.getId() == id) {
-                core.setRunning(debug);
+                core.setRunning(mode);
                 break;
             }
         }
@@ -743,13 +815,43 @@ public class Control {
                     @Override
                     public void run() {
                         for (CoreDefinition core : memory.<String, ArrayList<CoreDefinition>>get("Cores")) {
+
                             if (core.getLoad() > util.Statics.overloadLevel && !core.isOverLoadLimit()) {
                                 SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("woah", "woaaaaah", "CoreReconfiguration"));
-                            } else if (core.getLoad() < util.Statics.underUtilizedLevel && !core.isUnderUtilized()) {
-                                SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("woah", "woaaaaah", "CoreReconfiguration"));
-                            } else if (!core.isNormalLoad()) {
-                                SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("woah", "woaaaaah", "CoreReconfiguration"));
+                                break;
                             }
+                            if (core.getLoad() < util.Statics.underUtilizedLevel && !core.isUnderUtilized()) {
+                                SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("woah", "woaaaaah", "CoreReconfiguration"));
+                                break;
+                            }
+                            if (core.getLoad() <= util.Statics.exitOverLoadLevel && core.isOverLoadLimit()) {
+                                SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("woah", "woaaaaah", "CoreReconfiguration"));
+                                break;
+                            }
+                            if (core.getLoad() > util.Statics.underUtilizedLevel && core.getLoad() < util.Statics.overloadLevel && !core.isNormalLoad()) {
+                                SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("woah", "woaaaaah", "CoreReconfiguration"));
+                                break;
+                            }
+
+                        }
+                    }
+                })));
+
+        memory.<String, ArrayList<MonitoredVariable>>get("monitoredVariables").add(
+                new MonitoredVariable("OverloadFlag", 1, 1, new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (SharedMemory.<String, Boolean>get("OverLoadStatus")) {
+                            SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("woah", "woaaaaah", "OverLoaded"));
+                        }
+                    }
+                })));
+        memory.<String, ArrayList<MonitoredVariable>>get("monitoredVariables").add(
+                new MonitoredVariable("SensorReseter", 1, 1, new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
+                            m.reset();
                         }
                     }
                 })));

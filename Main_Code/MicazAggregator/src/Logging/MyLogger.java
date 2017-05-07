@@ -5,6 +5,7 @@
  */
 package Logging;
 
+import GUI.GUI;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,11 +24,13 @@ import java.util.logging.Logger;
  * @author root
  */
 public class MyLogger {
-    
+
     public static File logfile;
     private static PrintWriter pw;
+    public static GUI g;
 
     public static void init() {
+
         logfile = new File("log.nope");
         if (logfile.exists()) {
             try {
@@ -41,13 +44,15 @@ public class MyLogger {
         }
 
     }
-    
 
     public static void log(String s) {
-        
+
+        if (g != null) {
+            g.log("[" + new Date().toString() + "]:  " + s);
+        }
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(logfile,true));
-            bw.write("["+new Date().toString()+"]:  " + s);
+            BufferedWriter bw = new BufferedWriter(new FileWriter(logfile, true));
+            bw.write("[" + new Date().toString() + "]:  " + s);
             bw.newLine();
             bw.close();
         } catch (FileNotFoundException ex) {
@@ -55,10 +60,9 @@ public class MyLogger {
         } catch (IOException ex) {
             Logger.getLogger(MyLogger.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
 
     }
- 
+
     public static String readLog() {
         String toReturn = "<html><body>";
         try {

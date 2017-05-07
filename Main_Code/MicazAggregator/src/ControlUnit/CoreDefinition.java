@@ -34,6 +34,7 @@ public class CoreDefinition {
     }
 
     public void setPublicResource(boolean publicResource) {
+        //System.out.println("Altering publicResource of core "+id+" to "+publicResource);
         this.publicResource = publicResource;
     }
 
@@ -43,6 +44,9 @@ public class CoreDefinition {
 
     public void setOverLoadLimit() {
         utility = 1;
+    }
+    public void remove() {
+        this.load--;
     }
 
     public void setNormalLoad() {
@@ -83,6 +87,7 @@ public class CoreDefinition {
     }
 
     public void setRunning(Boolean running) {
+        //System.out.println("Altering running of core "+id+" to "+running);
         this.running = running;
     }
 
@@ -102,4 +107,9 @@ public class CoreDefinition {
         this.id = id;
     }
 
+    @Override
+    public String toString() {
+        return "CoreDefinition{" + "core=" + core + ", running=" + running + ", load=" + load + ", id=" + id + ", publicResource=" + publicResource + ", utility=" + utility + '}';
+    }
+    
 }

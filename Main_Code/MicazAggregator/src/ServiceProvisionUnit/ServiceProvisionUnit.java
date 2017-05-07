@@ -37,11 +37,11 @@ public class ServiceProvisionUnit {
             public void run() {
                 try {
                     try {
-                        System.out.println(finalControl);
-                        System.out.println(finalControl.findCoreById(0));
-                            System.out.println(finalControl.findCoreById(0).getCore());
+                        //System.out.println(finalControl);
+                        //System.out.println(finalControl.findCoreById(0));
+                            //System.out.println(finalControl.findCoreById(0).getCore());
                         finalControl.findCoreById(0).getCore().attachTo();
-                         System.out.println("Server attached!");
+                         //System.out.println("Server attached!");
                     } catch (Exception ex) {
                         Logger.getLogger(ServiceProvisionUnit.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -50,7 +50,7 @@ public class ServiceProvisionUnit {
                     Socket server;
                     while ((i++ < maxConnections) || (maxConnections == 0)) {
                         server = listener.accept();
-                         System.out.println("Server Accepted!!");
+                         //System.out.println("Server Accepted!!");
                         DoComms conn_c = new DoComms(server, finalControl,finalControl.findCoreById(0).getCore());
                         Thread clientConnectionThread = new Thread(conn_c);
                         clientConnectionThread.setName("clientConnectionThread"+i);
@@ -58,13 +58,13 @@ public class ServiceProvisionUnit {
                     }
 
                 } catch (IOException ioe) {
-                    System.out.println("IOException on socket listen: " + ioe);
+                    //System.out.println("IOException on socket listen: " + ioe);
                     ioe.printStackTrace();
                 }
             }
         });
         serverThread.start();
-        System.out.println("Server started!");
+        //System.out.println("Server started!");
     }
     
     public RequestObject httpContact(RequestObject request){
@@ -79,7 +79,7 @@ public class ServiceProvisionUnit {
                     reply.release();
                 }
             });
-            requestThread.run();
+            requestThread.start();
         }
         
         else if (request.getMethod().equalsIgnoreCase("GET")){
@@ -97,7 +97,7 @@ public class ServiceProvisionUnit {
                     reply.release();
                 }
             });
-            requestThread.run();
+            requestThread.start();
         }
         try {
             reply.acquire();

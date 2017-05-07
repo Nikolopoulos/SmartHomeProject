@@ -5,7 +5,6 @@
  */
 package ServiceProvisionUnit;
 
-import DecisionMaking.DecisionMaking;
 import Logging.MyLogger;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -73,7 +72,7 @@ public class DoComms implements Runnable {
             String localinput = getInput();
 
             int requestType = getRequestType(localinput);
-            System.out.println("checking request");
+            //System.out.println("checking request");
             switch (requestType) {
                 case 0: {
                     getGenericResponse();
@@ -102,7 +101,7 @@ public class DoComms implements Runnable {
             }
 
         } catch (IOException ioe) {
-            System.out.println("IOException on socket listen: " + ioe);
+            //System.out.println("IOException on socket listen: " + ioe);
             ioe.printStackTrace();
         }
     }
@@ -118,7 +117,7 @@ public class DoComms implements Runnable {
                 requestedURL = parts[1];
                 url = parts[1];
                 for (int i = 0; i < parts.length; i++) {
-                    System.out.println("****************REQUESTED URL" + i + " IS " + parts[i]);
+                    //System.out.println("****************REQUESTED URL" + i + " IS " + parts[i]);
                 }
             }
             input = input + line + "\n";
@@ -130,7 +129,7 @@ public class DoComms implements Runnable {
 
     private int getRequestType(String Url) {
         if (Url.equals("/")) {
-            System.out.println("is pure /");
+            //System.out.println("is pure /");
             return 0;
 
         } else if (Url.startsWith("/sensors")) {
@@ -138,7 +137,7 @@ public class DoComms implements Runnable {
         } else if (Url.startsWith("/log")) {
             return 2;
         } else if (Url.startsWith("/sensor/") /*&& !((Url.contains("photo")) || (Url.contains("temp")) || (Url.contains("switch")))*/) {
-            System.out.println("starts with sensor but doesnt have required service name");
+            //System.out.println("starts with sensor but doesnt have required service name");
             if (Url.length() < 9) {
                 return 3;
             } else if (Url.startsWith("/sensor/")) {
@@ -153,6 +152,7 @@ public class DoComms implements Runnable {
     }
 
     public void setCriticality(int criticality) {
+        //System.out.println("Changed criticality to "+criticality);
         this.criticality = criticality;
     }
 
@@ -170,10 +170,10 @@ public class DoComms implements Runnable {
     }
 
     private void getSensorsList() {
-        System.out.println("GetSensorsList");
+        //System.out.println("GetSensorsList");
         if (SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList").isEmpty()) {
             reply = "{\"sensors\":{}}";
-            System.out.println("1. set reply to "+reply);
+            //System.out.println("1. set reply to "+reply);
             sema.release();
         } else {
             reply = "{\"sensors\":{[";
@@ -182,22 +182,22 @@ public class DoComms implements Runnable {
             }
             reply = reply.substring(0, reply.length()-1);
             reply+="]}}";
-            System.out.println("2. set reply to "+reply);
+            //System.out.println("2. set reply to "+reply);
             sema.release();
         }
-        System.out.println("3. set reply to "+reply);
+        //System.out.println("3. set reply to "+reply);
     }
 
     private void getSpecificSensor(String url) {
-        System.out.println("starts with sensor and has both length and name");
+        //System.out.println("starts with sensor and has both length and name");
         reply = "";
-        System.out.println("adding to dm");
+        //System.out.println("adding to dm");
         int threadID = con.add(url,this);
-        System.out.println("added to bucket");
+        //System.out.println("added to bucket");
         String returnVal = "";
 
         while (reply.length() == "".length()) {
-            System.out.println("return val not acceptable");
+            ////System.out.println("return val not acceptable for request "+threadID);
             try {
                 Thread.sleep(300);
             } catch (InterruptedException ex) {
@@ -205,7 +205,7 @@ public class DoComms implements Runnable {
             }           
         }
         reply = "{\"sensor\":{"+reply;
-        System.out.println("Returnval = " + reply);
+        //System.out.println("Returnval = " + reply);
         reply += returnVal + "}}";
         sema.release();
     }
@@ -225,14 +225,14 @@ public class DoComms implements Runnable {
     }
 
     public void setResponse(String response) {
-        System.out.println("SetResponse from 1");
+        //System.out.println("SetResponse from 1");
         this.response.setReply(response);
         this.reply = response;
         //this.sema.release();
     }
 
     public void setResponse(ResponseObject response) {
-        System.out.println("SetResponse from 2");
+        //System.out.println("SetResponse from 2");
         this.response = response;
         this.sema.release();
     }
