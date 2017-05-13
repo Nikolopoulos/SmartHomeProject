@@ -8,7 +8,6 @@ package ControlUnit;
 import DecisionMakingUnit.DecisionMakingUnit;
 import Logging.MyLogger;
 import Libraries.ThreadAffinity;
-import Logging.AggregatorStatusReport;
 import MonitoringUnit.MonitoredVariable;
 import MonitoringUnit.MonitoringUnit;
 import java.lang.management.ManagementFactory;
@@ -480,6 +479,11 @@ public class Control {
         SharedMemory.<String, ArrayList<MicazMote>>get("BlackList").add(mote);
     }
 
+    public void emptyBlacklist() {
+        SharedMemory.<String, ArrayList<MicazMote>>unset("BlackList");
+        SharedMemory.<String, ArrayList<MicazMote>>set("BlackList", new ArrayList<MicazMote>());
+    }
+
     public void UpdateRecordInSHM(MicazMote mote) {
         boolean found = false;
 
@@ -806,6 +810,34 @@ public class Control {
         }
     }
 
+    public void changeToPush(int id) {
+        for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
+            if (m.getId() == id) {
+                m.setPush(true);
+
+                //to apo katw na ginetai sto dmu basei exception kai 8a ylopoiei to nhma to control
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (m.isPush()) {
+                            for (Service ser : m.getServices()) {
+                                m.RequestServiceReading(ser.getURI(), false, 5);
+                                try {
+                                    Thread.sleep(100);
+                                } catch (InterruptedException ex) {
+                                    Logger.getLogger(RequestExecutionThread.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                        }
+                    }
+                });
+                Logging.MyLogger.log("Mote " + m.getId() + " turned to push protocol");
+                t.start();
+                break;
+            }
+        }
+    }
+
     private void loadMonitoredVariables() {
         //this SHOULD be done dynamically from a file during the mon unit 
         //initialiation. this is bakalistikos way
@@ -853,6 +885,13 @@ public class Control {
                         for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
                             m.reset();
                         }
+                    }
+                })));
+        memory.<String, ArrayList<MonitoredVariable>>get("monitoredVariables").add(
+                new MonitoredVariable("BlacklistEmptier", 10, 1, new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SharedMemory.<String, Control>get("MCU").emptyBlacklist();
                     }
                 })));
     }

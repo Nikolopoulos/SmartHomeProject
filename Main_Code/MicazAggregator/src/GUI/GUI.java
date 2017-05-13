@@ -8,6 +8,7 @@ package GUI;
 import ControlUnit.CoreDefinition;
 import SensorsCommunicationUnit.MicazMote;
 import SharedMemory.SharedMemory;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +42,7 @@ public class GUI extends javax.swing.JFrame {
         jProgressBar4.setMaximum(util.Statics.maxThreads);
 
         jTextArea2.setEditable(false);
+        
         Thread daemon = updateDaemon();
         //System.out.println("GUI BEFORE DAEMON");
         daemon.start();
@@ -62,21 +64,57 @@ public class GUI extends javax.swing.JFrame {
                                 jLabel10.setText(core.isPublicResource() + "");
                                 jLabel8.setText(core.getRunning() + "");
                                 jLabel6.setText(core.getUtility() == -1?"Low":core.getUtility()==0?"Normal":"High" );
+                                if(core.getLoad()<util.Statics.underUtilizedLevel){
+                                    jProgressBar1.setForeground(Color.GREEN);
+                                }
+                                else if (core.getLoad()>util.Statics.overloadLevel){
+                                    jProgressBar1.setForeground(Color.red);
+                                }
+                                else{
+                                    jProgressBar1.setForeground(Color.blue);
+                                }
                             } else if (core.getId() == 1) {
                                 jProgressBar2.setValue(core.getLoad());
                                 jLabel14.setText(core.isPublicResource() + "");
                                 jLabel16.setText(core.getRunning() + "");
                                 jLabel13.setText(core.getUtility() == -1?"Low":core.getUtility()==0?"Normal":"High" );
+                                if(core.getLoad()<util.Statics.underUtilizedLevel){
+                                    jProgressBar2.setForeground(Color.GREEN);
+                                }
+                                else if (core.getLoad()>util.Statics.overloadLevel){
+                                    jProgressBar2.setForeground(Color.red);
+                                }
+                                else{
+                                    jProgressBar2.setForeground(Color.blue);
+                                }
                             } else if (core.getId() == 2) {
                                 jProgressBar3.setValue(core.getLoad());
                                 jLabel26.setText(core.isPublicResource() + "");
                                 jLabel28.setText(core.getRunning() + "");
                                 jLabel25.setText(core.getUtility() == -1?"Low":core.getUtility()==0?"Normal":"High" );
+                                if(core.getLoad()<util.Statics.underUtilizedLevel){
+                                    jProgressBar3.setForeground(Color.GREEN);
+                                }
+                                else if (core.getLoad()>util.Statics.overloadLevel){
+                                    jProgressBar3.setForeground(Color.red);
+                                }
+                                else{
+                                    jProgressBar3.setForeground(Color.blue);
+                                }
                             } else if (core.getId() == 3) {
                                 jProgressBar4.setValue(core.getLoad());
                                 jLabel32.setText(core.isPublicResource() + "");
                                 jLabel34.setText(core.getRunning() + "");
                                 jLabel31.setText(core.getUtility() == -1?"Low":core.getUtility()==0?"Normal":"High" );
+                                if(core.getLoad()<util.Statics.underUtilizedLevel){
+                                    jProgressBar4.setForeground(Color.GREEN);
+                                }
+                                else if (core.getLoad()>util.Statics.overloadLevel){
+                                    jProgressBar4.setForeground(Color.red);
+                                }
+                                else{
+                                    jProgressBar4.setForeground(Color.blue);
+                                }
                             }
 
                         }

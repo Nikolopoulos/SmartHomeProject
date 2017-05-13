@@ -24,7 +24,7 @@ public class Statics {
 
     public static int maxThreads = 15;
     public static int overloadLevel = 12;
-    public static int underUtilizedLevel = 3;
+    public static int underUtilizedLevel = 8;
     public static int exitOverLoadLevel = 10;
 
     public static long monitoringQuantum = 1000;

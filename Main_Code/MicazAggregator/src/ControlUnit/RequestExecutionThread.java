@@ -5,11 +5,13 @@
  */
 package ControlUnit;
 
+import DecisionMakingUnit.DecisionMakingUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import SensorsCommunicationUnit.MicazMote;
 import SharedMemory.SharedMemory;
 import java.util.ArrayList;
+import util.CustomException;
 
 /**
  *
@@ -101,23 +103,8 @@ public class RequestExecutionThread implements Runnable {
                 }
 
                 if (criticality > 4 && !m.isPush()) {
-                    m.setPush(true);
-                    Thread t = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            while (m.isPush()) {
-                                returnValueString += m.RequestServiceReading(ServiceURI.split("\\?")[0], false, criticality);
-                                try {
-                                    Thread.sleep(10);
-                                } catch (InterruptedException ex) {
-                                    Logger.getLogger(RequestExecutionThread.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                            }
-                        }
-                    });
-                    Logging.MyLogger.log("Mote " + m.getId() + " turned to push protocol");
-                    t.start();
-
+                    returnValueString += m.RequestServiceReading(ServiceURI.split("\\?")[0], false, criticality);
+                    SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("Mote", m.getId() + "", "PushCondition"));
                 } else if (criticality > 2 && !m.isPush()) {
                     returnValueString += m.RequestServiceReading(ServiceURI.split("\\?")[0], false, criticality);
                 } else {

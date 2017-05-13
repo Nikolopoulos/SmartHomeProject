@@ -91,17 +91,19 @@ public class DecisionMakingUnit {
 
         } else if (e.getType().equalsIgnoreCase("OverLoaded")) {
             MicazMote candidate = null;
-            for(MicazMote mote :SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")){
-               if(candidate == null){
-                   candidate = mote;
-                   continue;
-               }
-               if((candidate.getCallsSinceLastMonitoring()/candidate.getHighestCritSinceLastMonitoring())<(mote.getCallsSinceLastMonitoring()/mote.getHighestCritSinceLastMonitoring())){
-                   candidate = mote;
-               }
+            for (MicazMote mote : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
+                if (candidate == null) {
+                    candidate = mote;
+                    continue;
+                }
+                if ((candidate.getCallsSinceLastMonitoring() / candidate.getHighestCritSinceLastMonitoring()) < (mote.getCallsSinceLastMonitoring() / mote.getHighestCritSinceLastMonitoring())) {
+                    candidate = mote;
+                }
             }
             SharedMemory.<String, Control>get("MCU").addToBlackList(candidate);
-            Logging.MyLogger.log("Candidate for blacklisting/migration is mote with id "+candidate.getId());
+            Logging.MyLogger.log("Candidate for blacklisting/migration is mote with id " + candidate.getId());
+        } else if (e.getType().equalsIgnoreCase("PushCondition")) {
+            SharedMemory.<String, Control>get("MCU").changeToPush(Integer.parseInt(e.getDescription()));
         }
     }
 }

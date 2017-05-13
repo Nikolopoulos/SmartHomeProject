@@ -1,19 +1,47 @@
-[Sun May 07 20:01:43 EEST 2017]:  RequestObject{url=http://localhost, port=8383, parameters=ip%3D127.0.0.1%26port%3D8181%26services%3D%7B%22services%22%3A%5B%7B%22uri%22+%3A+%22%2Fsensors%22%2C+%22description%22+%3A+%22returns+a+list+of+sensors+available%22%7D%5D%7D, service=/register, myIP=null, method=Post, response={}}
-[Sun May 07 20:01:43 EEST 2017]:  Error parsing this{}
-[Sun May 07 20:01:43 EEST 2017]:  {}
-[Sun May 07 20:01:57 EEST 2017]:  Mote 2 turned to push protocol
-[Sun May 07 20:01:58 EEST 2017]:  Mote 2 turned to push protocol
-[Sun May 07 20:01:59 EEST 2017]:  Candidate for blacklisting/migration is mote with id 2
-[Sun May 07 20:01:59 EEST 2017]:  Mote 2 turned to push protocol
-[Sun May 07 20:02:00 EEST 2017]:  Candidate for blacklisting/migration is mote with id 2
-[Sun May 07 20:02:00 EEST 2017]:  Mote 2 turned to push protocol
-[Sun May 07 20:02:01 EEST 2017]:  Candidate for blacklisting/migration is mote with id 2
-[Sun May 07 20:02:01 EEST 2017]:  Mote 2 turned to push protocol
-[Sun May 07 20:02:02 EEST 2017]:  Candidate for blacklisting/migration is mote with id 2
-[Sun May 07 20:02:02 EEST 2017]:  Mote 2 turned to push protocol
-[Sun May 07 20:02:03 EEST 2017]:  Candidate for blacklisting/migration is mote with id 2
-[Sun May 07 20:02:03 EEST 2017]:  Mote 2 turned to push protocol
-[Sun May 07 20:02:04 EEST 2017]:  Mote 2 turned to push protocol
-[Sun May 07 20:02:05 EEST 2017]:  Mote 2 turned to push protocol
-[Sun May 07 20:02:06 EEST 2017]:  Mote 2 turned to push protocol
-[Sun May 07 20:02:07 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:46:48 EEST 2017]:  RequestObject{url=http://localhost, port=8383, parameters=ip%3D127.0.0.1%26port%3D8181%26services%3D%7B%22services%22%3A%5B%7B%22uri%22+%3A+%22%2Fsensors%22%2C+%22description%22+%3A+%22returns+a+list+of+sensors+available%22%7D%5D%7D, service=/register, myIP=null, method=Post, response={}}
+[Mon May 08 19:46:48 EEST 2017]:  Error parsing this{}
+[Mon May 08 19:46:48 EEST 2017]:  {}
+[Mon May 08 19:46:53 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:46:53 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:46:53 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:46:53 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:46:54 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:46:54 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:46:55 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:46:55 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:46:56 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:46:56 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:46:57 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:46:57 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:46:58 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:46:58 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:46:59 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:46:59 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:00 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:00 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:01 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:01 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:02 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:02 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:03 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:03 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:04 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:04 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:05 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:05 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:06 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:06 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:07 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:07 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:08 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:08 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:09 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:09 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:10 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:10 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:11 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:11 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:12 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:12 EEST 2017]:  Mote 4 turned to push protocol
+[Mon May 08 19:47:13 EEST 2017]:  Mote 2 turned to push protocol
+[Mon May 08 19:47:13 EEST 2017]:  Mote 4 turned to push protocol
