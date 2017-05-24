@@ -101,7 +101,7 @@ public class DecisionMakingUnit {
                 }
             }
             SharedMemory.<String, Control>get("MCU").addToBlackList(candidate);
-            Logging.MyLogger.log("Candidate for blacklisting/migration is mote with id " + candidate.getId());
+            Logging.MyLogger.log("Candidate for migration is mote with id " + candidate.getId());
         } else if (e.getType().equalsIgnoreCase("PushCondition")) {
             SharedMemory.<String, Control>get("MCU").changeToPush(Integer.parseInt(e.getDescription()));
         }

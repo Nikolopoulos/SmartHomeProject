@@ -28,14 +28,14 @@ public class Util {
         return System.currentTimeMillis();
     }
 
-    public static double a2d2engi(int thermistor) {
+    public static double a2d2engi(double thermistor) {
         double adc = thermistor;
         double Rthr = 10000 * (1023 - adc) / adc;
         return Rthr;
         //engineering from analog to digital
     }
 
-    public static double a2d2celsius(int reading) {
+    public static double a2d2celsius(double reading) {
         //celsious from analog to digital
         double temperature, a, b, c, Rthr;
         a = 0.001307050;
@@ -45,6 +45,7 @@ public class Util {
         temperature = 1 / (a + b * Math.log(Rthr) + c * Math.pow(Math.log(Rthr), 3));
         temperature -= 273.15; //Convert from Kelvin to Celcius
 
+        System.out.println("Computed temp is "+temperature);
         return temperature;
 
     }

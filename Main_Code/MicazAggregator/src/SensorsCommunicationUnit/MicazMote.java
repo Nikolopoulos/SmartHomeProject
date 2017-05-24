@@ -159,7 +159,7 @@ public class MicazMote {
             //System.out.println("Setting temp to " + tempReading);
             if (s.getName().equals("temp")) {
                 //System.out.println("Found service " + tempReading);
-                s.setDecimalValue(tempReading + "");
+                s.setDecimalValue(util.Util.a2d2celsius(tempReading) + "");
                 //System.out.println("Set temp to " + s.getDecimalValue());
                 s.setLatestReading(Util.getTime());
             }

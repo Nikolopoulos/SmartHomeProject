@@ -217,7 +217,7 @@ public class DoComms implements Runnable {
             Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
         }
         PrintStream out = new PrintStream(server.getOutputStream());
-        out.println(reply);
+        out.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: "+reply.length()+"\r\n\r\n"+reply);
         out.flush();
         out.close();
         server.close();
