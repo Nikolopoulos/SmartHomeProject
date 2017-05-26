@@ -16,6 +16,8 @@ import SensorsCommunicationUnit.MicazMote;
 import ControlUnit.Control;
 import Libraries.Core;
 import SharedMemory.SharedMemory;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
@@ -94,6 +96,10 @@ public class DoComms implements Runnable {
                     getSpecificSensor(localinput);
                     break;
                 }
+                case 5: {
+                    printToGUI(localinput);
+                    break;
+                }
                 case -1: {
                     getGenericResponse();
                     break;
@@ -143,6 +149,8 @@ public class DoComms implements Runnable {
             } else if (Url.startsWith("/sensor/")) {
                 return 4;
             }
+        } else if (Url.startsWith("/print")) {
+            return 5;
         }
         return -1;
     }
@@ -156,7 +164,6 @@ public class DoComms implements Runnable {
         this.criticality = criticality;
     }
 
-    
     public Socket getServer() {
         return server;
     }
@@ -169,19 +176,32 @@ public class DoComms implements Runnable {
         sema.release();
     }
 
+    private void printToGUI(String url) {
+        
+        String params[] = url.split("[\\?&]");
+        for (String param : params) {
+            if (param.startsWith("text=")) {
+                Logging.MyLogger.log(URLDecoder.decode(param.substring("text=".length())));
+            }
+        }
+        reply="";
+        sema.release();
+
+    }
+
     private void getSensorsList() {
         //System.out.println("GetSensorsList");
-        if (SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList").isEmpty()) {
+        if (SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList").isEmpty()) {
             reply = "{\"sensors\":{}}";
             //System.out.println("1. set reply to "+reply);
             sema.release();
         } else {
             reply = "{\"sensors\":{[";
-            for (MicazMote m : SharedMemory.<String,ArrayList<MicazMote>>get("SensorsList")) {
+            for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
                 reply += m.JSONDescription() + ",";
             }
-            reply = reply.substring(0, reply.length()-1);
-            reply+="]}}";
+            reply = reply.substring(0, reply.length() - 1);
+            reply += "]}}";
             //System.out.println("2. set reply to "+reply);
             sema.release();
         }
@@ -192,7 +212,7 @@ public class DoComms implements Runnable {
         //System.out.println("starts with sensor and has both length and name");
         reply = "";
         //System.out.println("adding to dm");
-        int threadID = con.add(url,this);
+        int threadID = con.add(url, this);
         //System.out.println("added to bucket");
         String returnVal = "";
 
@@ -202,9 +222,9 @@ public class DoComms implements Runnable {
                 Thread.sleep(300);
             } catch (InterruptedException ex) {
                 Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
-            }           
+            }
         }
-        reply = "{\"sensor\":{"+reply;
+        reply = "{\"sensor\":{" + reply;
         //System.out.println("Returnval = " + reply);
         reply += returnVal + "}}";
         sema.release();
@@ -217,7 +237,7 @@ public class DoComms implements Runnable {
             Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
         }
         PrintStream out = new PrintStream(server.getOutputStream());
-        out.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: "+reply.length()+"\r\n\r\n"+reply);
+        out.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + reply.length() + "\r\n\r\n" + reply);
         out.flush();
         out.close();
         server.close();

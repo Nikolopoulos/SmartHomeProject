@@ -20,23 +20,25 @@ public class Temperature {
         Thread daemon = new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    String url = "http://localhost:8181/sensor/2/temp?crit=2";
+                while (true) {
+                    try {
+                        String url = "http://localhost:8181/sensor/2/temp?crit=2";
 
-                    System.out.println(url);
-                    String resp = HTTPRequest.sendGet(url);
-                    
-                    int start = "{\"sensor\":{\"ID\":\"2\", \"temp\":\"".length();
-                    resp = resp.substring(start, start+4);
-                    if(Double.parseDouble(resp)>temp){
-                        turnOn();
+                        System.out.println(url);
+                        String resp = HTTPRequest.sendGet(url);
+
+                        int start = "{\"sensor\":{\"ID\":\"2\", \"temp\":\"".length();
+                        resp = resp.substring(start, start + 4);
+                        if (Double.parseDouble(resp) > temp) {
+                            turnOn();
+                        }
+                        if (Double.parseDouble(resp) < temp + 2) {
+                            turnOff();
+                        }
+
+                    } catch (Exception ex) {
+
                     }
-                    if(Double.parseDouble(resp)<temp+2){
-                        turnOff();
-                    }
-
-                } catch (Exception ex) {
-
                 }
 
             }
@@ -56,6 +58,7 @@ public class Temperature {
         System.out.println(url);
         HTTPRequest.sendGet(url);
     }
+
     private void turnOff() throws Exception {
         String url = "http://localhost:8181/sensor/4/switch?crit=4";
 
