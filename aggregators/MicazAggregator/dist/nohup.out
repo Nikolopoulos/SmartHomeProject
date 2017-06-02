@@ -1,0 +1,2330 @@
+Percieved ip is 192.168.1.7 first non loopbak is /192.168.1.7
+org.json.JSONException: JSONObject["result"] not found.
+	at org.json.JSONObject.get(JSONObject.java:476)
+	at util.Control.<init>(Control.java:122)
+	at oscilloscope.Conductor.main(Conductor.java:27)
+Server started!
+Server attached!
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+is pure /
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /favicon.ico
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /favicon.ico
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /favicon.ico
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp
+DM HERE ID IS1
+parametersSplit <2 = 1
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x248 0x249 0x249 0x249 0x249 0x249 0x249 0x249 0x249 0x249 ]
+
+Setting temp to 584.0
+Setting temp to 584.0
+Found service 584.0
+Set temp to 584.0
+tried to set reading to 584.0
+Returnval = "ID":"2", "temp":"584.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS2
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x25a 0x25a 0x25a 0x25a 0x25a 0x25a 0x25a 0x25a 0x25a 0x25a ]
+
+Setting temp to 602.0
+Setting temp to 602.0
+Found service 602.0
+Set temp to 602.0
+tried to set reading to 602.0
+Returnval = "ID":"2", "temp":"602.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS3
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x25b 0x25b 0x25b 0x25b 0x25b 0x25b 0x25b 0x25b 0x25b 0x25b ]
+
+Setting temp to 603.0
+Setting temp to 603.0
+Found service 603.0
+Set temp to 603.0
+tried to set reading to 603.0
+Returnval = "ID":"2", "temp":"603.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS4
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x25b 0x25b 0x25b 0x25b 0x25b 0x25b 0x25b 0x25b 0x25b 0x25b ]
+
+Setting temp to 603.0
+Setting temp to 603.0
+Found service 603.0
+Set temp to 603.0
+tried to set reading to 603.0
+Returnval = "ID":"2", "temp":"603.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS5
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x25b 0x25b 0x25b 0x25b 0x25b 0x25b 0x25b 0x25b 0x25b 0x25b ]
+
+Setting temp to 603.0
+Setting temp to 603.0
+Found service 603.0
+Set temp to 603.0
+tried to set reading to 603.0
+Returnval = "ID":"2", "temp":"603.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS6
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x25b 0x25c 0x25c 0x25c 0x25b 0x25c 0x25c 0x25c 0x25c 0x25c ]
+
+Setting temp to 603.0
+Setting temp to 603.0
+Found service 603.0
+Set temp to 603.0
+tried to set reading to 603.0
+Returnval = "ID":"2", "temp":"603.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS7
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x25c 0x25c 0x25c 0x25c 0x25c 0x25c 0x25c 0x25c 0x25c 0x25c ]
+
+Setting temp to 604.0
+Setting temp to 604.0
+Found service 604.0
+Set temp to 604.0
+tried to set reading to 604.0
+Returnval = "ID":"2", "temp":"604.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS8
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x267 0x267 0x267 0x267 0x267 0x267 0x267 0x267 0x267 0x267 ]
+
+Setting temp to 615.0
+Setting temp to 615.0
+Found service 615.0
+Set temp to 615.0
+tried to set reading to 615.0
+Returnval = "ID":"2", "temp":"615.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS9
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x269 0x269 0x269 0x269 0x269 0x269 0x269 0x269 0x269 0x269 ]
+
+Setting temp to 617.0
+Setting temp to 617.0
+Found service 617.0
+Set temp to 617.0
+tried to set reading to 617.0
+Returnval = "ID":"2", "temp":"617.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS10
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x269 0x269 0x269 0x269 0x269 0x269 0x269 0x269 0x269 0x269 ]
+
+Setting temp to 617.0
+Setting temp to 617.0
+Found service 617.0
+Set temp to 617.0
+tried to set reading to 617.0
+Returnval = "ID":"2", "temp":"617.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS11
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x269 0x269 0x269 0x269 0x269 0x269 0x269 0x269 0x269 0x269 ]
+
+Setting temp to 617.0
+Setting temp to 617.0
+Found service 617.0
+Set temp to 617.0
+tried to set reading to 617.0
+Returnval = "ID":"2", "temp":"617.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS12
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x26a 0x269 0x26a 0x26a 0x269 0x26a 0x26a 0x26a 0x269 0x26a ]
+
+Setting temp to 617.0
+Setting temp to 617.0
+Found service 617.0
+Set temp to 617.0
+tried to set reading to 617.0
+Returnval = "ID":"2", "temp":"617.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp
+DM HERE ID IS13
+parametersSplit <2 = 1
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+Returnval = "ID":"2", "temp":"617.0" 
+Server Accepted!!
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS14
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x273 0x273 0x273 0x273 0x273 0x273 0x273 0x273 0x273 0x273 ]
+
+Setting temp to 627.0
+Setting temp to 627.0
+Found service 627.0
+Set temp to 627.0
+tried to set reading to 627.0
+Returnval = "ID":"2", "temp":"627.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS15
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x273 0x273 0x273 0x273 0x273 0x273 0x273 0x273 0x273 0x273 ]
+
+Setting temp to 627.0
+Setting temp to 627.0
+Found service 627.0
+Set temp to 627.0
+tried to set reading to 627.0
+Returnval = "ID":"2", "temp":"627.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS16
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x26e 0x26e 0x26e 0x26e 0x26e 0x26e 0x26e 0x26e 0x26e 0x26e ]
+
+Setting temp to 622.0
+Setting temp to 622.0
+Found service 622.0
+Set temp to 622.0
+tried to set reading to 622.0
+Returnval = "ID":"2", "temp":"622.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS17
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x26e 0x26e 0x26e 0x26e 0x26e 0x26e 0x26e 0x26e 0x26e 0x26e ]
+
+Setting temp to 622.0
+Setting temp to 622.0
+Found service 622.0
+Set temp to 622.0
+tried to set reading to 622.0
+Returnval = "ID":"2", "temp":"622.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS18
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x26e 0x26e 0x26e 0x26e 0x26e 0x26e 0x26e 0x26d 0x26e 0x26e ]
+
+Setting temp to 621.0
+Setting temp to 621.0
+Found service 621.0
+Set temp to 621.0
+tried to set reading to 621.0
+Returnval = "ID":"2", "temp":"621.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS19
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x26d 0x26d 0x26d 0x26d 0x26d 0x26d 0x26d 0x26d 0x26d 0x26d ]
+
+Setting temp to 621.0
+Setting temp to 621.0
+Found service 621.0
+Set temp to 621.0
+tried to set reading to 621.0
+Returnval = "ID":"2", "temp":"621.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS20
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x26d 0x26d 0x26d 0x26d 0x26d 0x26d 0x26d 0x26d 0x26d 0x26d ]
+
+Setting temp to 621.0
+Setting temp to 621.0
+Found service 621.0
+Set temp to 621.0
+tried to set reading to 621.0
+Returnval = "ID":"2", "temp":"621.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS21
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x26d 0x26d 0x26d 0x26d 0x26d 0x26d 0x26d 0x26d 0x26d 0x26d ]
+
+Setting temp to 621.0
+Setting temp to 621.0
+Found service 621.0
+Set temp to 621.0
+tried to set reading to 621.0
+Returnval = "ID":"2", "temp":"621.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp
+DM HERE ID IS22
+parametersSplit <2 = 1
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+Returnval = "ID":"2", "temp":"621.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /favicon.ico
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp
+DM HERE ID IS23
+parametersSplit <2 = 1
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+Returnval = "ID":"2", "temp":"621.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /favicon.ico
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp
+DM HERE ID IS24
+parametersSplit <2 = 1
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+Returnval = "ID":"2", "temp":"621.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp
+DM HERE ID IS25
+parametersSplit <2 = 1
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+Returnval = "ID":"2", "temp":"621.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp
+DM HERE ID IS26
+parametersSplit <2 = 1
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+Returnval = "ID":"2", "temp":"621.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp
+DM HERE ID IS27
+parametersSplit <2 = 1
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+Returnval = "ID":"2", "temp":"621.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?qos=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?qos=10&domain=3
+DM HERE ID IS28
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = qos=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+Returnval = "ID":"2", "temp":"621.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?qos=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?qos=10&domain=3
+DM HERE ID IS29
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = qos=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x279 0x279 0x279 0x279 0x279 0x279 0x279 0x279 0x279 0x279 ]
+
+Setting temp to 633.0
+Setting temp to 633.0
+Found service 633.0
+Set temp to 633.0
+tried to set reading to 633.0
+Returnval = "ID":"2", "temp":"633.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?qos=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?qos=10&domain=3
+DM HERE ID IS30
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = qos=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x279 0x279 0x279 0x279 0x279 0x279 0x279 0x279 0x279 0x279 ]
+
+Setting temp to 633.0
+Setting temp to 633.0
+Found service 633.0
+Set temp to 633.0
+tried to set reading to 633.0
+Returnval = "ID":"2", "temp":"633.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS31
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x271 0x271 0x271 0x271 0x271 0x271 0x271 0x271 0x271 0x271 ]
+
+Setting temp to 625.0
+Setting temp to 625.0
+Found service 625.0
+Set temp to 625.0
+tried to set reading to 625.0
+Returnval = "ID":"2", "temp":"625.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS32
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x271 0x271 0x271 0x271 0x271 0x271 0x271 0x271 0x271 0x271 ]
+
+Setting temp to 625.0
+Setting temp to 625.0
+Found service 625.0
+Set temp to 625.0
+tried to set reading to 625.0
+Returnval = "ID":"2", "temp":"625.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS33
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x270 0x270 0x270 0x270 0x270 0x270 0x270 0x270 0x270 0x270 ]
+
+Setting temp to 624.0
+Setting temp to 624.0
+Found service 624.0
+Set temp to 624.0
+tried to set reading to 624.0
+Returnval = "ID":"2", "temp":"624.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS34
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+Server Accepted!!
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x270 0x270 0x270 0x270 0x270 0x270 0x270 0x270 0x270 0x270 ]
+
+Setting temp to 624.0
+Setting temp to 624.0
+Found service 624.0
+Set temp to 624.0
+tried to set reading to 624.0
+Returnval = "ID":"2", "temp":"624.0" 
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS35
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x26b 0x26b 0x26b 0x26b 0x26b 0x26b 0x26b 0x26b 0x26b 0x26b ]
+
+Setting temp to 619.0
+Setting temp to 619.0
+Found service 619.0
+Set temp to 619.0
+tried to set reading to 619.0
+Returnval = "ID":"2", "temp":"619.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS36
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x26a 0x26a 0x26a 0x26a 0x26a 0x26a 0x26a 0x26a 0x26a 0x26a ]
+
+Setting temp to 618.0
+Setting temp to 618.0
+Found service 618.0
+Set temp to 618.0
+tried to set reading to 618.0
+Returnval = "ID":"2", "temp":"618.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS37
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x22d 0x22d 0x22d 0x22d 0x22d 0x22d 0x22d 0x22d 0x22d 0x22d ]
+
+Setting temp to 557.0
+Setting temp to 557.0
+Found service 557.0
+Set temp to 557.0
+tried to set reading to 557.0
+Returnval = "ID":"4", "temp":"557.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS38
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x22d 0x22d 0x22d 0x22d 0x22d 0x22d 0x22d 0x22d 0x22d 0x22d ]
+
+Setting temp to 557.0
+Setting temp to 557.0
+Found service 557.0
+Set temp to 557.0
+tried to set reading to 557.0
+Returnval = "ID":"4", "temp":"557.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS39
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x22b 0x22b 0x22b 0x22b 0x22b 0x22b 0x22b 0x22b 0x22b 0x22b ]
+
+Setting temp to 555.0
+Setting temp to 555.0
+Found service 555.0
+Set temp to 555.0
+tried to set reading to 555.0
+Returnval = "ID":"4", "temp":"555.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS40
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x22b 0x22b 0x22b 0x22b 0x22b 0x22b 0x22b 0x22b 0x22b 0x22a ]
+
+Setting temp to 554.0
+Setting temp to 554.0
+Found service 554.0
+Set temp to 554.0
+tried to set reading to 554.0
+Returnval = "ID":"4", "temp":"554.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS41
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x268 0x268 0x268 0x268 0x268 0x268 0x268 0x268 0x268 0x268 ]
+
+Setting temp to 616.0
+Setting temp to 616.0
+Found service 616.0
+Set temp to 616.0
+tried to set reading to 616.0
+Returnval = "ID":"2", "temp":"616.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS42
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x261 0x261 0x261 0x261 0x262 0x261 0x261 0x261 0x261 0x261 ]
+
+Setting temp to 609.0
+Setting temp to 609.0
+Found service 609.0
+Set temp to 609.0
+tried to set reading to 609.0
+Returnval = "ID":"2", "temp":"609.0" 
+Server Accepted!!
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS43
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x25b 0x25b 0x25b 0x25b 0x25b 0x25c 0x25b 0x25b 0x25b 0x25c ]
+
+Setting temp to 603.0
+Setting temp to 603.0
+Found service 603.0
+Set temp to 603.0
+tried to set reading to 603.0
+Returnval = "ID":"2", "temp":"603.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?QoS=10&domain=3
+DM HERE ID IS44
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/photo vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x2]
+  [type=0x0]
+  [readings=0x248 0x248 0x248 0x247 0x247 0x247 0x247 0x248 0x248 0x247 ]
+
+Setting temp to 583.0
+Setting temp to 583.0
+Found service 583.0
+Set temp to 583.0
+tried to set reading to 583.0
+Returnval = "ID":"2", "temp":"583.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /favicon.ico
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /favicon.ico
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /favicon.ico
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS45
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x215 0x215 0x215 0x215 0x215 0x215 0x215 0x215 0x215 0x215 ]
+
+Setting temp to 533.0
+Setting temp to 533.0
+Found service 533.0
+Set temp to 533.0
+tried to set reading to 533.0
+Returnval = "ID":"4", "temp":"533.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS46
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x20b 0x20b 0x20b 0x20b 0x20b 0x20b 0x20b 0x20b 0x20b 0x20b ]
+
+Setting temp to 523.0
+Setting temp to 523.0
+Found service 523.0
+Set temp to 523.0
+tried to set reading to 523.0
+Returnval = "ID":"4", "temp":"523.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS47
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+Returnval = "ID":"4", "temp":"null" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS48
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+Returnval = "ID":"4", "temp":"null" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS49
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+Returnval = "ID":"4", "temp":"null" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS50
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+Returnval = "ID":"4", "temp":"null" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=0&domain=0
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=0&domain=0
+DM HERE ID IS51
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=0&domain=0
+CLESTIM= = 0.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+Returnval = "ID":"4", "temp":"null" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS52
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+Returnval = "ID":"4", "temp":"null" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS53
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+Returnval = "ID":"4", "temp":"null" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS54
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+Returnval = "ID":"4", "temp":"null" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS55
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+Returnval = "ID":"4", "temp":"null" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /log
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with log
+Server Accepted!!
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /log
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with log
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /favicon.ico
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS56
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+Returnval = "ID":"4", "temp":"null" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS57
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+Returnval = "ID":"4", "temp":"null" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS58
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x20b 0x20b 0x20b 0x20b 0x20b 0x20b 0x20b 0x20b 0x20b 0x20b ]
+
+Setting temp to 523.0
+Setting temp to 523.0
+Found service 523.0
+Set temp to 523.0
+tried to set reading to 523.0
+Returnval = "ID":"4", "temp":"523.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS59
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+Returnval = "ID":"4", "temp":"523.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?qos=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?qos=10&domain=3
+DM HERE ID IS60
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = qos=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+Returnval = 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/2/temp?qos=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/2/temp?qos=10&domain=3
+DM HERE ID IS61
+parametersSplit !<2 = /sensor/2/temp
+parametersSplit !<2 = qos=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+Returnval = 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?qos=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?qos=10&domain=3
+DM HERE ID IS62
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = qos=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+Returnval = 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?qos=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?qos=10&domain=3
+DM HERE ID IS63
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = qos=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+Returnval = 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?qos=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?qos=10&domain=3
+DM HERE ID IS64
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = qos=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x200 0x200 0x200 0x200 0x200 0x200 0x200 0x200 0x200 0x200 ]
+
+Setting temp to 512.0
+Setting temp to 512.0
+Found service 512.0
+Set temp to 512.0
+tried to set reading to 512.0
+Returnval = "ID":"4", "temp":"512.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?qos=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?qos=10&domain=3
+DM HERE ID IS65
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = qos=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x1e6 0x1e6 0x1e6 0x1e6 0x1e6 0x1e6 0x1e6 0x1e6 0x1e6 0x1e6 ]
+
+Setting temp to 486.0
+Setting temp to 486.0
+Found service 486.0
+Set temp to 486.0
+tried to set reading to 486.0
+Returnval = "ID":"4", "temp":"486.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensors
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensors
+Server Accepted!!
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?qos=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?qos=10&domain=3
+DM HERE ID IS66
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = qos=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb ]
+
+Setting temp to 491.0
+Setting temp to 491.0
+Found service 491.0
+Set temp to 491.0
+tried to set reading to 491.0
+Returnval = "ID":"4", "temp":"491.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?qos=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?qos=10&domain=3
+DM HERE ID IS67
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = qos=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb ]
+
+Setting temp to 491.0
+Setting temp to 491.0
+Found service 491.0
+Set temp to 491.0
+tried to set reading to 491.0
+Returnval = "ID":"4", "temp":"491.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?qos=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?qos=10&domain=3
+DM HERE ID IS68
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = qos=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb ]
+
+Setting temp to 491.0
+Setting temp to 491.0
+Found service 491.0
+Set temp to 491.0
+tried to set reading to 491.0
+Returnval = "ID":"4", "temp":"491.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?qos=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?qos=10&domain=3
+DM HERE ID IS69
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = qos=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb 0x1eb ]
+
+Setting temp to 491.0
+Setting temp to 491.0
+Found service 491.0
+Set temp to 491.0
+tried to set reading to 491.0
+Returnval = "ID":"4", "temp":"491.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /sensor/4/temp?QoS=10&domain=3
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+starts with sensor but doesnt have required service name
+starts with sensor and has both length and name
+adding to dm
+ADD URL IS /sensor/4/temp?QoS=10&domain=3
+DM HERE ID IS70
+parametersSplit !<2 = /sensor/4/temp
+parametersSplit !<2 = QoS=10&domain=3
+CLESTIM= = 3.0
+COMPUTED CL
+CREATED THREAD
+ADDED THREAD
+added to dm
+return val not acceptable
+/switch vs /temp
+/temp vs /temp
+ELSE INNER s.uri vs serviceuri /temp vs /temp is contained? true
+Uri contains/temp /temp
+temp
+READING ANSWERMessage <ReadingMsgAnswer> 
+  [messageType=0x4]
+  [id=0x4]
+  [type=0x0]
+  [readings=0x20b 0x20b 0x20b 0x20b 0x20b 0x20b 0x20b 0x20b 0x20b 0x20b ]
+
+Setting temp to 523.0
+Setting temp to 523.0
+Found service 523.0
+Set temp to 523.0
+tried to set reading to 523.0
+Returnval = "ID":"4", "temp":"523.0" 
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /favicon.ico
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /favicon.ico
+****************REQUESTED URL2 IS HTTP/1.1
+checking request
+Server Accepted!!
+****************REQUESTED URL0 IS GET
+****************REQUESTED URL1 IS /favicon.ico
+****************REQUESTED URL2 IS HTTP/1.1
+checking request

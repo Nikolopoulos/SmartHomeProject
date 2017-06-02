@@ -71,7 +71,7 @@ public class Control {
             boolean pub, run;
             if (i == 0) {
                 pub = false;
-                pub = true; //remove this line for raspi
+                //pub = true; //remove this line for raspi
                 run = true;
             } else if (i == 1) {
                 pub = true;
