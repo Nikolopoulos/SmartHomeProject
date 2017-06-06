@@ -6,6 +6,8 @@
 package GUIServices;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import loadgen01.HTTPRequest;
 
 /**
@@ -23,29 +25,34 @@ public class Temperature extends javax.swing.JFrame {
 
     public Temperature() {
         initComponents();
+        this.setTitle("Temperature");
         setVisible(true);
         Thread daemon = new Thread(new Runnable() {
             @Override
             public void run() {
+                jLabel5.setText(wantedTemp.toString());
+                jTextField1.setText(wantedTemp.toString());
                 while (true) {
                     try {
-                        String url = "http://localhost:8181/sensor/2/temp?crit=2";
+                        String url = "http://192.168.2.5:8181/sensor/2/temp?crit=4";
                         jTextArea1.append("[" + new Date().toGMTString() + "] Sensing Temperature\n");
                         System.out.println(url);
                         String resp = HTTPRequest.sendGet(url);
 
                         int start = "{\"sensor\":{\"ID\":\"2\", \"temp\":\"".length();
                         resp = resp.substring(start, start + 4);
-                        jLabel3.setText(resp.substring(start, start + 4));
+
                         temp = Double.parseDouble(resp);
+                        jLabel3.setText(temp.toString());
                         if (Double.parseDouble(resp) > wantedTemp && state == false) {
                             turnOn();
                             state = true;
                         }
-                        if (Double.parseDouble(resp) < wantedTemp + 2 && state == true) {
+                        if (Double.parseDouble(resp) < wantedTemp - 2 && state == true) {
                             turnOff();
                             state = false;
                         }
+                        jTextArea1.setCaretPosition(jTextArea1.getText().length() - 1);
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException ex) {
@@ -65,17 +72,40 @@ public class Temperature extends javax.swing.JFrame {
     }
 
     private void turnOn() throws Exception {
-        String url = "http://localhost:8181/sensor/4/switch?crit=4";
-        this.jTextArea1.append("[" + new Date().toGMTString() + "] Turning on ventilation system\n");
-        System.out.println(url);
-        HTTPRequest.sendGet(url);
+
+        Thread n = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                String url = "http://192.168.2.5:8181/sensor/4/switch?crit=4";
+                jTextArea1.append("[" + new Date().toGMTString() + "] Turning on ventilation system\n");
+                System.out.println(url);
+                try {
+                    HTTPRequest.sendGet(url);
+                } catch (Exception ex) {
+                    Logger.getLogger(Temperature.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        n.start();
     }
 
     private void turnOff() throws Exception {
-        String url = "http://localhost:8181/sensor/4/switch?crit=4";
-        this.jTextArea1.append("[" + new Date().toGMTString() + "] Turning off ventilation system");
-        System.out.println(url);
-        HTTPRequest.sendGet(url);
+         Thread n = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                String url = "http://192.168.2.5:8181/sensor/4/switch?crit=4";
+                jTextArea1.append("[" + new Date().toGMTString() + "] Turning off ventilation system\n");
+                System.out.println(url);
+                try {
+                    HTTPRequest.sendGet(url);
+                } catch (Exception ex) {
+                    Logger.getLogger(Temperature.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        n.start();
     }
 
     /**
@@ -140,11 +170,12 @@ public class Temperature extends javax.swing.JFrame {
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextField1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel5)
-                        .addGap(0, 99, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel5))
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 593, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -164,8 +195,8 @@ public class Temperature extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();

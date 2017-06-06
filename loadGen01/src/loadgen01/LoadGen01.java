@@ -23,8 +23,9 @@ public class LoadGen01 {
     public static void main(String[] args) {
         //new GUIServices.Temperature();
         //new GUIServices.FireWatchdog();
-        new GUIServices.Whereabouts();
-        //new DOSAttack(1);
+       
+        //new GUIServices.Whereabouts();
+        new DOSAttack(1);
     }
 
 }

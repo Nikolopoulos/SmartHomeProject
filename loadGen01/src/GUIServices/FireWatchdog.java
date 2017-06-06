@@ -8,6 +8,8 @@ package GUIServices;
 import static GUIServices.Temperature.temp;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import loadgen01.HTTPRequest;
 
 /**
@@ -25,6 +27,7 @@ public class FireWatchdog extends javax.swing.JFrame {
 
     public FireWatchdog() {
         initComponents();
+        this.setTitle("WatchDog");
         setVisible(true);
         jLabel6.setText("Normal");
         jLabel7.setText("Normal");
@@ -34,7 +37,7 @@ public class FireWatchdog extends javax.swing.JFrame {
             public void run() {
                 while (true) {
                     try {
-                        String url = "http://localhost:8181/sensor/2/temp?crit=2";
+                        String url = "http://192.168.2.5:8181/sensor/2/temp?crit=2";
                         sleepTime = 1000;
                         jTextArea1.append("[" + new Date().toGMTString() + "] Sensing Temperature\n");
                         counter += sleepTime;
@@ -43,33 +46,71 @@ public class FireWatchdog extends javax.swing.JFrame {
                             secs++;
                         }
 
-                        if (secs > 5) {
+                        if (secs > 10) {
                             jLabel6.setText("High");
                             jTextArea1.append("[" + new Date().toGMTString() + "] Temperature is above threshold! Starting to sense CO2!\n");
-                            HTTPRequest.sendGet("http://localhost:8181/print?text=" + URLEncoder.encode("Received high criticality Temperature reading request!"));
-                            url = "http://localhost:8181/sensor/2/temp?crit=5";
-                            HTTPRequest.sendGet(url);
+                            jTextArea1.setCaretPosition(jTextArea1.getText().length() - 1);
+                            Thread n = new Thread(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    try {
+                                        HTTPRequest.sendGet("http://192.168.2.5:8181/print?text=" + URLEncoder.encode("Received high criticality Temperature reading request!"));
+                                        String url = "http://192.168.2.5:8181/sensor/2/temp?crit=5";
+                                        HTTPRequest.sendGet(url);
+                                    } catch (Exception ex) {
+                                        Logger.getLogger(FireWatchdog.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
+                            });
+                            n.start();
                             sleepTime = 500;
                         }
-                        if (secs > 6) {
+                        if (secs > 20) {
                             jLabel7.setText("High");
                             jTextArea1.append("[" + new Date().toGMTString() + "] CO2 is above threshold! Starting to sense Ambient Light!\n");
-                            HTTPRequest.sendGet("http://localhost:8181/print?text=" + URLEncoder.encode("Received high criticality CO2 reading request!"));
-                            url = "http://localhost:8181/sensor/2/temp?crit=5";
-                            HTTPRequest.sendGet(url);
+                            jTextArea1.setCaretPosition(jTextArea1.getText().length() - 1);
+                            Thread n = new Thread(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    try {
+                                        HTTPRequest.sendGet("http://192.168.2.5:8181/print?text=" + URLEncoder.encode("Received high criticality CO2 reading request!"));
+                                        String url = "http://192.168.2.5:8181/sensor/2/temp?crit=5";
+                                        HTTPRequest.sendGet(url);
+                                    } catch (Exception ex) {
+                                        Logger.getLogger(FireWatchdog.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
+                            });
+                            n.start();
+
                             sleepTime = 100;
                         }
-                        if (secs > 7) {
+                        if (secs > 30) {
 
                             jLabel8.setText("High");
-                            jTextArea1.append("[" + new Date().toGMTString() + "] Ambient Light is above threshold! Sounding alarm and Starting Sprinklers!\n");
-                            HTTPRequest.sendGet("http://localhost:8181/print?text=" + URLEncoder.encode("Received high criticality Ambient Light reading request!"));
-                            HTTPRequest.sendGet("http://localhost:8181/print?text=" + URLEncoder.encode("Received high criticality Actuator turn on request!"));
-                            HTTPRequest.sendGet("http://localhost:8181/print?text=" + URLEncoder.encode("Received high criticality Actuator turn on request!"));
-                            url = "http://localhost:8181/sensor/2/temp?crit=5";
-                            HTTPRequest.sendGet(url);
+                            Thread n = new Thread(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    try {
+                                        HTTPRequest.sendGet("http://192.168.2.5:8181/print?text=" + URLEncoder.encode("Received high criticality Ambient Light reading request!"));
+                                        HTTPRequest.sendGet("http://192.168.2.5:8181/print?text=" + URLEncoder.encode("Received high criticality Actuator turn on request!"));
+                                        HTTPRequest.sendGet("http://192.168.2.5:8181/print?text=" + URLEncoder.encode("Received high criticality Actuator turn on request!"));
+                                        String url = "http://192.168.2.5:8181/sensor/2/temp?crit=5";
+                                        HTTPRequest.sendGet(url);
+                                    } catch (Exception ex) {
+                                        Logger.getLogger(FireWatchdog.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
+                            });
+                            n.start();
+                            jTextArea1.append("[" + new Date().toGMTString() + "] Ambient Light is above threshold! Sounding alarm and Starting Sprinklers!\n");                           
+                            jTextArea1.setCaretPosition(jTextArea1.getText().length() - 1);
                             sleepTime = 25;
                         }
+                        
                         try {
                             Thread.sleep(sleepTime);
                         } catch (InterruptedException ex) {
@@ -139,7 +180,7 @@ public class FireWatchdog extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 946, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()

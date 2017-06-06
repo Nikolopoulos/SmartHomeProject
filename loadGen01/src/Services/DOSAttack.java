@@ -23,10 +23,10 @@ public class DOSAttack {
                         Random rng = new Random();
                         String url = "";
                         if(mode == 1){
-                        url = "http://localhost:8181/sensor/" + (rng.nextInt(2) + 1) * 2 + "/temp?crit=" + (rng.nextInt(3) + 3);
+                        url = "http://192.168.2.5:8181/sensor/" + (rng.nextInt(2) + 1) * 2 + "/temp?crit=" + (rng.nextInt(3) + 3);
                         }
                         else{
-                            url = "http://localhost:8181/sensor/"+(rng.nextInt(2)+1)*2+"/temp?crit=" + 4;
+                            url = "http://192.168.2.5:8181/sensor/"+(rng.nextInt(2)+1)*2+"/temp?crit=" + 4;
                         }
                         System.out.println(url);
                         HTTPRequest.sendGet(url);
