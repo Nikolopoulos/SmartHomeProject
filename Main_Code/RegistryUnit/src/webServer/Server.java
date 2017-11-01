@@ -24,6 +24,7 @@ public class Server {
     // Listen for incoming connections and handle them
 
     public Server(Universe uniarg) {
+        
         this.universe = uniarg;
 
     }
@@ -34,6 +35,7 @@ public class Server {
             @Override
             public synchronized void run() {
                 try {
+                    new Advertiser();
                     int i = 0;
                     //should really stop the counter before INT_MAX or else there may be an overflow
                     ServerSocket listener = new ServerSocket(port);

@@ -1,5 +1,0 @@
-[Thu May 25 21:13:38 EEST 2017]:  RequestObject{url=http://localhost, port=8383, parameters=ip%3D127.0.0.1%26port%3D8181%26services%3D%7B%22services%22%3A%5B%7B%22uri%22+%3A+%22%2Fsensors%22%2C+%22description%22+%3A+%22returns+a+list+of+sensors+available%22%7D%5D%7D, service=/register, myIP=null, method=Post, response={}}
-[Thu May 25 21:13:38 EEST 2017]:  Error parsing this{}
-[Thu May 25 21:13:38 EEST 2017]:  {}
-[Thu May 25 21:15:25 EEST 2017]:  test
-[Thu May 25 21:15:46 EEST 2017]:  alviehntwiu34yniuot hqpou4tgiqupori34w thjwherhbqfwnepo

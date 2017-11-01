@@ -35,6 +35,7 @@ import util.Util;
 import ServiceProvisionUnit.ServiceProvisionUnit;
 import SharedMemory.SharedMemory;
 import java.util.ConcurrentModificationException;
+import util.AdvertismentConsumer;
 import util.CustomException;
 
 /**
@@ -57,7 +58,11 @@ public class Control {
     int threadId = 0;
 
     public Control(boolean debug) {
+
+        //Prime memory unit
         memory = SharedMemory.<String, SharedMemory>get("SMU");
+ 
+        System.out.println(memory.<String, String>get("registryUnitIP"));
         memory.<String, Control>set("MCU", this);
         SharedMemory.<String, Boolean>set("OverLoadStatus", false);
         dm = new DecisionMakingUnit();
@@ -121,7 +126,13 @@ public class Control {
         memory.<String, String>set("ip", ip);
         System.out.println("Percieved ip is " + ip + " first non loopbak is " + addr);
         //memory.<String, String>set("registryUnitIP", "192.168.2.5");
-        memory.<String, String>set("registryUnitIP", "localhost");
+
+        //find registry
+        new AdvertismentConsumer(this);
+        while (memory.<String, String>get("registryUnitIP") == null) {
+            //wait for consumer
+        }
+
         memory.<String, Integer>set("registryPort", 8383);
         memory.<String, Integer>set("myPort", 8181);
         spu = new ServiceProvisionUnit(this);
@@ -435,13 +446,13 @@ public class Control {
     }
 
     /*public void sendReadingRequest(int id, boolean cached, String ServiceURI) {
-        for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
-            if (m.getId() == id) {
-                //messages.sendReadingRequest(id, type);
-                m.RequestServiceReading(uid, cached);
-            }
-        }
-    }*/
+     for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
+     if (m.getId() == id) {
+     //messages.sendReadingRequest(id, type);
+     m.RequestServiceReading(uid, cached);
+     }
+     }
+     }*/
     public void reportReading(int id, int messageType, int[] Readings) {
         for (MicazMote m : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
             if (m.getId() == id) {
