@@ -5,6 +5,7 @@
  */
 package MonitoringUnit;
 
+import Logging.DumpVariables;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +18,8 @@ public class MonitoringUnit {
 
     ArrayList<MonitoredVariable> monitoredVariables;
     static long cycle;
+    
+    int dumpCycleCount = 0;
 
     public MonitoringUnit() {
         //System.out.println("STEP 0.1");
@@ -32,6 +35,11 @@ public class MonitoringUnit {
             @Override
             public void run() {
                 while (true) {
+                    if(dumpCycleCount%10==0){
+                        dumpCycleCount = 0;
+                        DumpVariables.dump();
+                    }
+                    dumpCycleCount++;
                     for (MonitoredVariable var : SharedMemory.SharedMemory.<String, ArrayList<MonitoredVariable>>get("monitoredVariables")) {
                         if (cycle % var.getSeconds() == 0) {
                             var.getAction().run();

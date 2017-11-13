@@ -8,6 +8,7 @@ package ControlUnit;
 import DecisionMakingUnit.DecisionMakingUnit;
 import Logging.MyLogger;
 import Libraries.ThreadAffinity;
+import Logging.DumpVariables;
 import MonitoringUnit.MonitoredVariable;
 import MonitoringUnit.MonitoringUnit;
 import java.lang.management.ManagementFactory;
@@ -59,6 +60,7 @@ public class Control {
 
     public Control(boolean debug) {
 
+        DumpVariables.init();
         //Prime memory unit
         memory = SharedMemory.<String, SharedMemory>get("SMU");
  
@@ -552,6 +554,12 @@ public class Control {
         //System.out.println("DM HERE ID IS" + threadId);
         int criticality = getCriticalityLevelOfRequest(url);
         request.setCriticality(criticality);
+        if(criticality >4){
+            DumpVariables.newHighCriticalityRequest();
+        }
+        else{
+            DumpVariables.newRequest();
+        }
         RequestExecutionThread thread = new RequestExecutionThread(threadId, criticality, url);
         addRequestToBucket(request, threadId, thread);
         //System.out.println("CREATED THREAD");

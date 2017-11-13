@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import SensorsCommunicationUnit.MicazMote;
 import ControlUnit.Control;
 import Libraries.Core;
+import Logging.DumpVariables;
 import SharedMemory.SharedMemory;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -35,6 +36,7 @@ public class DoComms implements Runnable {
     private Semaphore sema;
     private ResponseObject response;
     private int criticality = 0;
+    private final long receivedTime; 
 
     DoComms(Socket server, Control c, Core core) {
         this.server = server;
@@ -42,6 +44,7 @@ public class DoComms implements Runnable {
         this.core = core;
         this.sema = new Semaphore(0, true);
         response = new ResponseObject(this.server);
+        receivedTime = System.currentTimeMillis();
     }
 
     //So server listens for clients, and this class is runnable and executes the communication requests.
@@ -235,6 +238,12 @@ public class DoComms implements Runnable {
             sema.acquire();
         } catch (InterruptedException ex) {
             Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(criticality>1&&criticality<5){
+            DumpVariables.updateAverageRequestServiceTime(System.currentTimeMillis() - receivedTime);
+        }
+        if(criticality>4){
+            DumpVariables.updateHighCriticalityAverageRequestServiceTime(System.currentTimeMillis()-receivedTime);
         }
         PrintStream out = new PrintStream(server.getOutputStream());
         out.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + reply.length() + "\r\n\r\n" + reply);
