@@ -60,7 +60,7 @@ public class DumpVariables {
             try {
                 pw = new PrintWriter(logfile);
                 pw.write("");
-                pw.write( "Number of requests arrived in interval,"
+                pw.write("Number of requests arrived in interval,"
                         + "Number of requests arrived in total,"
                         + "Number of High criticality requets arrived in interval,"
                         + "Number of High criticality requets arrived in total,"
@@ -80,29 +80,32 @@ public class DumpVariables {
 
         }
     }
-    
-    public static void dump(){
+
+    public static void dump() {
         numberOfCoresInInterval = 0;
-        for(CoreDefinition core :  SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")){
-            if(core.isOverLoadLimit()){
+        if(SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores") == null || SharedMemory.<String, Boolean>get("OverLoadStatus") == null){
+            return;
+        }
+        for (CoreDefinition core : SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")) {
+            if (core.isOverLoadLimit()) {
                 numberOfCoresInInterval++;
             }
         }
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter(logfile, true));
-            bw.write(""+requestsTakenInInterval+","+
-                        requestsTakenInTotal+   ","+
-                        numberOfHighCriticalityRequestsInInterval + "," +
-                        numberOfHighCriticalityRequestsInTotal + "," +
-                        numberOfCoresInInterval + "," + 
-                        numberOfPushingSensors + "," +
-                        numberOfPullingSensors + ","+
-                        SharedMemory.<String, Boolean>get("OverLoadStatus") + "," +
-                        averageHighCriticalityRequestServiceTimeInInterval + "," +
-                        averageHighCriticalityRequestServiceTimeInTotal    + "," +
-                        averageRequestServiceTimeInInterval + "," +
-                        averageRequestServiceTimeInTotal
+            bw.write("" + requestsTakenInInterval + ","
+                    + requestsTakenInTotal + ","
+                    + numberOfHighCriticalityRequestsInInterval + ","
+                    + numberOfHighCriticalityRequestsInTotal + ","
+                    + numberOfCoresInInterval + ","
+                    + numberOfPushingSensors + ","
+                    + numberOfPullingSensors + ","
+                    + SharedMemory.<String, Boolean>get("OverLoadStatus") + ","
+                    + averageHighCriticalityRequestServiceTimeInInterval + ","
+                    + averageHighCriticalityRequestServiceTimeInTotal + ","
+                    + averageRequestServiceTimeInInterval + ","
+                    + averageRequestServiceTimeInTotal
             );
             bw.newLine();
             bw.close();
@@ -124,20 +127,24 @@ public class DumpVariables {
         numberOfHighCriticalityRequestsInInterval = 0;
         numberOfPullingSensors = 0;
         numberOfPushingSensors = 0;
-        for(MicazMote mote : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")){
-            if(mote.isPush()){
-                numberOfPushingSensors++;
-            } else{
-                numberOfPullingSensors++;
+        if (SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList") != null) {
+
+            for (MicazMote mote : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
+                if (mote.isPush()) {
+                    numberOfPushingSensors++;
+                } else {
+                    numberOfPullingSensors++;
+                }
             }
         }
         numberOfCoresInInterval = 0;
-        for(CoreDefinition core :  SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")){
-            if(core.isOverLoadLimit()){
-                numberOfCoresInInterval++;
+        if (SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores") != null) {
+            for (CoreDefinition core : SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")) {
+                if (core.isOverLoadLimit()) {
+                    numberOfCoresInInterval++;
+                }
             }
         }
-        
         overloaded = SharedMemory.<String, Boolean>get("OverLoadStatus");
         averageHighCriticalityRequestServiceTimeInInterval = 0;
         averageRequestServiceTimeInInterval = 0;
