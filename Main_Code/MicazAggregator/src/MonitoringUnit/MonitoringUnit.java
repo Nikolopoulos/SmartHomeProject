@@ -35,7 +35,7 @@ public class MonitoringUnit {
             @Override
             public void run() {
                 while (true) {
-                    if(dumpCycleCount%10==0){
+                    if(dumpCycleCount>10){
                         dumpCycleCount = 0;
                         DumpVariables.dump();
                     }

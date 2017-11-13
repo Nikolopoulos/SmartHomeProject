@@ -38,7 +38,7 @@ public class Whereabouts extends javax.swing.JFrame {
                     }
                     secs++;
                     try {
-                        String url = "http://192.168.2.5:8181/sensor/2/temp?crit=2";
+                        String url = "http://192.168.2.8:8181/sensor/2/temp?crit=2";
                         if (secs < 20) {
                             jTextArea1.append("[" + new Date().toGMTString() + "] Scaning for hardware: \"Samsung Galaxy S7\"\n");
                         }
