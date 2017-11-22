@@ -63,7 +63,7 @@ public class DumpVariables {
                 pw.close();
                 BufferedWriter bw = null;
                 bw = new BufferedWriter(new FileWriter(logfile, true));
-                pw.write("Number of requests arrived in interval;"
+                bw.write("Number of requests arrived in interval;"
                         + "Number of requests completed in interval;"
                         + "Number of requests arrived in total;"
                         + "Number of requests completed in total;"
