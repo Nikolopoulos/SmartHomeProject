@@ -239,12 +239,20 @@ public class DoComms implements Runnable {
         } catch (InterruptedException ex) {
             Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
         }
+        long completeTime = System.currentTimeMillis();
+        long milliValue = completeTime - receivedTime;
+        if(receivedTime < 1){
+            milliValue = 0;
+        }
         if(criticality>1&&criticality<5){
-            DumpVariables.updateAverageRequestServiceTime(System.currentTimeMillis() - receivedTime);
+            Logging.MyLogger.log("Non critical request started at "+receivedTime +" and finished at "+completeTime +" which means request took "+milliValue+"ms");
+            DumpVariables.updateAverageRequestServiceTime(milliValue);
         }
         if(criticality>4){
-            DumpVariables.updateHighCriticalityAverageRequestServiceTime(System.currentTimeMillis()-receivedTime);
+            Logging.MyLogger.log("Critical request started at "+receivedTime +" and finished at "+completeTime +" which means request took "+milliValue+"ms");
+            DumpVariables.updateHighCriticalityAverageRequestServiceTime(milliValue);
         }
+        
         PrintStream out = new PrintStream(server.getOutputStream());
         out.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + reply.length() + "\r\n\r\n" + reply);
         out.flush();

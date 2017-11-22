@@ -20,6 +20,7 @@ public class MonitoringUnit {
     static long cycle;
     
     int dumpCycleCount = 0;
+    int dumpCycleQuantum =1;
 
     public MonitoringUnit() {
         //System.out.println("STEP 0.1");
@@ -35,7 +36,7 @@ public class MonitoringUnit {
             @Override
             public void run() {
                 while (true) {
-                    if(dumpCycleCount>10){
+                    if(dumpCycleCount>dumpCycleQuantum){
                         dumpCycleCount = 0;
                         DumpVariables.dump();
                     }

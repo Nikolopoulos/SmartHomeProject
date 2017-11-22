@@ -25,7 +25,7 @@ public class LoadGen01 {
         //new GUIServices.FireWatchdog();
        
         //new GUIServices.Whereabouts();
-        new DOSAttack(0);
+        new DOSAttack(1);
     }
 
 }
