@@ -13,20 +13,22 @@ import loadgen01.HTTPRequest;
  * @author billaros
  */
 public class DOSAttack {
-
-    public DOSAttack(int mode) {
-        while (true) {
-            Thread daemon = new Thread(new Runnable() {
+    Thread daemon;
+    boolean flag = true;
+    public DOSAttack(int mode,int rps) {
+        long sleepTime = 1/rps;
+        while (flag) {
+            daemon = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         Random rng = new Random();
                         String url = "";
                         if(mode == 1){
-                        url = "http://192.168.2.8:8181/sensor/" + (rng.nextInt(2) + 1) * 2 + "/temp?crit=" + (rng.nextInt(3) + 3);
+                        url = "http://192.168.2.2:8181/sensor/" + (rng.nextInt(2) + 1) * 2 + "/temp?crit=" + (rng.nextInt(3) + 3);
                         }
                         else{
-                            url = "http://192.168.2.8:8181/sensor/"+(rng.nextInt(2)+1)*2+"/temp?crit=" + 4;
+                            url = "http://192.168.2.2:8181/sensor/"+(rng.nextInt(2)+1)*2+"/temp?crit=" + 4;
                         }
                         System.out.println(url);
                         HTTPRequest.sendGet(url);
@@ -38,11 +40,15 @@ public class DOSAttack {
                 }
             });
             try {
-                Thread.sleep(new Random().nextInt(50));
+                Thread.sleep(sleepTime+new Random().nextInt(50));
             } catch (InterruptedException ex) {
                 //Logger.getLogger(LoadGen01.class.getName()).log(Level.SEVERE, null, ex);
             }
             daemon.start();
         }
+    }
+    
+    public void stop(){
+        flag=false;
     }
 }
