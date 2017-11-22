@@ -60,22 +60,32 @@ public class DumpVariables {
             try {
                 pw = new PrintWriter(logfile);
                 pw.write("");
-                pw.write("Number of requests arrived in interval,"
-                        + "Number of requests arrived in total,"
-                        + "Number of High criticality requets arrived in interval,"
-                        + "Number of High criticality requets arrived in total,"
-                        + "Number of active cores in interval,"
-                        + "Number of sensors pushing data,"
-                        + "Number of sensors we pull data,"
-                        + "Overloaded system,"
-                        + "Average High Criticality requests service time in interval,"
-                        + "Average High Criticality requests service time in total,"
-                        + "Average request service time in interval,"
-                        + "Average request service time in total");
                 pw.close();
+                BufferedWriter bw = null;
+                bw = new BufferedWriter(new FileWriter(logfile, true));
+                pw.write("Number of requests arrived in interval;"
+                        + "Number of requests completed in interval;"
+                        + "Number of requests arrived in total;"
+                        + "Number of requests completed in total;"
+                        + "Number of High criticality requests arrived in interval;"
+                        + "Number of High criticality reuests completed in interval;"
+                        + "Number of High criticality requests arrived in total;"
+                        + "Number of High criticality reuests completed in total;"
+                        + "Number of active cores in interval;"
+                        + "Number of sensors pushing data;"
+                        + "Number of sensors we pull data;"
+                        + "Overloaded system;"
+                        + "Average High Criticality requests service time in interval;"
+                        + "Average High Criticality requests service time in total;"
+                        + "Average request service time in interval;"
+                        + "Average request service time in total");
+                bw.newLine();
+                bw.close();
                 resetIntervalCounters();
             } catch (FileNotFoundException ex) {
                 java.util.logging.Logger.getLogger(MyLogger.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(DumpVariables.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
@@ -94,17 +104,21 @@ public class DumpVariables {
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter(logfile, true));
-            bw.write("" + requestsTakenInInterval + ","
-                    + requestsTakenInTotal + ","
-                    + numberOfHighCriticalityRequestsInInterval + ","
-                    + numberOfHighCriticalityRequestsInTotal + ","
-                    + numberOfCoresInInterval + ","
-                    + numberOfPushingSensors + ","
-                    + numberOfPullingSensors + ","
-                    + SharedMemory.<String, Boolean>get("OverLoadStatus") + ","
-                    + averageHighCriticalityRequestServiceTimeInInterval + ","
-                    + averageHighCriticalityRequestServiceTimeInTotal + ","
-                    + averageRequestServiceTimeInInterval + ","
+            bw.write("" + requestsTakenInInterval + ";"
+                    + CompletedRequestsTakenInInterval + ";"
+                    + requestsTakenInTotal + ";"
+                    + CompletedRequestsTakenInTotal + ";"
+                    + numberOfHighCriticalityRequestsInInterval + ";"
+                    + CompletedNumberOfHighCriticalityRequestsInInterval + ";"
+                    + numberOfHighCriticalityRequestsInTotal + ";"
+                    + CompletedNumberOfHighCriticalityRequestsInTotal + ";"
+                    + numberOfCoresInInterval + ";"
+                    + numberOfPushingSensors + ";"
+                    + numberOfPullingSensors + ";"
+                    + SharedMemory.<String, Boolean>get("OverLoadStatus") + ";"
+                    + averageHighCriticalityRequestServiceTimeInInterval + ";"
+                    + averageHighCriticalityRequestServiceTimeInTotal + ";"
+                    + averageRequestServiceTimeInInterval + ";"
                     + averageRequestServiceTimeInTotal
             );
             bw.newLine();
@@ -166,30 +180,32 @@ public class DumpVariables {
     public static void updateAverageRequestServiceTime(long millis) {
         CompletedRequestsTakenInInterval++;
         CompletedRequestsTakenInTotal++;
+        System.out.println("millis is "+millis);
         if (CompletedRequestsTakenInInterval == 0) {
             averageRequestServiceTimeInInterval = millis;
         } else {
-            averageRequestServiceTimeInInterval = ((averageRequestServiceTimeInInterval * CompletedRequestsTakenInInterval) + millis) / CompletedRequestsTakenInInterval;
+            averageRequestServiceTimeInInterval = ((averageRequestServiceTimeInInterval * (CompletedRequestsTakenInInterval-1)) + millis) / CompletedRequestsTakenInInterval;
         }
         if (CompletedRequestsTakenInTotal == 0) {
             averageRequestServiceTimeInTotal = millis;
         } else {
-            averageRequestServiceTimeInTotal = ((averageRequestServiceTimeInTotal * CompletedRequestsTakenInTotal) + millis) / CompletedRequestsTakenInTotal;
+            averageRequestServiceTimeInTotal = ((averageRequestServiceTimeInTotal * (CompletedRequestsTakenInTotal-1) + millis)) / CompletedRequestsTakenInTotal;
         }
     }
 
     public static void updateHighCriticalityAverageRequestServiceTime(long millis) {
         CompletedNumberOfHighCriticalityRequestsInInterval++;
         CompletedNumberOfHighCriticalityRequestsInTotal++;
+        System.out.println("millis is "+millis);
         if (CompletedNumberOfHighCriticalityRequestsInInterval == 0) {
             averageHighCriticalityRequestServiceTimeInInterval = millis;
         } else {
-            averageHighCriticalityRequestServiceTimeInInterval = ((averageHighCriticalityRequestServiceTimeInInterval * CompletedNumberOfHighCriticalityRequestsInInterval) + millis) / CompletedNumberOfHighCriticalityRequestsInInterval;
+            averageHighCriticalityRequestServiceTimeInInterval = ((averageHighCriticalityRequestServiceTimeInInterval * (CompletedNumberOfHighCriticalityRequestsInInterval-1)) + millis) / CompletedNumberOfHighCriticalityRequestsInInterval;
         }
         if (CompletedNumberOfHighCriticalityRequestsInTotal == 0) {
             averageHighCriticalityRequestServiceTimeInTotal = millis;
         } else {
-            averageHighCriticalityRequestServiceTimeInTotal = ((averageHighCriticalityRequestServiceTimeInTotal * CompletedNumberOfHighCriticalityRequestsInTotal) + millis) / CompletedNumberOfHighCriticalityRequestsInTotal;
+            averageHighCriticalityRequestServiceTimeInTotal = ((averageHighCriticalityRequestServiceTimeInTotal * (CompletedNumberOfHighCriticalityRequestsInTotal-1)) + millis) / CompletedNumberOfHighCriticalityRequestsInTotal;
         }
         updateAverageRequestServiceTime(millis);
     }

@@ -22,10 +22,10 @@ public class Statics {
 
     public static int CriticallityLevels = 6;
 
-    public static int maxThreads = 15;
-    public static int overloadLevel = 12;
+    public static int maxThreads = 30;
+    public static int overloadLevel = 22;
     public static int underUtilizedLevel = 2;
-    public static int exitOverLoadLevel = 10;
+    public static int exitOverLoadLevel = 20;
 
     public static long monitoringQuantum = 1000;
 }
