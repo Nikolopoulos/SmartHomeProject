@@ -42,6 +42,7 @@ public class DumpVariables {
     static int numberOfPushingSensors;
     static int numberOfPullingSensors;
 
+    static int numberOfOverloadedCoresInInterval;
     static int numberOfCoresInInterval;
     static boolean overloaded;
 
@@ -72,6 +73,7 @@ public class DumpVariables {
                         + "Number of High criticality requests arrived in total;"
                         + "Number of High criticality reuests completed in total;"
                         + "Number of active cores in interval;"
+                        + "Number of overloaded cores in interval;"
                         + "Number of sensors pushing data;"
                         + "Number of sensors we pull data;"
                         + "Overloaded system;"
@@ -92,12 +94,19 @@ public class DumpVariables {
     }
 
     public static void dump() {
+        numberOfOverloadedCoresInInterval = 0;
         numberOfCoresInInterval = 0;
-        if(SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores") == null || SharedMemory.<String, Boolean>get("OverLoadStatus") == null){
+        
+        if (SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores") == null || SharedMemory.<String, Boolean>get("OverLoadStatus") == null) {
             return;
         }
         for (CoreDefinition core : SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")) {
             if (core.isOverLoadLimit()) {
+                numberOfOverloadedCoresInInterval++;
+            }
+        }
+        for (CoreDefinition core : SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")) {
+            if (core.getRunning()) {
                 numberOfCoresInInterval++;
             }
         }
@@ -113,6 +122,7 @@ public class DumpVariables {
                     + numberOfHighCriticalityRequestsInTotal + ";"
                     + CompletedNumberOfHighCriticalityRequestsInTotal + ";"
                     + numberOfCoresInInterval + ";"
+                    + numberOfOverloadedCoresInInterval + ";"                    
                     + numberOfPushingSensors + ";"
                     + numberOfPullingSensors + ";"
                     + SharedMemory.<String, Boolean>get("OverLoadStatus") + ";"
@@ -151,11 +161,11 @@ public class DumpVariables {
                 }
             }
         }
-        numberOfCoresInInterval = 0;
+        numberOfOverloadedCoresInInterval = 0;
         if (SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores") != null) {
             for (CoreDefinition core : SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")) {
                 if (core.isOverLoadLimit()) {
-                    numberOfCoresInInterval++;
+                    numberOfOverloadedCoresInInterval++;
                 }
             }
         }
@@ -180,32 +190,32 @@ public class DumpVariables {
     public static void updateAverageRequestServiceTime(long millis) {
         CompletedRequestsTakenInInterval++;
         CompletedRequestsTakenInTotal++;
-        System.out.println("millis is "+millis);
+        System.out.println("millis is " + millis);
         if (CompletedRequestsTakenInInterval == 0) {
             averageRequestServiceTimeInInterval = millis;
         } else {
-            averageRequestServiceTimeInInterval = ((averageRequestServiceTimeInInterval * (CompletedRequestsTakenInInterval-1)) + millis) / CompletedRequestsTakenInInterval;
+            averageRequestServiceTimeInInterval = ((averageRequestServiceTimeInInterval * (CompletedRequestsTakenInInterval - 1)) + millis) / CompletedRequestsTakenInInterval;
         }
         if (CompletedRequestsTakenInTotal == 0) {
             averageRequestServiceTimeInTotal = millis;
         } else {
-            averageRequestServiceTimeInTotal = ((averageRequestServiceTimeInTotal * (CompletedRequestsTakenInTotal-1) + millis)) / CompletedRequestsTakenInTotal;
+            averageRequestServiceTimeInTotal = ((averageRequestServiceTimeInTotal * (CompletedRequestsTakenInTotal - 1) + millis)) / CompletedRequestsTakenInTotal;
         }
     }
 
     public static void updateHighCriticalityAverageRequestServiceTime(long millis) {
         CompletedNumberOfHighCriticalityRequestsInInterval++;
         CompletedNumberOfHighCriticalityRequestsInTotal++;
-        System.out.println("millis is "+millis);
+        System.out.println("millis is " + millis);
         if (CompletedNumberOfHighCriticalityRequestsInInterval == 0) {
             averageHighCriticalityRequestServiceTimeInInterval = millis;
         } else {
-            averageHighCriticalityRequestServiceTimeInInterval = ((averageHighCriticalityRequestServiceTimeInInterval * (CompletedNumberOfHighCriticalityRequestsInInterval-1)) + millis) / CompletedNumberOfHighCriticalityRequestsInInterval;
+            averageHighCriticalityRequestServiceTimeInInterval = ((averageHighCriticalityRequestServiceTimeInInterval * (CompletedNumberOfHighCriticalityRequestsInInterval - 1)) + millis) / CompletedNumberOfHighCriticalityRequestsInInterval;
         }
         if (CompletedNumberOfHighCriticalityRequestsInTotal == 0) {
             averageHighCriticalityRequestServiceTimeInTotal = millis;
         } else {
-            averageHighCriticalityRequestServiceTimeInTotal = ((averageHighCriticalityRequestServiceTimeInTotal * (CompletedNumberOfHighCriticalityRequestsInTotal-1)) + millis) / CompletedNumberOfHighCriticalityRequestsInTotal;
+            averageHighCriticalityRequestServiceTimeInTotal = ((averageHighCriticalityRequestServiceTimeInTotal * (CompletedNumberOfHighCriticalityRequestsInTotal - 1)) + millis) / CompletedNumberOfHighCriticalityRequestsInTotal;
         }
         updateAverageRequestServiceTime(millis);
     }

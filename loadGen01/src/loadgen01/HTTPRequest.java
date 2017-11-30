@@ -50,7 +50,7 @@ public class HTTPRequest {
         in.close();
 
         //print result
-        System.out.println(response.toString());
+        //System.out.println(response.toString());
         return response.toString();
     }
 
