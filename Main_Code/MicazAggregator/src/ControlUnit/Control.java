@@ -711,8 +711,10 @@ public class Control {
                 while (true) {
                     //System.out.println("Tidier ran");
                     try {
+                        Iterator<PendingRequest> it = SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket").iterator();
                         PendingRequest req = null;
-                        for (PendingRequest request : SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket")) {
+                        while (it.hasNext()) {
+                            PendingRequest request = it.next();
                             if (request.getTimeOut() <= System.currentTimeMillis()) {
                                 req = request;
                                 request.setComplete(true);
