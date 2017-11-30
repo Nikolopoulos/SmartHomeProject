@@ -489,7 +489,7 @@ public class Control {
     }
 
     public void addToBlackList(MicazMote mote) {
-        SharedMemory.<String, ArrayList<MicazMote>>get("BlackList").add(mote);
+        //SharedMemory.<String, ArrayList<MicazMote>>get("BlackList").add(mote);
     }
 
     public void emptyBlacklist() {

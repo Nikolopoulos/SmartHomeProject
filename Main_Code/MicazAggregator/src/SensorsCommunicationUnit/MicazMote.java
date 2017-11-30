@@ -257,7 +257,9 @@ public class MicazMote {
         int type = -99;
         for (Service s : servicesList) {
             //System.out.println(s.getURI() + " vs " + ServiceURI);
-            if (s.getURI().contains(ServiceURI) && cached && s.getLatestReading() - System.currentTimeMillis() < 30000 && s.getDecimalValue() != null) {
+            //30000 is cache
+            long cacheMs = 1000;
+            if (s.getURI().contains(ServiceURI) && cached && s.getLatestReading() - System.currentTimeMillis() < cacheMs && s.getDecimalValue() != null) {
                 reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
             } else if (s.getURI().contains(ServiceURI)) {
                 if (s.getURI().contains("/temp")) {
