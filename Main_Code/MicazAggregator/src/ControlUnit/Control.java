@@ -36,6 +36,7 @@ import util.Util;
 import ServiceProvisionUnit.ServiceProvisionUnit;
 import SharedMemory.SharedMemory;
 import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import util.AdvertismentConsumer;
 import util.CustomException;
 
@@ -576,7 +577,9 @@ public class Control {
 
     private PendingRequest findRequestFromBucket(int id) {
         try {
-            for (PendingRequest p : memory.<String, ArrayList<PendingRequest>>get("RequestBucket")) {
+            Iterator<PendingRequest> it =  memory.<String, ArrayList<PendingRequest>>get("RequestBucket").iterator();
+            while (it.hasNext()) {
+                PendingRequest p = it.next();
                 if (p.getId() == id) {
                     return p;
                 }
@@ -734,7 +737,9 @@ public class Control {
     private void removeRequest(int id) {
         System.out.println("Done with request " + id);
         PendingRequest removable = null;
-        for (PendingRequest request : SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket")) {
+        Iterator<PendingRequest> it = SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket").iterator();
+        while (it.hasNext()) {
+            PendingRequest request=it.next();
             if (request.getId() == id) {
                 removable = request;
                 request.setComplete(true);
