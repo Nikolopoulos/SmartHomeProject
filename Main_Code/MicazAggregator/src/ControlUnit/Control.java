@@ -63,7 +63,7 @@ public class Control {
         DumpVariables.init();
         //Prime memory unit
         memory = SharedMemory.<String, SharedMemory>get("SMU");
- 
+
         System.out.println(memory.<String, String>get("registryUnitIP"));
         memory.<String, Control>set("MCU", this);
         SharedMemory.<String, Boolean>set("OverLoadStatus", false);
@@ -554,10 +554,9 @@ public class Control {
         //System.out.println("DM HERE ID IS" + threadId);
         int criticality = getCriticalityLevelOfRequest(url);
         request.setCriticality(criticality);
-        if(criticality >4){
+        if (criticality > 4) {
             DumpVariables.newHighCriticalityRequest();
-        }
-        else{
+        } else {
             DumpVariables.newRequest();
         }
         RequestExecutionThread thread = new RequestExecutionThread(threadId, criticality, url);
@@ -576,10 +575,15 @@ public class Control {
     }
 
     private PendingRequest findRequestFromBucket(int id) {
-        for (PendingRequest p : memory.<String, ArrayList<PendingRequest>>get("RequestBucket")) {
-            if (p.getId() == id) {
-                return p;
+        try {
+            for (PendingRequest p : memory.<String, ArrayList<PendingRequest>>get("RequestBucket")) {
+                if (p.getId() == id) {
+                    return p;
+                }
             }
+        }
+        catch(NullPointerException ex){
+            return null;
         }
         return null;
     }
