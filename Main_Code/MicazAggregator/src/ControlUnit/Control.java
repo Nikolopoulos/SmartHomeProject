@@ -849,7 +849,8 @@ public class Control {
                 Thread t = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        while (m.isPush()) {
+                        long start = System.currentTimeMillis();
+                        while (System.currentTimeMillis()-start < 5000) {
                             for (Service ser : m.getServices()) {
                                 m.RequestServiceReading(ser.getURI(), false, 5);
                                 try {

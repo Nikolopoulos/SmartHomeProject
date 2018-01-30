@@ -238,7 +238,7 @@ public class MicazMote {
     public void reset() {
         this.callsSinceLastMonitoring = 0;
         this.highestCritSinceLastMonitoring = 0;
-        this.push=false;
+        //this.push=false;
     }
     public int getHighestCritSinceLastMonitoring() {
         return highestCritSinceLastMonitoring;
@@ -259,7 +259,7 @@ public class MicazMote {
             //System.out.println(s.getURI() + " vs " + ServiceURI);
             //30000 is cache
             long cacheMs = 10000;
-            if (s.getURI().contains(ServiceURI) && cached && s.getLatestReading() - System.currentTimeMillis() < cacheMs && s.getDecimalValue() != null) {
+            if ((s.getURI().contains(ServiceURI)&& isPush()) || (s.getURI().contains(ServiceURI) && cached && System.currentTimeMillis() - s.getLatestReading() < cacheMs && s.getDecimalValue() != null)) {
                 reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
             } else if (s.getURI().contains(ServiceURI)) {
                 if (s.getURI().contains("/temp")) {

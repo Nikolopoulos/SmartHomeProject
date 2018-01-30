@@ -102,7 +102,7 @@ public class RequestExecutionThread implements Runnable {
                     System.out.println("Should go to push");
                 }
 
-                if (criticality > 4 && !m.isPush()) {
+                if (criticality > 4) {
                     returnValueString += m.RequestServiceReading(ServiceURI.split("\\?")[0], false, criticality);
                     SharedMemory.<String, DecisionMakingUnit>get("DMU").reconfigure(new CustomException("Mote", m.getId() + "", "PushCondition"));
                 } else if (criticality > 2 && !m.isPush()) {
