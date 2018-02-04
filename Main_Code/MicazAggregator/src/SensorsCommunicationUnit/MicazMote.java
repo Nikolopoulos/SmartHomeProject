@@ -5,6 +5,7 @@
  */
 package SensorsCommunicationUnit;
 
+import Logging.DumpVariables;
 import SharedMemory.SharedMemory;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -264,6 +265,7 @@ public class MicazMote {
             //System.out.println("condition is "+(s.getDecimalValue()!=null));
             if (s.getDecimalValue()!=null&&((s.getURI().contains(ServiceURI)&& isPush()) || (s.getURI().contains(ServiceURI) && cached && System.currentTimeMillis() - s.getLatestReading() < cacheMs && s.getDecimalValue() != null))) {
                 reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
+                DumpVariables.completeWithCache();
             } else if (s.getURI().contains(ServiceURI)) {
                 if (s.getURI().contains("/temp")) {
                     //System.out.println("ELSE INNER s.uri vs serviceuri " + s.getURI() + " vs " + ServiceURI + " is contained? " + s.getURI().contains(ServiceURI));

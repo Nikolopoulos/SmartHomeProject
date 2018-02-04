@@ -50,6 +50,9 @@ public class DumpVariables {
     static float averageRequestServiceTimeInTotal;
     static float averageHighCriticalityRequestServiceTimeInInterval;
     static float averageHighCriticalityRequestServiceTimeInTotal;
+    
+    static int numberOfRequestsCompletedWithCacheInInterval= 0;
+    static int numberOfRequestsCompletedWithCacheInTotal= 0;
 
     public static void init() {
         if (init) {
@@ -90,7 +93,9 @@ public class DumpVariables {
                         + "Average High Criticality requests service time in interval;"
                         + "Average High Criticality requests service time in total;"
                         + "Average request service time in interval;"
-                        + "Average request service time in total");
+                        + "Average request service time in total;"
+                        + "numberOfRequestsCompletedWithCacheInInterval;" 
+                        + "numberOfRequestsCompletedWithCacheInTotal");
                 bw.newLine();
                 bw.close();
                 System.out.println("Init happened");
@@ -140,7 +145,10 @@ public class DumpVariables {
                     + averageHighCriticalityRequestServiceTimeInInterval + ";"
                     + averageHighCriticalityRequestServiceTimeInTotal + ";"
                     + averageRequestServiceTimeInInterval + ";"
-                    + averageRequestServiceTimeInTotal
+                    + averageRequestServiceTimeInTotal + ";"
+                    + numberOfRequestsCompletedWithCacheInInterval + ";"
+                    + numberOfRequestsCompletedWithCacheInTotal
+                    
             );
             bw.newLine();
             bw.close();
@@ -155,13 +163,17 @@ public class DumpVariables {
         }
         resetIntervalCounters();
     }
-
+    public static void completeWithCache(){
+        numberOfRequestsCompletedWithCacheInInterval++;
+        numberOfRequestsCompletedWithCacheInTotal++;
+    }
     public static void resetIntervalCounters() {
 
         requestsTakenInInterval = 0;
         numberOfHighCriticalityRequestsInInterval = 0;
         numberOfPullingSensors = 0;
         numberOfPushingSensors = 0;
+        numberOfRequestsCompletedWithCacheInInterval = 0;
         if (SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList") != null) {
 
             for (MicazMote mote : SharedMemory.<String, ArrayList<MicazMote>>get("SensorsList")) {
