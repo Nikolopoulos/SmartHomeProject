@@ -46,9 +46,9 @@ public class AdvertismentConsumer {
                     while (true) {
                         s.receive(pack);
                         SharedMemory.SharedMemory.set("registryUnitIP", new String(buf).substring(1).trim());
-                        System.out.println("Received data from: " + pack.getAddress().toString()
-                                + ":" + pack.getPort() + " with length: "
-                                + pack.getLength() + " and data " + new String(buf).trim());
+                        //System.out.println("Received data from: " + pack.getAddress().toString()
+                        //        + ":" + pack.getPort() + " with length: "
+                        //        + pack.getLength() + " and data " + new String(buf).trim());
                         Thread.sleep(1000);
                     }
                     // Finally, let us do something useful with the data we just received,

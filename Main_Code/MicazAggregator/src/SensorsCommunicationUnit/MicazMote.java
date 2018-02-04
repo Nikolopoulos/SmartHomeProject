@@ -162,6 +162,7 @@ public class MicazMote {
                 s.setDecimalValue(util.Util.a2d2celsius(tempReading) + "");
                 //System.out.println("Set temp to " + s.getDecimalValue());
                 s.setLatestReading(Util.getTime());
+                //System.err.println("Setted latest reading");
             }
         }
     }
@@ -259,16 +260,19 @@ public class MicazMote {
             //System.out.println(s.getURI() + " vs " + ServiceURI);
             //30000 is cache
             long cacheMs = 10000;
-            if ((s.getURI().contains(ServiceURI)&& isPush()) || (s.getURI().contains(ServiceURI) && cached && System.currentTimeMillis() - s.getLatestReading() < cacheMs && s.getDecimalValue() != null)) {
+            //System.out.println("decval is "+s.getDecimalValue());
+            //System.out.println("condition is "+(s.getDecimalValue()!=null));
+            if (s.getDecimalValue()!=null&&((s.getURI().contains(ServiceURI)&& isPush()) || (s.getURI().contains(ServiceURI) && cached && System.currentTimeMillis() - s.getLatestReading() < cacheMs && s.getDecimalValue() != null))) {
                 reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
             } else if (s.getURI().contains(ServiceURI)) {
                 if (s.getURI().contains("/temp")) {
                     //System.out.println("ELSE INNER s.uri vs serviceuri " + s.getURI() + " vs " + ServiceURI + " is contained? " + s.getURI().contains(ServiceURI));
                     //System.out.println("Uri contains/temp " + ServiceURI);
+                    //System.out.println("Caching "+cached +" and I am inside trying to contact sensor");
+                    
                     type = Constants.TEMP;
                     SharedMemory.<String,SensorsCommunicationUnit>get("SCU").sendReadingRequest(id, type);
-
-                    //System.out.println("temp");
+                    
                 } else if (s.getURI().contains("/photo")) {
                     type = Constants.PHOTO;
                     SharedMemory.<String,SensorsCommunicationUnit>get("SCU").sendReadingRequest(id, type);
@@ -292,7 +296,7 @@ public class MicazMote {
                 } catch (InterruptedException ex) {
                     Logger.getLogger(MicazMote.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
+                while(s.getDecimalValue()==null){}
                 reply = "\"ID\":\"" + getId() + "\", \"" + s.getName() + "\":\"" + s.getDecimalValue() + "\" ";
                 
 

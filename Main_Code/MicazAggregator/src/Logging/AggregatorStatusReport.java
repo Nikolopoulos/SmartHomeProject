@@ -5,6 +5,7 @@
  */
 package Logging;
 
+import ControlUnit.Control;
 import ControlUnit.CoreDefinition;
 import ControlUnit.PendingRequest;
 import SharedMemory.SharedMemory;
@@ -146,7 +147,11 @@ public class AggregatorStatusReport {
         toWrite += "Complete";
         toWrite += "</th>";
         toWrite += "</tr>";
-
+        /*try {
+            SharedMemory.<String,Control>get("MCU").bucketSema.acquire();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(AggregatorStatusReport.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
         for (PendingRequest request : SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket")) {
             toWrite += "<tr>";
             toWrite += "<td>";
@@ -164,6 +169,7 @@ public class AggregatorStatusReport {
             toWrite += "</tr>";
 
         }
+        //SharedMemory.<String,Control>get("MCU").bucketSema.release();
         toWrite += "</table>";
         toWrite += "</div>";
 

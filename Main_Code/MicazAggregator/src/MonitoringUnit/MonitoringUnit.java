@@ -35,10 +35,14 @@ public class MonitoringUnit {
 
             @Override
             public void run() {
+                long lastMonitoring = 0;
                 while (true) {
-                    if(dumpCycleCount>dumpCycleQuantum){
+                    
+                    if(dumpCycleCount>=dumpCycleQuantum){
+                        System.out.println("Dumping after "+(System.currentTimeMillis()-lastMonitoring)+" ms");
                         dumpCycleCount = 0;
                         DumpVariables.dump();
+                        lastMonitoring = System.currentTimeMillis();
                     }
                     dumpCycleCount++;
                     for (MonitoredVariable var : SharedMemory.SharedMemory.<String, ArrayList<MonitoredVariable>>get("monitoredVariables")) {
@@ -49,6 +53,7 @@ public class MonitoringUnit {
                     }
                     try {
                         Thread.sleep(util.Statics.monitoringQuantum);
+                        //Thread.sleep(1);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(MonitoringUnit.class.getName()).log(Level.SEVERE, null, ex);
                     }

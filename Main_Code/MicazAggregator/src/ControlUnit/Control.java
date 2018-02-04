@@ -35,8 +35,12 @@ import ServiceProvisionUnit.RequestObject;
 import util.Util;
 import ServiceProvisionUnit.ServiceProvisionUnit;
 import SharedMemory.SharedMemory;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 import util.AdvertismentConsumer;
 import util.CustomException;
 
@@ -58,16 +62,18 @@ public class Control {
     public String ip;// = addr.getHostAddress();
     ServiceProvisionUnit spu;
     int threadId = 0;
+    //public Semaphore bucketSema;
 
     public Control(boolean debug) {
 
-        DumpVariables.init();
+        //bucketSema = new Semaphore(1,true);
         //Prime memory unit
         memory = SharedMemory.<String, SharedMemory>get("SMU");
 
         System.out.println(memory.<String, String>get("registryUnitIP"));
         memory.<String, Control>set("MCU", this);
         SharedMemory.<String, Boolean>set("OverLoadStatus", false);
+        DumpVariables.init();
         dm = new DecisionMakingUnit();
         memory.<String, DecisionMakingUnit>set("DMU", dm);
         threadAffinity = new ThreadAffinity(this);
@@ -109,7 +115,8 @@ public class Control {
             memory.<String, ArrayList>set("ThreadBucket" + i, new ArrayList<RequestExecutionThread>());
         }
         //System.out.println("STEP 1.0.2");
-        memory.<String, ArrayList<PendingRequest>>set("RequestBucket", new ArrayList<PendingRequest>());
+
+        memory.<String, ConcurrentHashMap<Integer, PendingRequest>>set("RequestBucket", new ConcurrentHashMap<Integer, PendingRequest>());
         try {
             //System.out.println("STEP 1.0.3");
             addr = getFirstNonLoopbackAddress(true, false);
@@ -194,6 +201,7 @@ public class Control {
         //System.out.println("Step 2.01");
         SharedMemory.<String, ArrayList<MicazMote>>set("SensorsList", new ArrayList<MicazMote>());
         SharedMemory.<String, ArrayList<MicazMote>>set("BlackList", new ArrayList<MicazMote>());
+
         //System.out.println("Step 2.02");
         dropDaemon = createDropDaemon();
         //System.out.println("Step 2.03");
@@ -563,8 +571,13 @@ public class Control {
         RequestExecutionThread thread = new RequestExecutionThread(threadId, criticality, url);
         addRequestToBucket(request, threadId, thread);
         //System.out.println("CREATED THREAD");
-        memory.<String, ArrayList<RequestExecutionThread>>get("ThreadBucket" + criticality).add(thread);
+        while (!(memory.<String, ArrayList<RequestExecutionThread>>get("ThreadBucket" + criticality).contains(thread))) {
+            try {
+                memory.<String, ArrayList<RequestExecutionThread>>get("ThreadBucket" + criticality).add(thread);
+            } catch (Exception ex) {
 
+            }
+        }
         //System.out.println("ADDED THREAD in bucket " + "ThreadBucket" + criticality);
         return threadId;
     }
@@ -572,27 +585,49 @@ public class Control {
     private void addRequestToBucket(DoComms request, int id, RequestExecutionThread ret) {
         PendingRequest pr = new PendingRequest(request, id);
         pr.setRet(ret);
-        memory.<String, ArrayList<PendingRequest>>get("RequestBucket").add(pr);
+        /*try {
+            System.out.println("AVAILABLE PERMITS "+bucketSema.availablePermits());
+            //System.out.println("Acquiring sema procedure at line 582");bucketSema.acquire();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
+        memory.<String, ConcurrentHashMap<Integer, PendingRequest>>get("RequestBucket").put(pr.getId(), pr);
+        //bucketSema.release();
+        //System.out.println("releasing lease because of completion of addRequest Available leases now "+bucketSema.availablePermits());
     }
 
     private PendingRequest findRequestFromBucket(int id) {
         try {
-            Iterator<PendingRequest> it =  memory.<String, ArrayList<PendingRequest>>get("RequestBucket").iterator();
-            while (it.hasNext()) {
-                PendingRequest p = it.next();
-                if (p.getId() == id) {
-                    return p;
-                }
+
+            //System.out.println("AVAILABLE PERMITS "+bucketSema.availablePermits());
+            //System.out.println("Acquiring sema procedure 594");
+            //bucketSema.acquire();
+            PendingRequest p = memory.<String, ConcurrentHashMap<Integer, PendingRequest>>get("RequestBucket").get(id);
+            //bucketSema.release();
+            if (p.getId() == id) {
+                return p;
             }
-        }
-        catch(NullPointerException ex){
+
+        } catch (NullPointerException ex) {
             return null;
+        } catch (ConcurrentModificationException ex) {
+            //bucketSema.release();
+            //return findRequestFromBucket(id);
+            Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
         }
+        /*catch (InterruptedException ex) {
+            Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
         return null;
     }
 
     public void setResponseOfRequest(int id, String reply) {
-        findRequestFromBucket(id).setReply(reply);
+
+        PendingRequest req = null;
+        while (req == null) {
+            req = findRequestFromBucket(id);
+        }
+        req.setReply(reply);
         removeRequest(id);
 
     }
@@ -711,20 +746,32 @@ public class Control {
                 while (true) {
                     //System.out.println("Tidier ran");
                     try {
-                        Iterator<PendingRequest> it = SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket").iterator();
+                        //memory.<String, ConcurrentHashMap<Integer,PendingRequest>>get("RequestBucket")
+                        Enumeration<PendingRequest> enume = SharedMemory.<String, ConcurrentHashMap<Integer, PendingRequest>>get("RequestBucket").elements();
                         PendingRequest req = null;
-                        while (it.hasNext()) {
-                            PendingRequest request = it.next();
+                        while (enume.hasMoreElements()) {
+                            PendingRequest request = null;
+                            try {
+                                //bucketSema.acquire();
+                                //System.out.println("Acquiring sema procedure 736");
+                                request = enume.nextElement();
+                                //bucketSema.release();
+                            } catch (Exception e) {
+                                //bucketSema.release();
+                                //System.out.println("releasing lease because of "+e+" Available leases now "+bucketSema.availablePermits());
+                                continue;
+                            }
                             if (request.getTimeOut() <= System.currentTimeMillis()) {
                                 req = request;
                                 request.setComplete(true);
+                                //System.out.println("Completing " + req.getId() + " due to timeout");
+                                SharedMemory.<String, ConcurrentHashMap<Integer, PendingRequest>>get("RequestBucket").remove(req.getId());
+                                //System.out.println("Removed " + req.getId());
                             }
                         }
 
-                        if (req != null) {
-                            //SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket").remove(req);
-                        }
-                        Thread.sleep(150);
+                        Thread.sleep(1000);
+
                     } catch (ConcurrentModificationException ex) {
                         Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (InterruptedException ex) {
@@ -737,25 +784,56 @@ public class Control {
     }
 
     private void removeRequest(int id) {
-        System.out.println("Done with request " + id);
+
         PendingRequest removable = null;
-        Iterator<PendingRequest> it = SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket").iterator();
-        while (it.hasNext()) {
-            PendingRequest request=it.next();
-            if (request.getId() == id) {
-                removable = request;
-                request.setComplete(true);
-            }
+
+        //Iterator<PendingRequest> it = SharedMemory.<String, ConcurrentHashMap<Integer,PendingRequest>>get("RequestBucket").iterator();
+        //while (it.hasNext()) {
+        PendingRequest request = null;
+        try {
+            ////System.out.println("Acquiring sema procedure 771");bucketSema.acquire();
+            request = SharedMemory.<String, ConcurrentHashMap<Integer, PendingRequest>>get("RequestBucket").get(id);
+            //bucketSema.release();
+        } catch (Exception e) {
+            //bucketSema.release();
+            //System.out.println("releasing lease because of "+e+" Available leases now "+bucketSema.availablePermits());
+            //continue;
         }
+//            if(request == null){
+//                Thread t = new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        removeRequest(id);
+//                        
+//                    }
+//                });
+//                t.start();
+//                return;
+//                
+//            }
+        if (request.getId() == id) {
+            removable = request;
+            request.setComplete(true);
+        }
+        //}
+        //System.out.println("Done with request " + id);
         try {
             if (removable != null) {
-                SharedMemory.<String, ArrayList<PendingRequest>>get("RequestBucket").remove(removable);
+                ////System.out.println("Acquiring sema procedure 796");bucketSema.acquire();
+                SharedMemory.<String, ConcurrentHashMap<Integer, PendingRequest>>get("RequestBucket").remove(removable.getId());
+                //bucketSema.release();
             }
             //Thread.sleep(500);
         } catch (ConcurrentModificationException ex) {
+            //bucketSema.release();
+            //System.out.println("releasing lease because of "+ex+" Available leases now "+bucketSema.availablePermits());
             Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+
         }
 
+        /*catch (InterruptedException ex) {
+            Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
     }
 
     private RequestExecutionThread getNextRequestToServe() {
@@ -850,7 +928,7 @@ public class Control {
                     @Override
                     public void run() {
                         long start = System.currentTimeMillis();
-                        while (System.currentTimeMillis()-start < 5000) {
+                        while (System.currentTimeMillis() - start < 5000) {
                             for (Service ser : m.getServices()) {
                                 m.RequestServiceReading(ser.getURI(), false, 5);
                                 try {

@@ -96,7 +96,11 @@ public class DecisionMakingUnit {
                     candidate = mote;
                     continue;
                 }
+                try{
                 if ((candidate.getCallsSinceLastMonitoring() / candidate.getHighestCritSinceLastMonitoring()) < (mote.getCallsSinceLastMonitoring() / mote.getHighestCritSinceLastMonitoring())) {
+                    candidate = mote;
+                }}
+                catch(ArithmeticException ex){
                     candidate = mote;
                 }
             }

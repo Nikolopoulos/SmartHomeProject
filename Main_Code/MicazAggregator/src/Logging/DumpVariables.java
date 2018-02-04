@@ -55,13 +55,23 @@ public class DumpVariables {
         if (init) {
             return;
         }
+        System.out.println("Initing text");
         init = true;
-        logfile = new File(new Date().toGMTString() + ".csv");
+        logfile = new File(System.currentTimeMillis() + ".csv");
+        try {
+            logfile.createNewFile();
+        } catch (IOException ex) {
+            Logger.getLogger(DumpVariables.class.getName()).log(Level.SEVERE, null, ex);
+        }
         if (logfile.exists()) {
             try {
+                System.out.println("1");
                 pw = new PrintWriter(logfile);
+                System.out.println("2");
                 pw.write("");
+                System.out.println("3");
                 pw.close();
+                System.out.println("Initing log");
                 BufferedWriter bw = null;
                 bw = new BufferedWriter(new FileWriter(logfile, true));
                 bw.write("Number of requests arrived in interval;"
@@ -83,9 +93,10 @@ public class DumpVariables {
                         + "Average request service time in total");
                 bw.newLine();
                 bw.close();
+                System.out.println("Init happened");
                 resetIntervalCounters();
             } catch (FileNotFoundException ex) {
-                java.util.logging.Logger.getLogger(MyLogger.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MyLogger.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
                 Logger.getLogger(DumpVariables.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -190,7 +201,7 @@ public class DumpVariables {
     public static void updateAverageRequestServiceTime(long millis) {
         CompletedRequestsTakenInInterval++;
         CompletedRequestsTakenInTotal++;
-        System.out.println("millis is " + millis);
+        //System.out.println("millis is " + millis);
         if (CompletedRequestsTakenInInterval == 0) {
             averageRequestServiceTimeInInterval = millis;
         } else {
@@ -206,7 +217,7 @@ public class DumpVariables {
     public static void updateHighCriticalityAverageRequestServiceTime(long millis) {
         CompletedNumberOfHighCriticalityRequestsInInterval++;
         CompletedNumberOfHighCriticalityRequestsInTotal++;
-        System.out.println("millis is " + millis);
+        //System.out.println("millis is " + millis);
         if (CompletedNumberOfHighCriticalityRequestsInInterval == 0) {
             averageHighCriticalityRequestServiceTimeInInterval = millis;
         } else {

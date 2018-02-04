@@ -244,7 +244,7 @@ public class DoComms implements Runnable {
         if(receivedTime < 1){
             milliValue = 0;
         }
-        if(criticality>1&&criticality<5){
+        if(criticality>0&&criticality<5){
             Logging.MyLogger.log("Non critical request started at "+receivedTime +" and finished at "+completeTime +" which means request took "+milliValue+"ms");
             DumpVariables.updateAverageRequestServiceTime(milliValue);
         }

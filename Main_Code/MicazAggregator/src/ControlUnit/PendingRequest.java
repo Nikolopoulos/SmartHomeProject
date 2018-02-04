@@ -13,7 +13,7 @@ import ServiceProvisionUnit.DoComms;
 public class PendingRequest {
     private DoComms request;
     private int id;
-    private long timeOut = System.currentTimeMillis() + 3000;
+    private long timeOut = System.currentTimeMillis() + 15000;
     private boolean complete = false;
     private RequestExecutionThread ret;
 
