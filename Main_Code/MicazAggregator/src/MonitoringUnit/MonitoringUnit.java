@@ -39,7 +39,7 @@ public class MonitoringUnit {
                 while (true) {
                     
                     if(dumpCycleCount>=dumpCycleQuantum){
-                        System.out.println("Dumping after "+(System.currentTimeMillis()-lastMonitoring)+" ms");
+                        //System.out.println("Dumping after "+(System.currentTimeMillis()-lastMonitoring)+" ms");
                         dumpCycleCount = 0;
                         DumpVariables.dump();
                         lastMonitoring = System.currentTimeMillis();

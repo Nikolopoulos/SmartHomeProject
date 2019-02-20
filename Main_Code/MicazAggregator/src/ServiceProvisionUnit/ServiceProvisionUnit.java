@@ -19,7 +19,7 @@ import java.util.concurrent.Semaphore;
  */
 public class ServiceProvisionUnit {
 
-    private static int port = 8181,
+    public static int port = 8184,
                        maxConnections = 0;
     // Listen for incoming connections and handle them
     final Control finalControl;
@@ -76,7 +76,9 @@ public class ServiceProvisionUnit {
 
                 @Override
                 public void run() {
-                    request.setResponse(HTTPRequest.sendPost(request));
+                    try{
+                        request.setResponse(HTTPRequest.sendPost(request));
+                    } catch (Exception e){}
                     reply.release();
                 }
             });
@@ -89,8 +91,8 @@ public class ServiceProvisionUnit {
                 @Override
                 public void run() {
                     try {
-                        HTTPRequest.sendGet(request);
-                        request.setResponse("");
+                        //HTTPRequest.sendGet(request);
+                        request.setResponse(HTTPRequest.sendGet(request));
                         reply.release();
                     } catch (Exception ex) {
                         Logger.getLogger(ServiceProvisionUnit.class.getName()).log(Level.SEVERE, null, ex);

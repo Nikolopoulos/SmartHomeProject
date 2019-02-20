@@ -103,6 +103,12 @@ public class DoComms implements Runnable {
                     printToGUI(localinput);
                     break;
                 }
+                case 6: {
+                    System.out.println("Contextupdate input is"+input);
+                    String[] lines = input.split("\n");                    
+                    handleContextUpdate(URLDecoder.decode(lines[lines.length-1]));
+                    break;
+                }
                 case -1: {
                     getGenericResponse();
                     break;
@@ -154,6 +160,8 @@ public class DoComms implements Runnable {
             }
         } else if (Url.startsWith("/print")) {
             return 5;
+        } else if (Url.startsWith("/topics")) {
+            return 6;
         }
         return -1;
     }
@@ -189,7 +197,14 @@ public class DoComms implements Runnable {
         }
         reply="";
         sema.release();
-
+    }
+    
+    private void handleContextUpdate(String inputBody) {
+        System.out.println("info Body is "+inputBody);
+        SharedMemory.<String, ContextAwarenessUnit.ContextAwarenessUnit>get("CAU").handleNewInformation(inputBody);
+        
+        reply="";
+        sema.release();
     }
 
     private void getSensorsList() {
@@ -255,6 +270,8 @@ public class DoComms implements Runnable {
         
         PrintStream out = new PrintStream(server.getOutputStream());
         out.println("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + reply.length() + "\r\n\r\n" + reply);
+        server.shutdownInput();
+        server.shutdownOutput();
         out.flush();
         out.close();
         server.close();

@@ -44,9 +44,9 @@ public class Request {
     public BufferedReader getReader() throws IOException {
         String headerLine = "";
         BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        /*while ((headerLine = br.readLine()).length() != 0) {
+        while ((headerLine = br.readLine()).length() != 0) {
             System.out.println("headrline is: "+headerLine);
-        }*/
+        }
 
         return br;
 
@@ -182,7 +182,8 @@ public class Request {
                 System.out.println("ParamsLine is " + paramsLine);
                 String[] params = paramsLine.split("&");
                 for (String param : params) {
-                    String[] kv = param.split("[=]");
+                    //if(indexOfEquals)
+                    String[] kv = param.split("[=:]",2);
                     try {
                         String key = java.net.URLDecoder.decode(kv[0], "UTF-8");
                         String value = java.net.URLDecoder.decode(kv[1], "UTF-8");

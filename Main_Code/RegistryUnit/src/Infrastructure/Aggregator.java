@@ -15,7 +15,7 @@ public class Aggregator {
     String IP;
     transient ArrayList<Service> services;
     int Port;
-    String uid;
+    transient String uid;
     
     
     

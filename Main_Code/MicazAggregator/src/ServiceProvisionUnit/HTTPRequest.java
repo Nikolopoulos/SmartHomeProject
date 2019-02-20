@@ -64,10 +64,10 @@ public class HTTPRequest {
         //MyLogger.log(response.toString());
     }
 
-    public static void sendGet(RequestObject request) throws Exception {
+    public static String sendGet(RequestObject request) throws Exception {
 
         //String url = "http://www.google.com/search?q=mkyong";
-        URL obj = new URL(request.getUrl());
+        URL obj = new URL(request.getUrl() +":"+request.getPort()+ request.getService());
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
         // optional default is GET
@@ -92,6 +92,8 @@ public class HTTPRequest {
 
         //print result
         //MyLogger.log(response.toString());
+        
+        return response.toString();
     }
 
     // HTTP POST request
@@ -125,6 +127,7 @@ public class HTTPRequest {
             pw.print(anull);
 
             pw.flush();
+            s.shutdownOutput();
             //pw.close();
             BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
             /* br.readLine();
@@ -212,13 +215,16 @@ public class HTTPRequest {
         String parameters = request.getParameters();
         String service = request.getService();
         InetAddress myIP = request.getMyIP();
+        System.out.println("I AM INSIDE THIS THING WHRE I SEND THE THING");
         try {
             Socket s = new Socket(url.substring(7), port);
+            System.out.println("getting writer");
             PrintWriter pw = new PrintWriter(s.getOutputStream());
+            System.out.println("got writer");
             pw.print("POST " + service + " HTTP/1.1\n");
             pw.print("User-Agent: Mozilla/5.0\n");
             pw.print("Accept-Language: en-US,en;q=0.5\n");
-            pw.print("Host: " + url.substring(7) + ":8383\n");
+            pw.print("Host: " + url.substring(7) + ":"+port+"\n");
 
             pw.print("Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2\n");
             pw.print("Connection: keep-alive\n");
@@ -226,18 +232,21 @@ public class HTTPRequest {
             pw.print("Content-Length: " + parameters.length() + "\n");
 
             pw.print(parameters);
-            Object anull = null;
-            pw.print(anull);
+            
 
             pw.flush();
+            
+            s.shutdownOutput();
+            System.out.println("get reader");
             BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 
             String t = "";
             String line = "";
             try {
+                System.out.println("PRELOOPDALOOP");
                 while (((line = br.readLine()) != null)&&!s.isInputShutdown()) {
                     t += line;
-
+                    System.out.println("LOOPDALOOP");
                 }
             } catch (SocketException e) {
                 e.printStackTrace();

@@ -51,6 +51,7 @@ public class Tassadar {
         Communication comm = new Communication();
         comm.setRequest(request);
         ArrayList<Service> services = new ArrayList<Service>();
+        System.out.println("REQUESTED URI IS "+request.getURI());
         if (request.getURI().equalsIgnoreCase("/register")) {
             comm.setRequestType(Util.Statics.REGISTER_REQUEST);
             System.out.println("request.client: " + request.client);
@@ -494,13 +495,17 @@ public class Tassadar {
         if (action.equals("create")) {
             try {
                 try {
-                    BufferedReader br = request.getReader();
                     String body = "";
-                    String line = "";
-                    while (br.ready()) {
-                        line = br.readLine();
-                        System.out.println("l is " + line);
-                        body += line;
+                    if(request.getParameters().containsKey("body")){
+                        body = request.getParameters().get("body");
+                    } else {
+                        BufferedReader br = request.getReader();
+                        String line = "";
+                        while (br.ready()) {
+                            line = br.readLine();
+                            System.out.println("l is " + line);
+                            body += line;
+                        }
                     }
                     System.out.println("Body is ");
                     System.out.println(body);
@@ -654,11 +659,17 @@ public class Tassadar {
 
     private void normalPersonsResponseThatIsNotLikeATotalPieceOfShit(Communication comm, String preFormattedMessage, int status) throws IOException {
         String response = preFormattedMessage;
+        String headers = "HTTP/1.1 200 OK\n"
+                + "Date: Wed, 20 Feb 2019 13:57:55 GMT\n"
+                + "Content-Type: text; charset=UTF-8\n"
+                + "Content-Length: " + response.length();
         comm.setResponseType(status);
-        comm.setAnswer(response + "\n\n\n\n\n\n");
+        comm.setAnswer(headers + "\n\n" + response);
         uni.comms.add(comm);
         out.write(comm.getAnswer().getBytes());
         out.flush();
+        comm.getRequest().socket.shutdownOutput();
+        comm.getRequest().socket.shutdownInput();
         comm.getRequest().socket.close();
         //out.close();
     }
@@ -677,6 +688,7 @@ public class Tassadar {
         out.write(comm.getAnswer().getBytes());
         System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
         out.flush();
+        
         System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
 //        
 //        out.close();

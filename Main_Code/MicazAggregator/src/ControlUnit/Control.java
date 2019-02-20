@@ -5,6 +5,7 @@
  */
 package ControlUnit;
 
+import ContextAwarenessUnit.ContextAwarenessUnit;
 import DecisionMakingUnit.DecisionMakingUnit;
 import Logging.MyLogger;
 import Libraries.ThreadAffinity;
@@ -35,12 +36,8 @@ import ServiceProvisionUnit.RequestObject;
 import util.Util;
 import ServiceProvisionUnit.ServiceProvisionUnit;
 import SharedMemory.SharedMemory;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Semaphore;
 import util.AdvertismentConsumer;
 import util.CustomException;
 
@@ -72,6 +69,7 @@ public class Control {
 
         System.out.println(memory.<String, String>get("registryUnitIP"));
         memory.<String, Control>set("MCU", this);
+        
         SharedMemory.<String, Boolean>set("OverLoadStatus", false);
         DumpVariables.init();
         dm = new DecisionMakingUnit();
@@ -144,9 +142,10 @@ public class Control {
         }
 
         memory.<String, Integer>set("registryPort", 8383);
-        memory.<String, Integer>set("myPort", 8181);
+        
         spu = new ServiceProvisionUnit(this);
         memory.<String, ServiceProvisionUnit>set("SPU", spu);
+        memory.<String, Integer>set("myPort", memory.<String, ServiceProvisionUnit>get("SPU").port);
         //System.out.println("STEP 1.1");
         spu.startServer();
         //System.out.println("STEP 1.2");
@@ -216,6 +215,7 @@ public class Control {
         requestServingDaemon();
         //System.out.println("Step 2.08");
         requestsTidier();
+        memory.<String, ContextAwarenessUnit>set("CAU", new ContextAwarenessUnit());
         //System.out.println("Step 2.09");
         //AggregatorStatusReport.init();
         //System.out.println("Step 2.10");
@@ -1004,4 +1004,77 @@ public class Control {
                     }
                 })));
     }
+
+    public Thread getDropDaemon() {
+        return dropDaemon;
+    }
+
+    public void setDropDaemon(Thread dropDaemon) {
+        this.dropDaemon = dropDaemon;
+    }
+
+    public Thread getPopulate() {
+        return populate;
+    }
+
+    public void setPopulate(Thread populate) {
+        this.populate = populate;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    public ThreadAffinity getThreadAffinity() {
+        return threadAffinity;
+    }
+
+    public void setThreadAffinity(ThreadAffinity threadAffinity) {
+        this.threadAffinity = threadAffinity;
+    }
+
+    public InetAddress getAddr() {
+        return addr;
+    }
+
+    public void setAddr(InetAddress addr) {
+        this.addr = addr;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public ServiceProvisionUnit getSpu() {
+        return spu;
+    }
+
+    public void setSpu(ServiceProvisionUnit spu) {
+        this.spu = spu;
+    }
+
+    public int getThreadId() {
+        return threadId;
+    }
+
+    public void setThreadId(int threadId) {
+        this.threadId = threadId;
+    }
+    
 }
