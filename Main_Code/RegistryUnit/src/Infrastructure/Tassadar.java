@@ -10,9 +10,10 @@ import Util.Hasher;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.*;
@@ -31,12 +32,12 @@ public class Tassadar {
             + "Content-Type: text/html\n";
     private static final String OUTPUT_END_OF_HEADERS = "\n\n";
     Request request;
-    PrintStream out;
+    OutputStream out;
     Universe uni;
     ArrayList<Service> Services;
     Socket sock;
 
-    public Tassadar(Request requestArg, PrintStream outArg, Universe uniArg, Socket server) {
+    public Tassadar(Request requestArg, OutputStream outArg, Universe uniArg, Socket server) {
         this.request = requestArg;
         this.out = outArg;
         this.uni = uniArg;
@@ -65,7 +66,11 @@ public class Tassadar {
             System.out.println("test1");
             if (!result) {
                 comm.setResponseType(Util.Statics.NOT_PERMITTED_ERROR);
-                errorRespond(comm, "Already Registered");
+                try {
+                    errorRespond(comm, "Already Registered");
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 System.out.println("test2");
             } else {
                 Aggregator agr = new Aggregator(IP, Port);
@@ -80,9 +85,14 @@ public class Tassadar {
                     obj = new JSONObject(jsonServices);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    System.out.println("Offending line is " + jsonServices);
                     comm.setResponseType(Util.Statics.BAD_REQUEST_ERROR);
                     System.out.println("test4");
-                    errorRespond(comm, "Services not correctly stated");
+                    try {
+                        errorRespond(comm, "Services not correctly stated");
+                    } catch (IOException ex) {
+                        Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     return;
                 }
                 System.out.println("test4.2");
@@ -126,7 +136,11 @@ public class Tassadar {
                 } catch (Exception e) {
                     comm.setResponseType(Util.Statics.BAD_REQUEST_ERROR);
                     System.out.println("test5");
-                    errorRespond(comm, "Services not correctly formated");
+                    try {
+                        errorRespond(comm, "Services not correctly formated");
+                    } catch (IOException ex) {
+                        Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     return;
                 }
                 try {
@@ -137,25 +151,33 @@ public class Tassadar {
                     uni.aggregators.put(agr.uid, agr);
                     this.registerRespond(comm, agr);
                 } catch (Exception e) {
-                    System.out.println("test7");
-                    comm.setResponseType(Util.Statics.INTERNAL_SERVER_ERROR);
-                    errorRespond(comm, "Services not correctly formated");
-                    return;
+                    try {
+                        System.out.println("test7");
+                        comm.setResponseType(Util.Statics.INTERNAL_SERVER_ERROR);
+                        errorRespond(comm, "Services not correctly formated");
+                        return;
+                    } catch (IOException ex) {
+                        Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
 
             }
 
         } else if (request.getURI().equalsIgnoreCase("/delete")) {
-            JSONObject obj;
+            JSONObject obj = null;
             String uid = "";
             try {
                 uid = request.getParameters().get("uid");
                 String jsonServices = request.getParameters().get("services");
                 obj = new JSONObject(jsonServices);
             } catch (Exception e) {
-                comm.setResponseType(Util.Statics.BAD_REQUEST_ERROR);
-                errorRespond(comm, "Malformed Parameters");
-                return;
+                try {
+                    comm.setResponseType(Util.Statics.BAD_REQUEST_ERROR);
+                    errorRespond(comm, "Malformed Parameters");
+                    return;
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             try {
                 JSONArray arr = obj.getJSONArray("services");
@@ -197,12 +219,20 @@ public class Tassadar {
             } catch (NullPointerException e) {
                 e.printStackTrace();
                 comm.setResponseType(Util.Statics.NOT_PERMITTED_ERROR);
-                errorRespond(comm, "You don't have permission to delete some or all of the services. Check UID");
+                try {
+                    errorRespond(comm, "You don't have permission to delete some or all of the services. Check UID");
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 return;
             } catch (Exception e) {
                 e.printStackTrace();
                 comm.setResponseType(Util.Statics.BAD_REQUEST_ERROR);
-                errorRespond(comm, "Services not correctly formated");
+                try {
+                    errorRespond(comm, "Services not correctly formated");
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 return;
             }
             try {
@@ -210,7 +240,11 @@ public class Tassadar {
                 this.genericRespond(comm);
             } catch (Exception e) {
                 comm.setResponseType(Util.Statics.INTERNAL_SERVER_ERROR);
-                errorRespond(comm, "Internal Server Error");
+                try {
+                    errorRespond(comm, "Internal Server Error");
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 return;
             }
         } else if (request.getURI().equalsIgnoreCase("/update")) {
@@ -222,7 +256,11 @@ public class Tassadar {
                 obj = new JSONObject(jsonServices);
             } catch (Exception e) {
                 comm.setResponseType(Util.Statics.BAD_REQUEST_ERROR);
-                errorRespond(comm, "Malformed Parameters or wrong UID");
+                try {
+                    errorRespond(comm, "Malformed Parameters or wrong UID");
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 return;
             }
             try {
@@ -272,11 +310,19 @@ public class Tassadar {
                 System.out.println("test6 of update");
             } catch (NullPointerException e) {
                 comm.setResponseType(Util.Statics.NOT_PERMITTED_ERROR);
-                errorRespond(comm, "You don't have permission to update some or all of the services. Check UID");
+                try {
+                    errorRespond(comm, "You don't have permission to update some or all of the services. Check UID");
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 return;
             } catch (Exception e) {
                 comm.setResponseType(Util.Statics.BAD_REQUEST_ERROR);
-                errorRespond(comm, "Services not correctly formated");
+                try {
+                    errorRespond(comm, "Services not correctly formated");
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 return;
             }
 
@@ -284,9 +330,13 @@ public class Tassadar {
                 comm.setResponseType(Util.Statics.OK_RESPONSE);
                 this.genericRespond(comm);
             } catch (Exception e) {
-                comm.setResponseType(Util.Statics.INTERNAL_SERVER_ERROR);
-                errorRespond(comm, "Internal Server Error");
-                return;
+                try {
+                    comm.setResponseType(Util.Statics.INTERNAL_SERVER_ERROR);
+                    errorRespond(comm, "Internal Server Error");
+                    return;
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         } else if (request.getURI().equalsIgnoreCase("/getServices")) {
             System.out.println("test 1 of get services");
@@ -309,7 +359,11 @@ public class Tassadar {
                 servicesGetRespond(comm, servicesJSON);
             } catch (Exception e) {
                 comm.setResponseType(Util.Statics.INTERNAL_SERVER_ERROR);
-                errorRespond(comm, "Internal Server Error");
+                try {
+                    errorRespond(comm, "Internal Server Error");
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
         } else if (request.getURI().equalsIgnoreCase("/getAggregators")) {
@@ -330,7 +384,11 @@ public class Tassadar {
                 aggregatorsGetRespond(comm, aggregatorsJSON);
             } catch (Exception e) {
                 comm.setResponseType(Util.Statics.INTERNAL_SERVER_ERROR);
-                errorRespond(comm, "Internal Server Error");
+                try {
+                    errorRespond(comm, "Internal Server Error");
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         } else if (request.getURI().equalsIgnoreCase("/describe")) {
             try {
@@ -357,22 +415,38 @@ public class Tassadar {
                 comm.setResponseType(Util.Statics.OK_RESPONSE);
                 describeRespond(comm, describeJSON);
             } catch (Exception e) {
-                comm.setResponseType(Util.Statics.INTERNAL_SERVER_ERROR);
-                errorRespond(comm, "Internal Server Error");
+                try {
+                    comm.setResponseType(Util.Statics.INTERNAL_SERVER_ERROR);
+                    errorRespond(comm, "Internal Server Error");
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         } else if (request.getURI().equalsIgnoreCase("/whoIsAGoodTeapot")) {
-            comm.setResponseType(Util.Statics.IM_A_TEAPOT_ERROR);
-            errorRespond(comm, "I'M A GOOD TEAPOT :D");
+            try {
+                comm.setResponseType(Util.Statics.IM_A_TEAPOT_ERROR);
+                errorRespond(comm, "I'M A GOOD TEAPOT :D");
+            } catch (IOException ex) {
+                Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else if (request.getURI().equalsIgnoreCase("/log")) {
-            comm.setResponseType(Util.Statics.OK_RESPONSE);
-            logRespond(comm);
+            try {
+                comm.setResponseType(Util.Statics.OK_RESPONSE);
+                logRespond(comm);
+            } catch (IOException ex) {
+                Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else if (request.getURI().startsWith("/topics")) {
             System.out.println("parsed uri ok");
             //not going to fix the above madness, but I will try to amend future work on it
-            manageTopicRequest(request,comm);
+            manageTopicRequest(request, comm);
         } else {
-            comm.setResponseType(Util.Statics.SERVICE_UNAVAILABLE_ERROR);
-            errorRespond(comm, "Service not found or service unavailable");
+            try {
+                comm.setResponseType(Util.Statics.SERVICE_UNAVAILABLE_ERROR);
+                errorRespond(comm, "Service not found or service unavailable");
+            } catch (IOException ex) {
+                Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         /* 
          registryIP:8282/register -> uses post headers to register a list of services available at an aggregator. 
@@ -403,150 +477,248 @@ public class Tassadar {
     private void manageTopicRequest(Request request, Communication comm) {
         String[] requestPath = request.getURI().split("/");
         if (requestPath.length == 2) {
-            Gson gson = new Gson();
-            String topicsList = gson.toJson(uni.topics);
-            normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm,topicsList, Util.Statics.OK_RESPONSE);
+            try {
+                Gson gson = new Gson();
+                String topicsList = gson.toJson(uni.topics);
+                normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm, topicsList, Util.Statics.OK_RESPONSE);
+                return;
+            } catch (IOException ex) {
+                Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         String action = requestPath[2];
-        System.out.println("requestPath[1] is "+ requestPath[1]);
-        System.out.println("requestPath[2] is "+ requestPath[2]);
+        System.out.println("requestPath[1] is " + requestPath[1]);
+        System.out.println("requestPath[2] is " + requestPath[2]);
 
         if (action.equals("create")) {
             try {
-                BufferedReader br = request.getReader();
-                String body = "";  
-                String line = "";
-                while (br.ready()) { 
-                    line = br.readLine();
-                    body += line;                    
+                try {
+                    BufferedReader br = request.getReader();
+                    String body = "";
+                    String line = "";
+                    while (br.ready()) {
+                        line = br.readLine();
+                        System.out.println("l is " + line);
+                        body += line;
+                    }
+                    System.out.println("Body is ");
+                    System.out.println(body);
+                    //br.close();
+                    try {
+                        Gson gson = new Gson();
+                        BasicTopic basicTopic = gson.fromJson(body, BasicTopic.class);
+                        if (basicTopic.description == null || basicTopic.machineDescription == null || basicTopic.name == null) {
+                            throw new Exception("Invalid Json File");
+                        }
+                        System.out.println("[" + (new Date()) + "] [Registry0x00] Received request to create topic with machine description " + basicTopic.machineDescription);
+
+                        int id = uni.topics.size() + 1;
+                        uni.topics.put(id, new FullTopic(basicTopic, id));
+                        normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm, "", Util.Statics.NO_CONTENT);
+                        System.out.println("[" + (new Date()) + "] [Registry0x00] Created topic with machine description " + basicTopic.machineDescription);
+                    } catch (Exception e) {
+                        System.out.println("test");
+                        errorRespond(comm, "Sent body is not a valid JSON Topic. Details: " + e.getLocalizedMessage(), Util.Statics.BAD_REQUEST_ERROR);
+                        return;
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                System.out.println("Body is ");
-                System.out.println(body);
-                br.close();
-                Gson gson = new Gson();
-                BasicTopic basicTopic = gson.fromJson(body, BasicTopic.class);
-                int id = uni.topics.size() + 1;
-                uni.topics.put(id, new FullTopic(basicTopic, id));
-                normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm,"",Util.Statics.NO_CONTENT);
+
+                errorRespond(comm, "something went terribly wrong. sorry bro", Util.Statics.BAD_REQUEST_ERROR);
+            } catch (IOException ex) {
+                Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (action.equals("subscribe")) {
+            try {
+                Integer topicId = requestPath.length > 3 ? Integer.parseInt(requestPath[3]) : null;
+                String aggregatorUid = requestPath.length > 4 ? requestPath[4] : null;
+
+                if (topicId == null || aggregatorUid == null) {
+                    try {
+                        errorRespond(comm, "you dun goofed, missing parameters", Util.Statics.BAD_REQUEST_ERROR);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+                Aggregator agg = uni.aggregators.get(aggregatorUid);
+
+                if (agg == null) {
+                    try {
+                        errorRespond(comm, "why are you like that? please specify a valid aggregator id", Util.Statics.UNAUTHORIZED_ERROR);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+                if (!uni.topics.containsKey(topicId)) {
+                    try {
+                        errorRespond(comm, "why are you like that? please specify a valid topic id", Util.Statics.NOT_FOUND_ERROR);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                System.out.println("[" + (new Date()) + "] [Registry0x00] Received request to subscribe aggregator " + agg.uid + " to topic " + topicId);
+
+                uni.topics.get(topicId).participants.add(agg);
+
+                normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm, "", Util.Statics.NO_CONTENT);
+                System.out.println("[" + (new Date()) + "] [Registry0x00] Subscribed aggregator " + agg.uid + " to topic " + topicId);
             } catch (IOException ex) {
                 Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            errorRespond(comm, "something went terribly wrong. sorry bro",Util.Statics.BAD_REQUEST_ERROR);
-        } else if (action.equals("subscribe")) {
-            Integer topicId = requestPath.length > 2 ? Integer.parseInt(requestPath[2]) : null;
-            String aggregatorUid = requestPath.length > 3 ? requestPath[3] : null;
-
-            if (topicId == null || aggregatorUid == null) {
-                errorRespond(comm, "you dun goofed, missing parameters",Util.Statics.BAD_REQUEST_ERROR);
-            }
-
-            Aggregator agg = uni.aggregators.get(aggregatorUid);
-
-            if (agg == null) {
-                errorRespond(comm, "why are you like that? please specify a valid aggregator id",Util.Statics.UNAUTHORIZED_ERROR);
-            }
-
-            if (!uni.topics.containsKey(topicId)) {
-               errorRespond(comm, "why are you like that? please specify a valid topic id",Util.Statics.NOT_FOUND_ERROR);
-            }
-
-            uni.topics.get(topicId).participants.add(agg);
-
-            normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm,"",Util.Statics.NO_CONTENT);
         } else if (action.equals("unsubscribe")) {
-            Integer topicId = requestPath.length > 2 ? Integer.parseInt(requestPath[2]) : null;
-            String aggregatorUid = requestPath.length > 3 ? requestPath[3] : null;
+            Integer topicId = requestPath.length > 3 ? Integer.parseInt(requestPath[3]) : null;
+            String aggregatorUid = requestPath.length > 4 ? requestPath[4] : null;
 
             if (topicId == null || aggregatorUid == null) {
-                errorRespond(comm, "you dun goofed, missing parameters",Util.Statics.BAD_REQUEST_ERROR);
+                try {
+                    errorRespond(comm, "you dun goofed, missing parameters", Util.Statics.BAD_REQUEST_ERROR);
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             Aggregator agg = uni.aggregators.get(aggregatorUid);
 
             if (agg == null) {
-                errorRespond(comm, "why are you like that? please specify a valid aggregator id",Util.Statics.UNAUTHORIZED_ERROR);
+                try {
+                    errorRespond(comm, "why are you like that? please specify a valid aggregator id", Util.Statics.UNAUTHORIZED_ERROR);
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             if (!uni.topics.containsKey(topicId)) {
-               errorRespond(comm, "why are you like that? please specify a valid topic id",Util.Statics.NOT_FOUND_ERROR);
+                try {
+                    errorRespond(comm, "why are you like that? please specify a valid topic id", Util.Statics.NOT_FOUND_ERROR);
+                } catch (IOException ex) {
+                    Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
+            System.out.println("[" + (new Date()) + "] [Registry0x00] Received request to unsubscribe aggregator " + agg.uid + " to topic " + topicId);
 
             uni.topics.get(topicId).participants.remove(agg);
 
-            normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm,"",Util.Statics.NO_CONTENT);
+            try {
+                normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm, "", Util.Statics.NO_CONTENT);
+            } catch (IOException ex) {
+                Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("[" + (new Date()) + "] [Registry0x00] Unsubscribed aggregator " + agg.uid + " to topic " + topicId);
+
         } else if (action.equals("participants")) {
-            Integer topicId = requestPath.length > 2 ? Integer.parseInt(requestPath[2]) : null;
-            
-            if (topicId == null) {
-                errorRespond(comm, "you dun goofed, missing parameters",Util.Statics.BAD_REQUEST_ERROR);
+            try {
+                Integer topicId = requestPath.length > 3 ? Integer.parseInt(requestPath[3]) : null;
+
+                if (topicId == null) {
+                    try {
+                        errorRespond(comm, "you dun goofed, missing parameters", Util.Statics.BAD_REQUEST_ERROR);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+                if (!uni.topics.containsKey(topicId)) {
+                    try {
+                        errorRespond(comm, "why are you like that? please specify a valid topic id", Util.Statics.NOT_FOUND_ERROR);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                System.out.println("[" + (new Date()) + "] [Registry0x00] Received request to list participants for topic with id " + topicId);
+
+                Gson gson = new Gson();
+                String participantsList = gson.toJson(uni.topics.get(topicId).participants);
+                normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm, participantsList, Util.Statics.OK_RESPONSE);
+                System.out.println("[" + (new Date()) + "] [Registry0x00] Listed participants for topic with id " + topicId);
+            } catch (IOException ex) {
+                Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (!uni.topics.containsKey(topicId)) {
-                errorRespond(comm, "why are you like that? please specify a valid topic id",Util.Statics.NOT_FOUND_ERROR);
-            }
-            Gson gson = new Gson();
-            String participantsList = gson.toJson(uni.topics.get(topicId).participants);
-            normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm,participantsList,Util.Statics.OK_RESPONSE);
         }
     }
 
-    private void logRespond(Communication comm) {
+    private void logRespond(Communication comm) throws IOException {
         String response = MyLogger.readLog();
         comm.setAnswer(response);
         uni.comms.add(comm);
-        out.println(comm.getAnswer());
+        out.write(comm.getAnswer().getBytes());
         out.flush();
-        out.close();
+        comm.getRequest().socket.close();
+        //out.close();
     }
-    
-    private void normalPersonsResponseThatIsNotLikeATotalPieceOfShit(Communication comm, String preFormattedMessage, int status) {
+
+    private void normalPersonsResponseThatIsNotLikeATotalPieceOfShit(Communication comm, String preFormattedMessage, int status) throws IOException {
         String response = preFormattedMessage;
         comm.setResponseType(status);
-        comm.setAnswer(response);
+        comm.setAnswer(response + "\n\n\n\n\n\n");
         uni.comms.add(comm);
-        out.println(comm.getAnswer());
+        out.write(comm.getAnswer().getBytes());
         out.flush();
-        out.close();
+        comm.getRequest().socket.close();
+        //out.close();
     }
-    
-    private void errorRespond(Communication comm, String message, int status) {
+
+    private void errorRespond(Communication comm, String message, int status) throws IOException {
         comm.setResponseType(status);
+
+        String response = "{\"result\" : \"fail\", \"reason\" : \"" + comm.getResponseType() + "\", \"message\" : \"" + message + "\"}";
+        String headers = "HTTP/1.1 200 OK\n"
+                + "Date: Wed, 20 Feb 2019 13:57:55 GMT\n"
+                + "Content-Type: text; charset=UTF-8\n"
+                + "Content-Length: " + response.length();
+        comm.setAnswer(headers + "\n\n" + response);
+        System.out.println("Socket is closed:" + comm.getRequest().socket.isConnected());
+
+        out.write(comm.getAnswer().getBytes());
+        System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
+        out.flush();
+        System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
+//        
+//        out.close();
+        comm.getRequest().socket.shutdownOutput();
+        System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
+        comm.getRequest().socket.shutdownInput();
+        System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
+        comm.getRequest().socket.close();
+        System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
+//        uni.comms.add(comm);
+
+    }
+
+    private void errorRespond(Communication comm, String message) throws IOException {
         String response = "{\"result\" : \"fail\", \"reason\" : \"" + comm.getResponseType() + "\", \"message\" : \"" + message + "\"}";
         comm.setAnswer(response);
         uni.comms.add(comm);
-        out.println(comm.getAnswer());
+        out.write(comm.getAnswer().getBytes());
         out.flush();
-        out.close();
+        comm.getRequest().socket.close();
+        //out.close();
     }
 
-    private void errorRespond(Communication comm, String message) {
-        String response = "{\"result\" : \"fail\", \"reason\" : \"" + comm.getResponseType() + "\", \"message\" : \"" + message + "\"}";
-        comm.setAnswer(response);
-        uni.comms.add(comm);
-        out.println(comm.getAnswer());
-        out.flush();
-        out.close();
-    }
-
-    private void registerRespondDump(Communication comm, Aggregator ag) {
+    private void registerRespondDump(Communication comm, Aggregator ag) throws IOException {
         String response = "{\"result\" = \"success\", \"reason\" = \"" + comm.getResponseType() + "\", \"uid\" = \"" + ag.getUid() + "\"}";
         comm.setAnswer(response);
         uni.comms.add(comm);
-        out.println(comm.getAnswer());
+        out.write(comm.getAnswer().getBytes());
         out.flush();
-        out.close();
+        comm.getRequest().socket.close();
+        //out.close();
 
     }
 
-    private void genericRespond(Communication comm) {
+    private void genericRespond(Communication comm) throws IOException {
         String response = "{\"result\" : \"success\", \"reason\" : \"" + comm.getResponseType() + "\"}";
         comm.setAnswer(response);
         uni.comms.add(comm);
-        out.println(comm.getAnswer());
+        out.write(comm.getAnswer().getBytes());
         out.flush();
-        out.close();
+        comm.getRequest().socket.close();
+        //out.close();
     }
 
     private void servicesGetRespond(Communication comm, String services) {
@@ -554,9 +726,9 @@ public class Tassadar {
             System.out.println("test8");
             String response = "{\"result\" : \"success\", \"reason\" : \"" + comm.getResponseType() + "\", \"services\" : " + services + "}";
             uni.comms.add(comm);
-            out.println(response);
+            out.write(response.getBytes());
             comm.setAnswer(formatResponse(" 200 OK ", response));
-            System.out.println(comm.getAnswer());
+            System.out.write(comm.getAnswer().getBytes());
             out.flush();
             out.close();
         } catch (Exception e) {
@@ -570,7 +742,7 @@ public class Tassadar {
             String response = "{\"result\" : \"success\", \"reason\" : \"" + comm.getResponseType() + "\", \"aggregators\" : \"" + aggregators + "\"}";
             comm.setAnswer(response);
             uni.comms.add(comm);
-            out.println(comm.getAnswer());
+            out.write(comm.getAnswer().getBytes());
             out.flush();
             out.close();
         } catch (Exception e) {
@@ -578,11 +750,11 @@ public class Tassadar {
         }
     }
 
-    private void describeRespond(Communication comm, String description) {
+    private void describeRespond(Communication comm, String description) throws IOException {
         String response = "{\"result\" : \"success\", \"reason\" : \"" + comm.getResponseType() + "\",\"sid\" : \"" + comm.getRequest().getParameters().get("sid") + "\", \"description\" = \"" + description + "\"}";
         comm.setAnswer(response);
         uni.comms.add(comm);
-        out.println(comm.getAnswer());
+        out.write(comm.getAnswer().getBytes());
         out.flush();
         out.close();
     }
@@ -614,7 +786,7 @@ public class Tassadar {
                     + "connected? " + sock.isConnected() + "\n"
                     + "inputshutdown? " + sock.isInputShutdown() + "\n"
                     + "outputshutdown? " + sock.isOutputShutdown() + "\n" + "\n************");
-            out.println("\0");
+            out.write("\0".getBytes());
             String response = jsonR;
             uni.comms.add(comm);
             comm.setAnswer(formatResponse(" 200 OK ", response));

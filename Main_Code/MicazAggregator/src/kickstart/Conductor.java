@@ -21,8 +21,10 @@ public class Conductor {
     //Sincerely, Basil Nikolopoulos
     public static void main(String args[]) {
 
+        
         GUI graph = new GUI();
-        graph.setVisible(true);
+        //    graph.setVisible(true);
+        
         Logging.MyLogger.init();
 
         SharedMemory memory = new SharedMemory();

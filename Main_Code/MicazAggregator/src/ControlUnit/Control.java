@@ -103,8 +103,8 @@ public class Control {
         System.out.println("Cores in arrayList = " + memory.<String, ArrayList<CoreDefinition>>get("Cores").size());
 
         //System.out.println("WTF");
-        SensorsCommunicationUnit.SensorsCommunicationUnit SCU = new SensorsCommunicationUnit.SensorsCommunicationUnit();
-        memory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>set("SCU", SCU);
+        //SensorsCommunicationUnit.SensorsCommunicationUnit SCU = new SensorsCommunicationUnit.SensorsCommunicationUnit();
+        //memory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>set("SCU", SCU);
         memory.<String, Integer>set("CriticalityLevels", util.Statics.CriticallityLevels);
         memory.<String, String>set("ServingAlgorithm", "CAFIFO");
         //System.out.println("STEP 1");
@@ -402,7 +402,7 @@ public class Control {
                     public void run() {
                         while (true) {
                             //System.out.println("polling");
-                            SharedMemory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendPoll();
+//                            SharedMemory.<String, SensorsCommunicationUnit.SensorsCommunicationUnit>get("SCU").sendPoll();
                             //System.out.println("polling");
                             try {
                                 Thread.sleep(1000);

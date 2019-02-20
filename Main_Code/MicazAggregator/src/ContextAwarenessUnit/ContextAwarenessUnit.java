@@ -9,6 +9,6 @@ package ContextAwarenessUnit;
  *
  * @author billaros
  */
-public class Control {
-    
+public class ContextAwarenessUnit {
+    public void handleNewInformation(){}
 }

@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class Aggregator {
     String IP;
-    ArrayList<Service> services;
+    transient ArrayList<Service> services;
     int Port;
     String uid;
     

@@ -10,6 +10,7 @@ import Infrastructure.Tassadar;
 import Infrastructure.Universe;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -42,7 +43,8 @@ class DoComms implements Runnable {
             // Get input from the client
             InputStream ins = server.getInputStream();
             //DataInputStream in = new DataInputStream(ins);
-            PrintStream out = new PrintStream(server.getOutputStream());
+            //PrintStream out = new PrintStream(server.getOutputStream());
+            OutputStream out = server.getOutputStream();
             
             //System.out.println("sending test message");
             try {
