@@ -7,9 +7,14 @@ package Infrastructure;
 
 import Logging.MyLogger;
 import Util.Hasher;
+import com.google.gson.Gson;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.*;
 
 /**
@@ -40,7 +45,7 @@ public class Tassadar {
 
     public synchronized void execute() {
         if (request == null || out == null) {
-            return;
+            throw new NullPointerException();
         }
         Communication comm = new Communication();
         comm.setRequest(request);
@@ -51,7 +56,7 @@ public class Tassadar {
             String IP = request.Parameters.get("ip");
             int Port = Integer.parseInt(request.getParameters().get("port"));
             boolean result = true;
-            for (Aggregator agr : uni.aggregators) {
+            for (Aggregator agr : uni.aggregators.values()) {
                 if (agr.getIP().equals(IP) && agr.getPort() == Port) {
                     result = false;
                     break;
@@ -129,7 +134,7 @@ public class Tassadar {
                     for (Service itter : services) {
                         uni.services.put(itter.URI, itter);
                     }
-                    uni.aggregators.add(agr);
+                    uni.aggregators.put(agr.uid, agr);
                     this.registerRespond(comm, agr);
                 } catch (Exception e) {
                     System.out.println("test7");
@@ -161,7 +166,7 @@ public class Tassadar {
                     StringServices.add(transformedURI);
                 }
                 Aggregator agg = null;
-                for (Aggregator agr : uni.aggregators) {
+                for (Aggregator agr : uni.aggregators.values()) {
                     if (agr.getUid().equals(request.getParameters().get("uid"))) {
                         agg = agr;
                         break;
@@ -287,7 +292,7 @@ public class Tassadar {
             System.out.println("test 1 of get services");
             try {
                 String servicesJSON = "[";
-                for (Aggregator agg : uni.aggregators) {
+                for (Aggregator agg : uni.aggregators.values()) {
                     for (Service srv : agg.services) {
                         servicesJSON += "{";
                         servicesJSON += "\"url\" : \"" + srv.canonURI + "\" , \"sid\" : \"" + srv.getId() + "\"";
@@ -310,7 +315,7 @@ public class Tassadar {
         } else if (request.getURI().equalsIgnoreCase("/getAggregators")) {
             try {
                 String aggregatorsJSON = "[";
-                for (Aggregator agg : uni.aggregators) {
+                for (Aggregator agg : uni.aggregators.values()) {
 
                     aggregatorsJSON += "{";
                     aggregatorsJSON += "\"url\" = \"" + agg.getIP() + ":" + agg.Port + "\"";
@@ -332,7 +337,7 @@ public class Tassadar {
                 String ID = request.getParameters().get("sid");
                 String describeJSON = "";
                 boolean found = false;
-                for (Aggregator agg : uni.aggregators) {
+                for (Aggregator agg : uni.aggregators.values()) {
                     for (Service srv : agg.services) {
                         if (srv.getId().equals(ID)) {
                             describeJSON = srv.Description;
@@ -358,11 +363,14 @@ public class Tassadar {
         } else if (request.getURI().equalsIgnoreCase("/whoIsAGoodTeapot")) {
             comm.setResponseType(Util.Statics.IM_A_TEAPOT_ERROR);
             errorRespond(comm, "I'M A GOOD TEAPOT :D");
-        } else if (request.getURI().equalsIgnoreCase("/log")){
+        } else if (request.getURI().equalsIgnoreCase("/log")) {
             comm.setResponseType(Util.Statics.OK_RESPONSE);
             logRespond(comm);
-        }
-        else {
+        } else if (request.getURI().startsWith("/topics")) {
+            System.out.println("parsed uri ok");
+            //not going to fix the above madness, but I will try to amend future work on it
+            manageTopicRequest(request,comm);
+        } else {
             comm.setResponseType(Util.Statics.SERVICE_UNAVAILABLE_ERROR);
             errorRespond(comm, "Service not found or service unavailable");
         }
@@ -391,8 +399,121 @@ public class Tassadar {
          */
 
     }
+
+    private void manageTopicRequest(Request request, Communication comm) {
+        String[] requestPath = request.getURI().split("/");
+        if (requestPath.length == 2) {
+            Gson gson = new Gson();
+            String topicsList = gson.toJson(uni.topics);
+            normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm,topicsList, Util.Statics.OK_RESPONSE);
+        }
+
+        String action = requestPath[2];
+        System.out.println("requestPath[1] is "+ requestPath[1]);
+        System.out.println("requestPath[2] is "+ requestPath[2]);
+
+        if (action.equals("create")) {
+            try {
+                BufferedReader br = request.getReader();
+                String body = "";  
+                String line = "";
+                while (br.ready()) { 
+                    line = br.readLine();
+                    body += line;                    
+                }
+                System.out.println("Body is ");
+                System.out.println(body);
+                br.close();
+                Gson gson = new Gson();
+                BasicTopic basicTopic = gson.fromJson(body, BasicTopic.class);
+                int id = uni.topics.size() + 1;
+                uni.topics.put(id, new FullTopic(basicTopic, id));
+                normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm,"",Util.Statics.NO_CONTENT);
+            } catch (IOException ex) {
+                Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            errorRespond(comm, "something went terribly wrong. sorry bro",Util.Statics.BAD_REQUEST_ERROR);
+        } else if (action.equals("subscribe")) {
+            Integer topicId = requestPath.length > 2 ? Integer.parseInt(requestPath[2]) : null;
+            String aggregatorUid = requestPath.length > 3 ? requestPath[3] : null;
+
+            if (topicId == null || aggregatorUid == null) {
+                errorRespond(comm, "you dun goofed, missing parameters",Util.Statics.BAD_REQUEST_ERROR);
+            }
+
+            Aggregator agg = uni.aggregators.get(aggregatorUid);
+
+            if (agg == null) {
+                errorRespond(comm, "why are you like that? please specify a valid aggregator id",Util.Statics.UNAUTHORIZED_ERROR);
+            }
+
+            if (!uni.topics.containsKey(topicId)) {
+               errorRespond(comm, "why are you like that? please specify a valid topic id",Util.Statics.NOT_FOUND_ERROR);
+            }
+
+            uni.topics.get(topicId).participants.add(agg);
+
+            normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm,"",Util.Statics.NO_CONTENT);
+        } else if (action.equals("unsubscribe")) {
+            Integer topicId = requestPath.length > 2 ? Integer.parseInt(requestPath[2]) : null;
+            String aggregatorUid = requestPath.length > 3 ? requestPath[3] : null;
+
+            if (topicId == null || aggregatorUid == null) {
+                errorRespond(comm, "you dun goofed, missing parameters",Util.Statics.BAD_REQUEST_ERROR);
+            }
+
+            Aggregator agg = uni.aggregators.get(aggregatorUid);
+
+            if (agg == null) {
+                errorRespond(comm, "why are you like that? please specify a valid aggregator id",Util.Statics.UNAUTHORIZED_ERROR);
+            }
+
+            if (!uni.topics.containsKey(topicId)) {
+               errorRespond(comm, "why are you like that? please specify a valid topic id",Util.Statics.NOT_FOUND_ERROR);
+            }
+
+            uni.topics.get(topicId).participants.remove(agg);
+
+            normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm,"",Util.Statics.NO_CONTENT);
+        } else if (action.equals("participants")) {
+            Integer topicId = requestPath.length > 2 ? Integer.parseInt(requestPath[2]) : null;
+            
+            if (topicId == null) {
+                errorRespond(comm, "you dun goofed, missing parameters",Util.Statics.BAD_REQUEST_ERROR);
+            }
+
+            if (!uni.topics.containsKey(topicId)) {
+                errorRespond(comm, "why are you like that? please specify a valid topic id",Util.Statics.NOT_FOUND_ERROR);
+            }
+            Gson gson = new Gson();
+            String participantsList = gson.toJson(uni.topics.get(topicId).participants);
+            normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm,participantsList,Util.Statics.OK_RESPONSE);
+        }
+    }
+
     private void logRespond(Communication comm) {
         String response = MyLogger.readLog();
+        comm.setAnswer(response);
+        uni.comms.add(comm);
+        out.println(comm.getAnswer());
+        out.flush();
+        out.close();
+    }
+    
+    private void normalPersonsResponseThatIsNotLikeATotalPieceOfShit(Communication comm, String preFormattedMessage, int status) {
+        String response = preFormattedMessage;
+        comm.setResponseType(status);
+        comm.setAnswer(response);
+        uni.comms.add(comm);
+        out.println(comm.getAnswer());
+        out.flush();
+        out.close();
+    }
+    
+    private void errorRespond(Communication comm, String message, int status) {
+        comm.setResponseType(status);
+        String response = "{\"result\" : \"fail\", \"reason\" : \"" + comm.getResponseType() + "\", \"message\" : \"" + message + "\"}";
         comm.setAnswer(response);
         uni.comms.add(comm);
         out.println(comm.getAnswer());

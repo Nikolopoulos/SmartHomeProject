@@ -18,9 +18,9 @@ import java.util.logging.Logger;
  */
 public class Server {
 
-    private static int port = Util.Statics.PORT,
-            maxConnections = 0;
-    public Universe universe;
+    private static int      port           = Util.Statics.PORT;
+    private static int      maxConnections = 0;
+    public         Universe universe;
     // Listen for incoming connections and handle them
 
     public Server(Universe uniarg) {
@@ -47,6 +47,9 @@ public class Server {
                         Thread clientConnectionThread = new Thread(conn_c);
                         clientConnectionThread.setName("clientConnectionThread" + i);
                         clientConnectionThread.start();
+                        if(i == Integer.MAX_VALUE-1){
+                            i = 0;
+                        }
                     }
 
                 } catch (IOException ioe) {

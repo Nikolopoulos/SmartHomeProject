@@ -20,8 +20,11 @@ public class Statics {
     public static int DESCRIBE_REQUEST = 6;
 
     public static int OK_RESPONSE = 200;
+    public static int NO_CONTENT = 204;
+    
 
     public static int BAD_REQUEST_ERROR = 400;
+    public static int UNAUTHORIZED_ERROR = 401;
     public static int PAYMENT_REQUIRED_ERROR = 402;
     public static int NOT_PERMITTED_ERROR = 403;
     public static int NOT_FOUND_ERROR = 404;

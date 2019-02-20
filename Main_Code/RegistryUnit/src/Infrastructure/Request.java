@@ -5,7 +5,11 @@
  */
 package Infrastructure;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +21,7 @@ import java.util.logging.Logger;
 public class Request {
 
     String client;
+    Socket socket;
     int requestType;
     String Host;
     String UserAgent;
@@ -26,11 +31,25 @@ public class Request {
     String AcceptEncoding;
     String Connection;
     String ContentType;
-    HashMap <String,String> Parameters;
+    HashMap<String, String> Parameters;
     String URI;
 
-    public Request() {
-        this.Parameters = new HashMap<String,String>();
+    public Request(String input, Socket client) {
+        this.Parameters = new HashMap<String, String>();
+        socket = client;
+        this.parseRequest(input);
+        this.setClient(socket.getInetAddress().toString() + ":" + socket.getPort());
+    }
+
+    public BufferedReader getReader() throws IOException {
+        String headerLine = "";
+        BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        while ((headerLine = br.readLine()).length() != 0) {
+            //System.out.println(headerLine);
+        }
+
+        return br;
+
     }
 
     public int getRequestType() {
@@ -64,7 +83,7 @@ public class Request {
     public void setClient(String client) {
         this.client = client;
     }
-    
+
     public String getMethod() {
         return Method;
     }
@@ -105,7 +124,7 @@ public class Request {
         this.ContentType = ContentType;
     }
 
-    public HashMap<String,String> getParameters() {
+    public HashMap<String, String> getParameters() {
         return Parameters;
     }
 
@@ -135,8 +154,8 @@ public class Request {
         for (String line : lines) {
             //System.out.println("I am trying to parse for "+lineCount+" time");
             System.out.println(line);
-            
-            if(line.isEmpty()){
+
+            if (line.isEmpty()) {
                 continue;
             }
             if (lineCount == 1) {
@@ -160,15 +179,15 @@ public class Request {
             } else if (line.startsWith("Params: ")) {
                 String paramsLine = line.substring("Params: ".length());
                 paramsLine = java.net.URLDecoder.decode(paramsLine);
-                System.out.println("ParamsLine is "+paramsLine);
+                System.out.println("ParamsLine is " + paramsLine);
                 String[] params = paramsLine.split("&");
                 for (String param : params) {
-                    String[] kv = param.split("=");
+                    String[] kv = param.split("[=:]");
                     try {
                         String key = java.net.URLDecoder.decode(kv[0], "UTF-8");
                         String value = java.net.URLDecoder.decode(kv[1], "UTF-8");
                         this.Parameters.put(key, value);
-                        System.out.println(key + " = "+ value);
+                        System.out.println(key + " = " + value);
                     } catch (UnsupportedEncodingException ex) {
                         Logger.getLogger(Request.class.getName()).log(Level.SEVERE, null, ex);
                     }

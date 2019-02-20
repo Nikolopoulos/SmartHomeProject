@@ -59,7 +59,7 @@ public class Advertiser {
                     // Do a send. Note that send takes a byte for the ttl and not an int.
                     while (true) {
                         s.send(pack, (byte) ttl);
-                        System.out.println("Sent message to broadcast group");
+                        //System.out.println("Sent message to broadcast group");
                         Thread.sleep(1000);
                     }
                     // And when we have finished sending data close the socket

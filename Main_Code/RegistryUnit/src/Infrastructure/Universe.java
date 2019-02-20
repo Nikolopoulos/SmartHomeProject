@@ -16,16 +16,18 @@ import webServer.Server;
 public class Universe {
 
     //final Tassadar executor;
-    ArrayList<Aggregator> aggregators;
+    HashMap<String,Aggregator> aggregators;
     ArrayList<Communication> comms;
     HashMap<String,Service> services; //uri object
+    HashMap<Integer,FullTopic> topics;
     Server myServer;
 
     public Universe() {
         services = new HashMap();
+        topics = new HashMap();
         myServer = new Server(this);
         myServer.startServer();
-        aggregators = new ArrayList<Aggregator>();
+        aggregators = new HashMap<String,Aggregator>();
         comms = new ArrayList<Communication>();
     }
 

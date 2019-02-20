@@ -38,13 +38,13 @@ class DoComms implements Runnable {
         requestedURL = "";
         int emptyLines=0;
         try {
-            System.out.println("test -2 doComms");
+            //System.out.println("test -2 doComms");
             // Get input from the client
             InputStream ins = server.getInputStream();
             //DataInputStream in = new DataInputStream(ins);
             PrintStream out = new PrintStream(server.getOutputStream());
             
-            System.out.println("sending test message");
+            //System.out.println("sending test message");
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
@@ -52,9 +52,9 @@ class DoComms implements Runnable {
             }
             out.flush();
             //out.print("testmessage");
-            System.out.println("sent");
+            //System.out.println("sent");
             int lineNumber = 1;
-            System.out.println("test -1 doComms");
+            //System.out.println("test -1 doComms");
             while ((line = readLine(ins)) != null) {
                 if(line.length()>0)
                 {
@@ -87,12 +87,12 @@ class DoComms implements Runnable {
                 }
 
             }
-            Request request = new Request();
-            System.out.println("test 1 doComms");
+            Request request = new Request(input,server);
+            /*System.out.println("test 1 doComms");
             request.parseRequest(input);
             System.out.println("test 2 doComms");
             request.setClient(server.getInetAddress().toString()+":"+server.getPort());
-            System.out.println("test 3 doComms");
+            System.out.println("test 3 doComms");*/
             Tassadar executor = new Tassadar(request,out,universe,server);
             System.out.println("test 4 doComms");
             executor.execute();
