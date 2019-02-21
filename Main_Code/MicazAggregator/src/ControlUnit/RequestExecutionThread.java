@@ -99,7 +99,7 @@ public class RequestExecutionThread implements Runnable {
             if (m.getId() == ID) {
                 found = true;
                 if (criticality > 4) {
-                    System.out.println("Should go to push");
+                    //System.out.println("Should go to push");
                 }
 
                 if (criticality > 4) {

@@ -58,7 +58,7 @@ public class DumpVariables {
         if (init) {
             return;
         }
-        System.out.println("Initing text");
+        //System.out.println("Initing text");
         init = true;
         logfile = new File(System.currentTimeMillis() + ".csv");
         try {
@@ -68,13 +68,13 @@ public class DumpVariables {
         }
         if (logfile.exists()) {
             try {
-                System.out.println("1");
+                //System.out.println("1");
                 pw = new PrintWriter(logfile);
-                System.out.println("2");
+                //System.out.println("2");
                 pw.write("");
-                System.out.println("3");
+                //System.out.println("3");
                 pw.close();
-                System.out.println("Initing log");
+                //System.out.println("Initing log");
                 BufferedWriter bw = null;
                 bw = new BufferedWriter(new FileWriter(logfile, true));
                 bw.write("Number of requests arrived in interval;"
@@ -98,7 +98,7 @@ public class DumpVariables {
                         + "numberOfRequestsCompletedWithCacheInTotal");
                 bw.newLine();
                 bw.close();
-                System.out.println("Init happened");
+                //System.out.println("Init happened");
                 resetIntervalCounters();
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(MyLogger.class.getName()).log(Level.SEVERE, null, ex);

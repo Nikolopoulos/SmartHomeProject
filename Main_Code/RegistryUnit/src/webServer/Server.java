@@ -53,7 +53,7 @@ public class Server {
                     }
 
                 } catch (IOException ioe) {
-                    System.out.println("IOException on socket listen: " + ioe);
+                    //System.out.println("IOException on socket listen: " + ioe);
                     ioe.printStackTrace();
                 }
             }

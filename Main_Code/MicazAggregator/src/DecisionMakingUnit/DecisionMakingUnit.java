@@ -24,7 +24,7 @@ public class DecisionMakingUnit {
             int runningCores = 0;
             int overloadedCores = 0;
 
-            System.out.println("*************************");
+            //System.out.println("*************************");
             for (CoreDefinition core : SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")) {
                 runningCores = 0;
                 overloadedCores = 0;
@@ -37,10 +37,10 @@ public class DecisionMakingUnit {
                     }
                 }
 
-                System.out.println("Got in reconf for core " + core.getId());
-                System.out.println("Core load is " + core.getLoad());
-                System.out.println("Core overload func is " + (core.getLoad() > util.Statics.overloadLevel));
-                System.out.println("Core overload bool is  " + core.isOverLoadLimit());
+                //System.out.println("Got in reconf for core " + core.getId());
+                //System.out.println("Core load is " + core.getLoad());
+                //System.out.println("Core overload func is " + (core.getLoad() > util.Statics.overloadLevel));
+                //System.out.println("Core overload bool is  " + core.isOverLoadLimit());
                 if (core.getLoad() > util.Statics.overloadLevel && !core.isOverLoadLimit()) {
 
                     SharedMemory.<String, Control>get("MCU").setCoreMode(core.getId(), 1);

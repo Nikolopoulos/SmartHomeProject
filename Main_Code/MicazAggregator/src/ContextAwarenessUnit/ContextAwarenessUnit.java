@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import java.net.InetAddress;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -29,14 +30,11 @@ import java.util.logging.Logger;
  */
 public class ContextAwarenessUnit {
 
-    private HashMap<String, Object> context = new HashMap();
+    private final HashMap<String, Object> context = new HashMap();
     private final SharedMemory memory = SharedMemory.<String, SharedMemory>get("SMU");
     private boolean amISubbed = false;
 
     public void handleNewInformation(String jsonString) {
-        System.out.println("********************************************************");
-        System.out.println(jsonString);
-        System.out.println("********************************************************");
         Gson gson = new Gson();
         TopicInformationPiece information = gson.fromJson(jsonString, TopicInformationPiece.class);
 
@@ -46,7 +44,9 @@ public class ContextAwarenessUnit {
                 context.put("MigrationInfo", new HashMap<String, MigrationInfo>());
             }
             ((HashMap<String, MigrationInfo>) context.get("MigrationInfo")).put(migInfo.getIp() + ":" + migInfo.getPort(), migInfo);
+            System.out.println("[" + (new Date()) + "] [Micaz-"+memory.<String, Control>get("MCU").getUid()+"] Received new topic information for topic MigrationInfo from "+migInfo.getIp() + ":" + migInfo.getPort());
         }
+                    
 
     }
 
@@ -81,6 +81,8 @@ public class ContextAwarenessUnit {
     }
 
     private void createTheProperTopic() {
+        System.out.println("[" + (new Date()) + "] [Micaz-"+memory.<String, Control>get("MCU").getUid()+"] Will now create the topic { \"description\": \"micaz_migration_policy_discussion_group\", \"machineDescription\": \"micaz_migration/load/driver/visible_sensors/ip/port\", \"name\":\"topic_1\" }");
+
         RequestObject ro = memory.<String, ServiceProvisionUnit>get("SPU").httpContact(
                 new RequestObject(
                         "http://" + memory.<String, String>get("registryUnitIP"),
@@ -96,6 +98,8 @@ public class ContextAwarenessUnit {
     }
 
     private void subToTheProperTopic() {
+        System.out.println("[" + (new Date()) + "] [Micaz-"+memory.<String, Control>get("MCU").getUid()+"] Will now subscribe to the topic { \"description\": \"micaz_migration_policy_discussion_group\", \"machineDescription\": \"micaz_migration/load/driver/visible_sensors/ip/port\", \"name\":\"topic_1\" }");
+
         RequestObject ro = memory.<String, ServiceProvisionUnit>get("SPU").httpContact(
                 new RequestObject(
                         "http://" + memory.<String, String>get("registryUnitIP"),
@@ -132,6 +136,7 @@ public class ContextAwarenessUnit {
             }
             for (Aggregator agg : ((HashMap<String, FullTopic>) context.get("topics")).get(topicId + "").getParticipants()) {
                 if ((!agg.getIP().equals(memory.<String, String>get("ip"))) || agg.getPort() != memory.<String, Integer>get("myPort")) {
+                    System.out.println("[" + (new Date()) + "] [Micaz-"+memory.<String, Control>get("MCU").getUid()+"] Sending topic status update to Node "+agg.getIP()+":"+agg.getPort());
                     sendUpdateTo(agg, topicId, migInfo);
                 }
             }
@@ -144,7 +149,6 @@ public class ContextAwarenessUnit {
         Gson gson = new Gson();
         TopicInformationPiece topPiece = new TopicInformationPiece("MigrationInfo", gson.toJson(topic));
 
-        System.out.println("**************Sending some shit!!******************");
         memory.<String, ServiceProvisionUnit>get("SPU").httpContact(new RequestObject(
                 "http://" + agg.getIP(),
                 agg.getPort(),
@@ -152,8 +156,7 @@ public class ContextAwarenessUnit {
                 "/topics/update/" + topicId,
                 memory.<String, InetAddress>get("addr"),
                 "POST"));
-        System.out.println("**************Sent some shit!!******************");
-    }
+        }
 
     private Thread getTopicListUpdateDaemon() {
         Thread t = new Thread(() -> {
@@ -218,4 +221,10 @@ public class ContextAwarenessUnit {
         Thread updates = this.sendTopicUpdateThread();
         updates.start();
     }
+
+    public HashMap<String, Object> getContext() {
+        return context;
+    }
+    
+    
 }

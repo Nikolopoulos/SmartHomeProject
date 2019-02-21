@@ -45,7 +45,7 @@ public class Request {
         String headerLine = "";
         BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         while ((headerLine = br.readLine()).length() != 0) {
-            System.out.println("headrline is: "+headerLine);
+            //System.out.println("headrline is: "+headerLine);
         }
 
         return br;
@@ -153,7 +153,7 @@ public class Request {
         int lineCount = 1;
         for (String line : lines) {
             //System.out.println("I am trying to parse for "+lineCount+" time");
-            System.out.println(line);
+            //System.out.println(line);
 
             if (line.isEmpty()) {
                 continue;
@@ -179,7 +179,7 @@ public class Request {
             } else if (line.startsWith("Params: ")) {
                 String paramsLine = line.substring("Params: ".length());
                 paramsLine = java.net.URLDecoder.decode(paramsLine);
-                System.out.println("ParamsLine is " + paramsLine);
+                //System.out.println("ParamsLine is " + paramsLine);
                 String[] params = paramsLine.split("&");
                 for (String param : params) {
                     //if(indexOfEquals)
@@ -188,7 +188,7 @@ public class Request {
                         String key = java.net.URLDecoder.decode(kv[0], "UTF-8");
                         String value = java.net.URLDecoder.decode(kv[1], "UTF-8");
                         this.Parameters.put(key, value);
-                        System.out.println(key + " = " + value);
+                        //System.out.println(key + " = " + value);
                     } catch (UnsupportedEncodingException ex) {
                         Logger.getLogger(Request.class.getName()).log(Level.SEVERE, null, ex);
                     }

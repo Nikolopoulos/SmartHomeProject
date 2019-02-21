@@ -19,7 +19,7 @@ import java.util.concurrent.Semaphore;
  */
 public class ServiceProvisionUnit {
 
-    public static int port = 8184,
+    public static int port = 8182,
                        maxConnections = 0;
     // Listen for incoming connections and handle them
     final Control finalControl;

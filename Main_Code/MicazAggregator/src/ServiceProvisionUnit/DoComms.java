@@ -104,9 +104,17 @@ public class DoComms implements Runnable {
                     break;
                 }
                 case 6: {
-                    System.out.println("Contextupdate input is"+input);
                     String[] lines = input.split("\n");                    
                     handleContextUpdate(URLDecoder.decode(lines[lines.length-1]));
+                    break;
+                }
+                case 7: { 
+                    String[] parts = localinput.split("/");
+                    if(parts.length != 3){
+                        getGenericResponse();
+                    } else {
+                        migrationRequest(true,localinput.split("/")[2]);//(URLDecoder.decode(lines[lines.length-1]));
+                    }
                     break;
                 }
                 case -1: {
@@ -162,6 +170,8 @@ public class DoComms implements Runnable {
             return 5;
         } else if (Url.startsWith("/topics")) {
             return 6;
+        } else if (Url.startsWith("/migration")) {
+            return 7;
         }
         return -1;
     }
@@ -200,10 +210,18 @@ public class DoComms implements Runnable {
     }
     
     private void handleContextUpdate(String inputBody) {
-        System.out.println("info Body is "+inputBody);
         SharedMemory.<String, ContextAwarenessUnit.ContextAwarenessUnit>get("CAU").handleNewInformation(inputBody);
         
         reply="";
+        sema.release();
+    }
+    
+    private void migrationRequest(boolean accept,String sensorId) {
+        if(accept){
+            reply="{\"response\": \"OK\"}";
+        } else {
+            reply="{\"response\": \"DENY\"}";
+        }
         sema.release();
     }
 

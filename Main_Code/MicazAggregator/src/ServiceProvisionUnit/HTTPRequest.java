@@ -215,12 +215,12 @@ public class HTTPRequest {
         String parameters = request.getParameters();
         String service = request.getService();
         InetAddress myIP = request.getMyIP();
-        System.out.println("I AM INSIDE THIS THING WHRE I SEND THE THING");
+        //System.out.println("I AM INSIDE THIS THING WHRE I SEND THE THING");
         try {
             Socket s = new Socket(url.substring(7), port);
-            System.out.println("getting writer");
+            //System.out.println("getting writer");
             PrintWriter pw = new PrintWriter(s.getOutputStream());
-            System.out.println("got writer");
+            //System.out.println("got writer");
             pw.print("POST " + service + " HTTP/1.1\n");
             pw.print("User-Agent: Mozilla/5.0\n");
             pw.print("Accept-Language: en-US,en;q=0.5\n");
@@ -237,16 +237,16 @@ public class HTTPRequest {
             pw.flush();
             
             s.shutdownOutput();
-            System.out.println("get reader");
+            //System.out.println("get reader");
             BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 
             String t = "";
             String line = "";
             try {
-                System.out.println("PRELOOPDALOOP");
+                //System.out.println("PRELOOPDALOOP");
                 while (((line = br.readLine()) != null)&&!s.isInputShutdown()) {
                     t += line;
-                    System.out.println("LOOPDALOOP");
+                    //System.out.println("LOOPDALOOP");
                 }
             } catch (SocketException e) {
                 e.printStackTrace();

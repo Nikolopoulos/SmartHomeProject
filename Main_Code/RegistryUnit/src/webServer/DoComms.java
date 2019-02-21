@@ -69,7 +69,7 @@ class DoComms implements Runnable {
                 {
                     break;
                 }
-                System.out.println("test 0 doComms");
+                //System.out.println("test 0 doComms");
                 if (lineNumber == 1) {
                     int urlEnd = line.indexOf(" HTTP/1.1");
                     requestedURL = line.substring(4, urlEnd);
@@ -78,13 +78,13 @@ class DoComms implements Runnable {
                 noBreakInput = noBreakInput + line;
                 lineNumber++;
 
-                System.out.println(line);
+                //System.out.println(line);
                 if (line.startsWith("Content-Length: ")) {
                     line = "Params: "+readChars(ins, Integer.parseInt(line.substring("Content-Length: ".length())));
                     input = input + line + "\n";
                     noBreakInput = noBreakInput + line;
                     lineNumber++;
-                    System.out.println(line);
+                    //System.out.println(line);
                     break;
                 }
 
@@ -96,11 +96,11 @@ class DoComms implements Runnable {
             request.setClient(server.getInetAddress().toString()+":"+server.getPort());
             System.out.println("test 3 doComms");*/
             Tassadar executor = new Tassadar(request,out,universe,server);
-            System.out.println("test 4 doComms");
+            //System.out.println("test 4 doComms");
             executor.execute();
             //server.close();
         } catch (IOException ioe) {
-            System.out.println("IOException on socket listen: " + ioe);
+            //System.out.println("IOException on socket listen: " + ioe);
             ioe.printStackTrace();
         }
     }
@@ -121,7 +121,7 @@ class DoComms implements Runnable {
     private String readChars(InputStream is, int len) throws IOException {
         String input = "";
         int c;
-        System.out.println("len i got is "+len);
+        //System.out.println("len i got is "+len);
         for (int i = 0; i < len; i++) {
             c = is.read();
             while(Character.isWhitespace(c)){

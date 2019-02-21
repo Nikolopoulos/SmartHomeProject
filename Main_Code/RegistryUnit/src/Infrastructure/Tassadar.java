@@ -51,10 +51,10 @@ public class Tassadar {
         Communication comm = new Communication();
         comm.setRequest(request);
         ArrayList<Service> services = new ArrayList<Service>();
-        System.out.println("REQUESTED URI IS "+request.getURI());
+        //System.out.println("REQUESTED URI IS "+request.getURI());
         if (request.getURI().equalsIgnoreCase("/register")) {
             comm.setRequestType(Util.Statics.REGISTER_REQUEST);
-            System.out.println("request.client: " + request.client);
+            //System.out.println("request.client: " + request.client);
             String IP = request.Parameters.get("ip");
             int Port = Integer.parseInt(request.getParameters().get("port"));
             boolean result = true;
@@ -64,7 +64,7 @@ public class Tassadar {
                     break;
                 }
             }
-            System.out.println("test1");
+            //System.out.println("test1");
             if (!result) {
                 comm.setResponseType(Util.Statics.NOT_PERMITTED_ERROR);
                 try {
@@ -72,7 +72,7 @@ public class Tassadar {
                 } catch (IOException ex) {
                     Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                System.out.println("test2");
+                //System.out.println("test2");
             } else {
                 Aggregator agr = new Aggregator(IP, Port);
                 //byte[] buf = Hasher.hash((System.currentTimeMillis() + "").toCharArray(), Hasher.getNextSalt());
@@ -81,14 +81,14 @@ public class Tassadar {
 
                 String jsonServices = request.getParameters().get("services");
                 JSONObject obj;
-                System.out.println("test3");
+                //System.out.println("test3");
                 try {
                     obj = new JSONObject(jsonServices);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    System.out.println("Offending line is " + jsonServices);
+                    //System.out.println("Offending line is " + jsonServices);
                     comm.setResponseType(Util.Statics.BAD_REQUEST_ERROR);
-                    System.out.println("test4");
+                    //System.out.println("test4");
                     try {
                         errorRespond(comm, "Services not correctly stated");
                     } catch (IOException ex) {
@@ -96,7 +96,7 @@ public class Tassadar {
                     }
                     return;
                 }
-                System.out.println("test4.2");
+                //System.out.println("test4.2");
                 try {
                     services = new ArrayList<Service>();
                     JSONArray arr = obj.getJSONArray("services");
@@ -105,7 +105,7 @@ public class Tassadar {
                         String serviceDescription = arr.getJSONObject(i).getString("description");
                         Service parsed = new Service(agr.getUid() + (serviceUri.startsWith("/") ? ("") : ("/")) + serviceUri, "http://" + agr.IP + ":" + agr.getPort() + (serviceUri.startsWith("/") ? ("") : ("/")) + serviceUri, serviceDescription, agr);
                         services.add(parsed);
-                        System.out.println("service:" + parsed.Description);
+                        //System.out.println("service:" + parsed.Description);
                         //hackathon code begin
                         if (agr.Port == 8086) {
                             serviceUri = "/sensor/160";
@@ -136,7 +136,7 @@ public class Tassadar {
 
                 } catch (Exception e) {
                     comm.setResponseType(Util.Statics.BAD_REQUEST_ERROR);
-                    System.out.println("test5");
+                    //System.out.println("test5");
                     try {
                         errorRespond(comm, "Services not correctly formated");
                     } catch (IOException ex) {
@@ -145,7 +145,7 @@ public class Tassadar {
                     return;
                 }
                 try {
-                    System.out.println("test6");
+                    //System.out.println("test6");
                     for (Service itter : services) {
                         uni.services.put(itter.URI, itter);
                     }
@@ -153,7 +153,7 @@ public class Tassadar {
                     this.registerRespond(comm, agr);
                 } catch (Exception e) {
                     try {
-                        System.out.println("test7");
+                        //System.out.println("test7");
                         comm.setResponseType(Util.Statics.INTERNAL_SERVER_ERROR);
                         errorRespond(comm, "Services not correctly formated");
                         return;
@@ -268,30 +268,30 @@ public class Tassadar {
                 JSONArray arr = obj.getJSONArray("services");
                 Aggregator agg = null;
                 int aggArrId = -1;
-                System.out.println("test1 of update");
+                //System.out.println("test1 of update");
 
                 for (int aggCount = 0; aggCount < uni.aggregators.size(); aggCount++) {
-                    System.out.println("test2 of update");
+                    //System.out.println("test2 of update");
                     if (uni.aggregators.get(aggCount).getUid().equals(request.getParameters().get("uid"))) {
                         aggArrId = aggCount;
                         break;
                     } else {
-                        System.out.println("uid needed is " + uni.aggregators.get(aggCount).getUid() + " and i got " + request.getParameters().get("uid"));
+                        //System.out.println("uid needed is " + uni.aggregators.get(aggCount).getUid() + " and i got " + request.getParameters().get("uid"));
                     }
                 }
-                System.out.println("test3 of update");
+                //System.out.println("test3 of update");
                 if (aggArrId == -1) {
-                    System.out.println("uid i got " + request.getParameters().get("uid"));
+                    //System.out.println("uid i got " + request.getParameters().get("uid"));
                     throw new NullPointerException();
                 }
-                System.out.println("test4 of update");
+                //System.out.println("test4 of update");
                 for (int i = 0; i < arr.length(); i++) {
                     String serviceUri = arr.getJSONObject(i).getString("uri");
                     String serviceDescription = arr.getJSONObject(i).getString("description");
                     Service parsed = new Service(uid + (serviceUri.startsWith("/") ? ("") : ("/")) + serviceUri, "http://" + uni.aggregators.get(aggArrId).IP + ":" + uni.aggregators.get(aggArrId).getPort() + (serviceUri.startsWith("/") ? ("") : ("/")) + serviceUri, serviceDescription, uni.aggregators.get(aggArrId));
                     services.add(parsed);
                 }
-                System.out.println("test5 of update");
+                //System.out.println("test5 of update");
                 try {
                     for (Service srv : services) {
                         for (Service asrv : uni.aggregators.get(aggArrId).services) {
@@ -308,7 +308,7 @@ public class Tassadar {
                 } catch (Exception es) {
                     es.printStackTrace();
                 }
-                System.out.println("test6 of update");
+                //System.out.println("test6 of update");
             } catch (NullPointerException e) {
                 comm.setResponseType(Util.Statics.NOT_PERMITTED_ERROR);
                 try {
@@ -340,7 +340,7 @@ public class Tassadar {
                 }
             }
         } else if (request.getURI().equalsIgnoreCase("/getServices")) {
-            System.out.println("test 1 of get services");
+            //System.out.println("test 1 of get services");
             try {
                 String servicesJSON = "[";
                 for (Aggregator agg : uni.aggregators.values()) {
@@ -350,13 +350,13 @@ public class Tassadar {
                         servicesJSON += "},";
                     }
                 }
-                System.out.println("test 2 of get services");
+                //System.out.println("test 2 of get services");
                 if (servicesJSON.length() > 5) {
                     servicesJSON = servicesJSON.substring(0, servicesJSON.length() - 1);
                 }
                 servicesJSON += "]";
                 comm.setResponseType(Util.Statics.OK_RESPONSE);
-                System.out.println("test 3 of get services");
+                //System.out.println("test 3 of get services");
                 servicesGetRespond(comm, servicesJSON);
             } catch (Exception e) {
                 comm.setResponseType(Util.Statics.INTERNAL_SERVER_ERROR);
@@ -438,7 +438,7 @@ public class Tassadar {
                 Logger.getLogger(Tassadar.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else if (request.getURI().startsWith("/topics")) {
-            System.out.println("parsed uri ok");
+            //System.out.println("parsed uri ok");
             //not going to fix the above madness, but I will try to amend future work on it
             manageTopicRequest(request, comm);
         } else {
@@ -489,8 +489,8 @@ public class Tassadar {
         }
 
         String action = requestPath[2];
-        System.out.println("requestPath[1] is " + requestPath[1]);
-        System.out.println("requestPath[2] is " + requestPath[2]);
+        //System.out.println("requestPath[1] is " + requestPath[1]);
+        //System.out.println("requestPath[2] is " + requestPath[2]);
 
         if (action.equals("create")) {
             try {
@@ -503,12 +503,12 @@ public class Tassadar {
                         String line = "";
                         while (br.ready()) {
                             line = br.readLine();
-                            System.out.println("l is " + line);
+                            //System.out.println("l is " + line);
                             body += line;
                         }
                     }
-                    System.out.println("Body is ");
-                    System.out.println(body);
+                    //System.out.println("Body is ");
+                    //System.out.println(body);
                     //br.close();
                     try {
                         Gson gson = new Gson();
@@ -523,7 +523,7 @@ public class Tassadar {
                         normalPersonsResponseThatIsNotLikeATotalPieceOfShit(comm, "", Util.Statics.NO_CONTENT);
                         System.out.println("[" + (new Date()) + "] [Registry0x00] Created topic with machine description " + basicTopic.machineDescription);
                     } catch (Exception e) {
-                        System.out.println("test");
+                        //System.out.println("test");
                         errorRespond(comm, "Sent body is not a valid JSON Topic. Details: " + e.getLocalizedMessage(), Util.Statics.BAD_REQUEST_ERROR);
                         return;
                     }
@@ -683,21 +683,21 @@ public class Tassadar {
                 + "Content-Type: text; charset=UTF-8\n"
                 + "Content-Length: " + response.length();
         comm.setAnswer(headers + "\n\n" + response);
-        System.out.println("Socket is closed:" + comm.getRequest().socket.isConnected());
+        //System.out.println("Socket is closed:" + comm.getRequest().socket.isConnected());
 
         out.write(comm.getAnswer().getBytes());
-        System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
+        //System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
         out.flush();
         
-        System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
+        //System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
 //        
 //        out.close();
         comm.getRequest().socket.shutdownOutput();
-        System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
+        //System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
         comm.getRequest().socket.shutdownInput();
-        System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
+        //System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
         comm.getRequest().socket.close();
-        System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
+        //System.out.println("Socket is closed:" + comm.getRequest().socket.isClosed());
 //        uni.comms.add(comm);
 
     }
@@ -735,7 +735,7 @@ public class Tassadar {
 
     private void servicesGetRespond(Communication comm, String services) {
         try {
-            System.out.println("test8");
+            //System.out.println("test8");
             String response = "{\"result\" : \"success\", \"reason\" : \"" + comm.getResponseType() + "\", \"services\" : " + services + "}";
             uni.comms.add(comm);
             out.write(response.getBytes());
@@ -745,7 +745,7 @@ public class Tassadar {
             out.close();
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("test9");
+            //System.out.println("test9");
         }
     }
 
@@ -773,43 +773,43 @@ public class Tassadar {
 
     private void registerRespond(Communication comm, Aggregator ag) {
         try {
-            System.out.println("test8");
+            //System.out.println("test8");
             String jsonR = "{\"result\" : \"success\", \"reason\" : \"" + comm.getResponseType() + "\", \"uid\" : \"" + ag.getUid() + "\"}\n";
-            System.out.println("out.checkError() ");
-            System.out.println("Let's test the socket: \n"
-                    + "closed? " + sock.isClosed() + "\n"
-                    + "bound? " + sock.isBound() + "\n"
-                    + "connected? " + sock.isConnected() + "\n"
-                    + "inputshutdown? " + sock.isInputShutdown() + "\n"
-                    + "outputshutdown? " + sock.isOutputShutdown() + "\n"
-                    + "bound? " + sock.isBound() + "\n************");
+            //System.out.println("out.checkError() ");
+            //System.out.println("Let's test the socket: \n"
+//                    + "closed? " + sock.isClosed() + "\n"
+//                    + "bound? " + sock.isBound() + "\n"
+//                    + "connected? " + sock.isConnected() + "\n"
+//                    + "inputshutdown? " + sock.isInputShutdown() + "\n"
+//                    + "outputshutdown? " + sock.isOutputShutdown() + "\n"
+//                    + "bound? " + sock.isBound() + "\n************");
             sock.getOutputStream().flush();
-            System.out.println("Let's test the socket: \n"
-                    + "closed? " + sock.isClosed() + "\n"
-                    + "bound? " + sock.isBound() + "\n"
-                    + "connected? " + sock.isConnected() + "\n"
-                    + "inputshutdown? " + sock.isInputShutdown() + "\n"
-                    + "outputshutdown? " + sock.isOutputShutdown() + "\n"
-                    + "bound? " + sock.isBound() + "\n************");
+            //System.out.println("Let's test the socket: \n"
+//                    + "closed? " + sock.isClosed() + "\n"
+//                    + "bound? " + sock.isBound() + "\n"
+//                    + "connected? " + sock.isConnected() + "\n"
+//                    + "inputshutdown? " + sock.isInputShutdown() + "\n"
+//                    + "outputshutdown? " + sock.isOutputShutdown() + "\n"
+//                    + "bound? " + sock.isBound() + "\n************");
             sock.getOutputStream().write(jsonR.getBytes("UTF-8"));//.print(jsonR);
-            System.out.println("Let's test the socket: \n"
-                    + "closed? " + sock.isClosed() + "\n"
-                    + "bound? " + sock.isBound() + "\n"
-                    + "connected? " + sock.isConnected() + "\n"
-                    + "inputshutdown? " + sock.isInputShutdown() + "\n"
-                    + "outputshutdown? " + sock.isOutputShutdown() + "\n" + "\n************");
+//            System.out.println("Let's test the socket: \n"
+//                    + "closed? " + sock.isClosed() + "\n"
+//                    + "bound? " + sock.isBound() + "\n"
+//                    + "connected? " + sock.isConnected() + "\n"
+//                    + "inputshutdown? " + sock.isInputShutdown() + "\n"
+//                    + "outputshutdown? " + sock.isOutputShutdown() + "\n" + "\n************");
             out.write("\0".getBytes());
             String response = jsonR;
             uni.comms.add(comm);
             comm.setAnswer(formatResponse(" 200 OK ", response));
-            System.out.println("flushed");
-            System.out.println("appended");
+            //System.out.println("flushed");
+            //System.out.println("appended");
 
             out.flush();
             out.close();
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("test9");
+            //System.out.println("test9");
         }
     }
 

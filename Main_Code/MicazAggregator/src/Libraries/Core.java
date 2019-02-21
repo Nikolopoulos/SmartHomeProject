@@ -44,10 +44,10 @@ public class Core {
         try {
             SharedMemory.SharedMemory.<String,ThreadAffinity>get("Affinity").setCurrentThreadAffinityMask(mask);
         } catch (NullPointerException E) {
-            System.out.println("WHOS THAT POKEMON? ITS MASK " + mask);
-             System.out.println("WHOS THAT POKEMON? ITS CONTROL " + c);
-              System.out.println("WHOS THAT POKEMON? ITS THREAD AFFINITY " + SharedMemory.SharedMemory.<String,ThreadAffinity>get("Affinity"));
-               System.out.println("WHOS THAT POKEMON?" );
+            //System.out.println("WHOS THAT POKEMON? ITS MASK " + mask);
+            // System.out.println("WHOS THAT POKEMON? ITS CONTROL " + c);
+            //  System.out.println("WHOS THAT POKEMON? ITS THREAD AFFINITY " + SharedMemory.SharedMemory.<String,ThreadAffinity>get("Affinity"));
+            //   System.out.println("WHOS THAT POKEMON?" );
         }
     }
 

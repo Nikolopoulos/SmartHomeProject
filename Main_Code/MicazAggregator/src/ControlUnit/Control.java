@@ -6,6 +6,8 @@
 package ControlUnit;
 
 import ContextAwarenessUnit.ContextAwarenessUnit;
+import ContextAwarenessUnit.contextClasses.Aggregator;
+import ContextAwarenessUnit.contextClasses.MigrationInfo;
 import DecisionMakingUnit.DecisionMakingUnit;
 import Logging.MyLogger;
 import Libraries.ThreadAffinity;
@@ -37,6 +39,9 @@ import util.Util;
 import ServiceProvisionUnit.ServiceProvisionUnit;
 import SharedMemory.SharedMemory;
 import java.util.ConcurrentModificationException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import util.AdvertismentConsumer;
 import util.CustomException;
@@ -53,6 +58,7 @@ public class Control {
     Thread dropDaemon, populate;
     String uid = "";
     boolean debug;
+    boolean amTheVictim = true;
     public ThreadAffinity threadAffinity;
 
     public InetAddress addr = null;// = getFirstNonLoopbackAddress(true, false);
@@ -67,9 +73,9 @@ public class Control {
         //Prime memory unit
         memory = SharedMemory.<String, SharedMemory>get("SMU");
 
-        System.out.println(memory.<String, String>get("registryUnitIP"));
+        //System.out.println(memory.<String, String>get("registryUnitIP"));
         memory.<String, Control>set("MCU", this);
-        
+
         SharedMemory.<String, Boolean>set("OverLoadStatus", false);
         DumpVariables.init();
         dm = new DecisionMakingUnit();
@@ -94,11 +100,11 @@ public class Control {
             }
             CoreDefinition core = new CoreDefinition(threadAffinity.cores()[i], run, 0, i, pub);
             memory.<String, ArrayList<CoreDefinition>>get("Cores").add(core);
-            System.out.println("added " + core);
+            //System.out.println("added " + core);
         }
         //System.out.println("WTF");
-        System.out.println("Cores available = " + threadAffinity.cores().length);
-        System.out.println("Cores in arrayList = " + memory.<String, ArrayList<CoreDefinition>>get("Cores").size());
+        //System.out.println("Cores available = " + threadAffinity.cores().length);
+        //System.out.println("Cores in arrayList = " + memory.<String, ArrayList<CoreDefinition>>get("Cores").size());
 
         //System.out.println("WTF");
         //SensorsCommunicationUnit.SensorsCommunicationUnit SCU = new SensorsCommunicationUnit.SensorsCommunicationUnit();
@@ -132,33 +138,38 @@ public class Control {
         }
         //System.out.println("STEP 1.0.6");
         memory.<String, String>set("ip", ip);
-        System.out.println("Percieved ip is " + ip + " first non loopbak is " + addr);
+        //System.out.println("Percieved ip is " + ip + " first non loopbak is " + addr);
         //memory.<String, String>set("registryUnitIP", "192.168.2.5");
 
         //find registry
+        System.out.println("[" + (new Date()) + "] [Micaz0x" + memory.<String, Integer>get("myPort") + "] Looking for Registry Unit");
+
         new AdvertismentConsumer(this);
         while (memory.<String, String>get("registryUnitIP") == null) {
             //wait for consumer
         }
 
         memory.<String, Integer>set("registryPort", 8383);
-        
+
+        System.out.println("[" + (new Date()) + "] [Micaz0x" + memory.<String, Integer>get("myPort") + "] Found registry unit at " + memory.<String, String>get("registryUnitIP") + ":" + memory.<String, Integer>get("registryPort"));
+
         spu = new ServiceProvisionUnit(this);
         memory.<String, ServiceProvisionUnit>set("SPU", spu);
         memory.<String, Integer>set("myPort", memory.<String, ServiceProvisionUnit>get("SPU").port);
         //System.out.println("STEP 1.1");
         spu.startServer();
         //System.out.println("STEP 1.2");
-        System.out.println("Set ports");
+        //System.out.println("Set ports");
         //System.out.println("STEP 2");
         this.debug = debug;
         String jsonReply = "";
-        System.out.println("setAffinity");
-        System.out.println("reached");
+        //System.out.println("setAffinity");
+        //System.out.println("reached");
         try {
             //System.out.println("STEP 3");
-            System.out.println("Tryint to https reg unit");
+            //System.out.println("Tryint to https reg unit");
             jsonReply = "{result : \"success\", uid : \"1\"}";
+            System.out.println("[" + (new Date()) + "] [Micaz0x" + memory.<String, Integer>get("myPort") + "] Sending to Registry Unit request to register me");
 
             RequestObject ro = memory.<String, ServiceProvisionUnit>get("SPU").httpContact(
                     new RequestObject(
@@ -170,8 +181,8 @@ public class Control {
                             "Post"));
 
             jsonReply = ro.getResponse();
-            System.out.println("json reply is " + jsonReply);
-            System.out.println("Done https reg unit");
+            //System.out.println("json reply is " + jsonReply);
+            //System.out.println("Done https reg unit");
             //registers itself to the registry unit
             MyLogger.log(ro.toString());
             if (debug) {
@@ -191,6 +202,7 @@ public class Control {
                     MyLogger.log("myUID is " + uid);
                 }
             }
+            System.out.println("[" + (new Date()) + "] [Micaz0x" + memory.<String, Integer>get("myPort") + "] Registered successfully. Handle will now be Micaz-" + uid);
 
         } catch (Exception e) {
 
@@ -219,6 +231,55 @@ public class Control {
         //System.out.println("Step 2.09");
         //AggregatorStatusReport.init();
         //System.out.println("Step 2.10");
+        if (amTheVictim) {
+            Thread t = new Thread(() -> {
+                try {
+                    Thread.sleep(10000 + new Random().nextInt(10000));
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                System.out.println("[" + (new Date()) + "] [Micaz-" + memory.<String, Control>get("MCU").getUid() + "] I am overloaded!");
+                System.out.println("[" + (new Date()) + "] [Micaz-" + memory.<String, Control>get("MCU").getUid() + "] Picked sensor 1, type Micaz to migrate!");
+                HashMap<String, MigrationInfo> info = ((HashMap<String, MigrationInfo>) memory.<String, ContextAwarenessUnit>get("CAU").getContext().get("MigrationInfo"));
+                MigrationInfo min = null;
+                if(info == null){
+                    System.out.println("[" + (new Date()) + "] [Micaz-" + memory.<String, Control>get("MCU").getUid() + "] No suitable candidates were found");
+                    return;
+                }
+                for (MigrationInfo mig : info.values()) {
+                    if (min == null) {
+                        min = mig;
+                    } else if (mig.getCurrentLoad() < min.getCurrentLoad()) {
+                        min = mig;
+                    }
+                }
+                if(min == null){
+                    System.out.println("[" + (new Date()) + "] [Micaz-" + memory.<String, Control>get("MCU").getUid() + "] No suitable candidates were found");
+                    return;
+                }
+                System.out.println("[" + (new Date()) + "] [Micaz-" + memory.<String, Control>get("MCU").getUid() + "] Based on context of topic micaz_migration discussion topic best candidate to attempt to migrate to is " + min.getIp() + ":" + min.getPort() + " with core load of " + min.getCurrentLoad());
+
+                System.out.println("[" + (new Date()) + "] [Micaz-" + memory.<String, Control>get("MCU").getUid() + "] Attempting to contact selected node");
+
+                RequestObject ro = memory.<String, ServiceProvisionUnit>get("SPU").httpContact(
+                        new RequestObject(
+                                "http://" + min.getIp(),
+                                Integer.parseInt(min.getPort()),
+                                "",
+                                "/migration/1",
+                                memory.<String, InetAddress>get("addr"),
+                                "GET")
+                );
+                if(ro.getResponse().contains("{\"response\": \"OK\"}")){
+                    System.out.println("[" + (new Date()) + "] [Micaz-" + memory.<String, Control>get("MCU").getUid() + "] Successfully migrated sensor 1 to new aggregator!");
+
+                } else {
+                    System.out.println("[" + (new Date()) + "] [Micaz-" + memory.<String, Control>get("MCU").getUid() + "] Failed to migrate sensor");
+                }
+                
+            });
+            t.start();
+        }
         return;
 
     }
@@ -492,7 +553,7 @@ public class Control {
             if (m.getId() == id) {
                 m.setLatestActivity(Util.getTime());
                 m.setSwitchState(state);
-                System.out.println("State changed to " + state);
+                //System.out.println("State changed to " + state);
             }
         }
     }
@@ -538,13 +599,13 @@ public class Control {
                     }
 
                     services += "]}";
-                    System.out.println("My uid at update is " + uid);
+                    //System.out.println("My uid at update is " + uid);
 
                     RequestObject regReq = new RequestObject("http://" + SharedMemory.<String, String>get("registryUnitIP"), SharedMemory.<String, Integer>get("registryPort"), URLEncoder.encode("uid=" + uid + "&services=" + services), "/update", addr, "POST");
                     regReq = spu.httpContact(regReq);
                     jsonReply = regReq.getResponse();
 
-                    System.out.println("reply is: " + jsonReply);
+                    //System.out.println("reply is: " + jsonReply);
                     JSONObject obj;
 
                     obj = new JSONObject(jsonReply);
@@ -887,7 +948,7 @@ public class Control {
     }
 
     public void setCoreMode(int id, int mode) {
-        System.out.println("Setting core " + id + " to " + mode);
+        //System.out.println("Setting core " + id + " to " + mode);
         for (CoreDefinition core : SharedMemory.<String, ArrayList<CoreDefinition>>get("Cores")) {
             if (core.getId() == id) {
                 switch (mode) {
@@ -1076,5 +1137,5 @@ public class Control {
     public void setThreadId(int threadId) {
         this.threadId = threadId;
     }
-    
+
 }
